@@ -12,7 +12,7 @@ public interface mj_DAO {
 	void updateData(String name, String data);
 	ArrayList<mj_DTO> getData();
 	
-	
+	// 수정함 ㅋㅋ 
 	ArrayList<mj_bookDTO> getBooks(int room_seq);
 	
 	
