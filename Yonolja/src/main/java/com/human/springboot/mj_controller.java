@@ -206,6 +206,12 @@ public class mj_controller {
 	
 	
 	
+	@GetMapping("practice_signup")
+	public String showSigngin_practice() {
+		return "practice_signup";
+	}
+	
+	
 	// 상태토큰 -> 이미 jsp 파일에서 만듬 
 	
 	
