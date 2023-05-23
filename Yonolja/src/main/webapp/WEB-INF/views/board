@@ -1,9 +1,24 @@
-공지
+		
+		
 
+   
+	
+	1. 파일작성시 앞에 본인 이름 이니셜 붙이기 권장
+	ex) mj_controller
+	ex) th_DAO
+	ex) yt_bookDTO
+	ex) hs_mapper
+	
+	  > jsp file 들은 상관없을듯? ?
+	  
+	  
+	2. 두 개 이상의 controller 가 같은 url 을 mapping 하면 안됨.
+	 
+	 
+	 
+	 
+	 
+	 
 
-	공유 네이버 아이디 
-	아이디 / 비번
-	the_relaxed_tortoise  / xAxrmThNTlQB
-
-
-
+	 
+	 
