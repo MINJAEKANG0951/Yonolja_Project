@@ -3,10 +3,14 @@ package com.human.springboot;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -206,10 +210,19 @@ public class mj_controller {
 	
 	
 	
-	@GetMapping("practice_signup")
+	@GetMapping("/practice_signup")
 	public String showSigngin_practice() {
 		return "practice_signup";
 	}
+	
+	@GetMapping("/practice_emailAuthentication")
+	public String practice_emailAuthentication() {
+		return "practice_mailAuthentication";
+	}
+	
+	
+	
+	
 	
 	
 	// 상태토큰 -> 이미 jsp 파일에서 만듬 
