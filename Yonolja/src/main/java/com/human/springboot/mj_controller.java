@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -21,11 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
+
 @Controller
 public class mj_controller {
 	
 	@Autowired
 	private mj_DAO mjdao;
+	
+	@Autowired
+	private MailService mailService;
 	
 	@GetMapping("/home")
 	public String showHome(HttpServletRequest req) {
@@ -220,7 +225,21 @@ public class mj_controller {
 		return "practice_mailAuthentication";
 	}
 	
-	
+	@GetMapping("/send2")
+	public void sendEmail2() {
+		
+//		JavaMailSender msender = new JavaMailSenderImpl(); // 이거라 안됐네 sender 그 자체는 interface 라서.
+//		SimpleMailMessage message = new SimpleMailMessage();
+//		message.setTo("blueie2@naver.com");
+//		message.setSubject("hi");
+//		message.setText("I am Yonolja Server");
+//		message.setFrom("the_relaxed_tortoise@naver.com");
+//		
+//		msender.send(message);
+		
+		// controller 는 여기서 해두됨. 꼭 service 를 해서 써야하는가?
+		mailService.sendEmail("blueie2@naver.com", "hi", "babo");
+	}
 	
 	
 	

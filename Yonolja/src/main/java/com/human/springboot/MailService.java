@@ -7,13 +7,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class MailService {
-
-	private JavaMailSender javaMailSender;
-	
 	
 	@Autowired
-	public MailService(JavaMailSender javaMailSender) {
-		this.javaMailSender = javaMailSender;
+	private JavaMailSender javaMailSender;		// mail sender 객체 생성. interface 임.
+	
+	public MailService(JavaMailSender javaMailSender) {	
+		this.javaMailSender = javaMailSender;	// mailservice 만들면 초기화 
 	}
 	
 	

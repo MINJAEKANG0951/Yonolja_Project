@@ -3,6 +3,8 @@ package com.human.springboot;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,7 +17,7 @@ import jakarta.servlet.http.HttpSession;
 public class MailController {
 
 	@Autowired
-	private MailService mailService;
+	private MailService mailService;	
 	
 	public MailController(MailService mailService) {
 		this.mailService = mailService;
@@ -24,7 +26,8 @@ public class MailController {
 	@GetMapping("/send")
 	public void sendMail() {
 		
-		mailService.sendEmail("dudxo940@naver.com", "야", "안녕");
+		mailService.sendEmail("blueie2@naver.com", "야", "안녕");
+		
 		
 	}
 	

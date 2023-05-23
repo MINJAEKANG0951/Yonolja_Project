@@ -21,4 +21,7 @@ public interface mj_DAO {
 	
 	ArrayList<mj_hotelDTO> keywordSearchByName(String keyword);
 	ArrayList<mj_hotelDTO> keywordSearchByRegion(String keyword);
+	
+	
+	void empty_user_connected();
 }

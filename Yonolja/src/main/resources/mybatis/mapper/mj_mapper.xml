@@ -38,7 +38,9 @@
 	</select>
 	
 	
-	
+	<delete id="empty_user_connected">
+		delete from user_connected
+	</delete>
 	
 	
 </mapper>
