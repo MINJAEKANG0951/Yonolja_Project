@@ -9,7 +9,6 @@
 <title>main</title>
 </head>
 <style>
-
 header {
   display: grid;
   place-items:center;
@@ -39,7 +38,15 @@ footer {
     width:95%;
     height:100%;
 }
-.header_item { width:100%;border:0px solid #ddd; }
+#mypage_button{
+	border:1px solid #ddd;
+	width:85px;
+	height:45px;
+	border-radius:30% 30% 30% 30%;
+	cursor:pointer;
+}
+#mypage_button:hover{  }
+.header_item { width:100%;border:0px solid #ddd;}
 .header_item:nth-child(2){	text-align:center; }
 .header_item:nth-child(3){  text-align:right;  }
 #logo{height:50px;}
@@ -54,7 +61,9 @@ footer {
 		<div class=header_item>
 			
 		</div>
-		<div class=header_item>내정보</div>
+		<div class=header_item>
+			<button id=mypage_button></button>
+		</div>
 </div>
 </header>
 
