@@ -45,7 +45,7 @@ footer {
 	border-radius:30% 30% 30% 30%;
 	cursor:pointer;
 }
-#mypage_button:hover{  }
+#mypage_button:hover{ box-shadow: 0px 0px 5px #444;transition:0.5s; }
 .header_item { width:100%;border:0px solid #ddd;}
 .header_item:nth-child(2){	text-align:center; }
 .header_item:nth-child(3){  text-align:right;  }
