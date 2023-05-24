@@ -10,7 +10,10 @@ public class Controller_MJ {
 	@Autowired
 	DAO_MJ mjdao;
 	
-	
+	@GetMapping("/main")
+	public String showMain() {
+		return "main";
+	}
 	
 	
 }
