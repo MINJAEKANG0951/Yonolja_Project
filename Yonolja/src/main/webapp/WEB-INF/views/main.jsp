@@ -9,13 +9,16 @@
 <title>main</title>
 </head>
 <style>
+
 header {
+  display: grid;
+  place-items:center;
   position: fixed;
   top: 0; left: 0;
   height: 100px;
   width: 100%;
   background-color: white;
-   border:1px solid #ddd;
+  border:1px solid #ddd;
 }
 section {
   padding-top: 150px; padding-bottom: 150px;
@@ -28,10 +31,31 @@ footer {
   background-color: white;
   border:1px solid #ddd;
 }
+.header_container {
+	display:grid;
+	grid-template-columns:1fr  1fr  1fr;
+	grid-template-rows:1fr;
+    place-items: center;
+    width:95%;
+    height:100%;
+}
+.header_item { width:100%;border:0px solid #ddd; }
+.header_item:nth-child(2){	text-align:center; }
+.header_item:nth-child(3){  text-align:right;  }
+#logo{height:50px;}
 </style>
 <body>
 
 <header>
+<div class=header_container>
+		<div class=header_item>
+			<a href="/main"><img id=logo src="/img/website/header_logo.png"></a>
+		</div>
+		<div class=header_item>
+			
+		</div>
+		<div class=header_item>내정보</div>
+</div>
 </header>
 
 <section>
