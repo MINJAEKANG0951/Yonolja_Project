@@ -4,7 +4,17 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.human.springboot.DAO_MJ">
-
+	
+	<select id="getNormalUsers" resultType="com.human.springboot.DTO_MJ_userDTO">
+		select*from yonolja_user where user_signinType='normal'
+	</select>
+	
+	<insert id="addUser">
+		insert into yonolja_user values(
+			user_seq.nextval, 
+			#{param1},#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8} 
+		)
+	</insert>
 	
 </mapper>
 
