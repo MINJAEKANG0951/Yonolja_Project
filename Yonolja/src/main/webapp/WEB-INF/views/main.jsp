@@ -36,7 +36,9 @@ header {
 	cursor:pointer;
 	overflow:hidden;
 }
-#mypage_button:hover{ box-shadow: 0px 0px 5px #444;transition:0.5s;}
+#mypage_button:hover{ 
+	box-shadow: 0px 0px 5px #444;transition:0.5s;
+}
 .header_item { width:100%;border:0px solid #ddd;}
 .header_item:nth-child(2){	text-align:center; }
 .header_item:nth-child(3){  text-align:right;  }
@@ -189,7 +191,10 @@ section {
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
-
+$(document)
+.on('click','#mypage_button',function(){
+	
+})
 
 
 </script>
