@@ -4,8 +4,21 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.human.springboot.DAO_TH">
-
-	
+		<!-- 
+	<select id="member_login" resultType="com.human.springboot.dto.TH_DTO">
+		select kth_user_id, kth_user_seq from kth_member where 
+	</select>
+	--> 
+	<select id="member_list" resultType="com.human.springboot.DTO_TH">
+		SELECT USER_SEQ, USER_ID, USER_NAME, USER_MOBILE, USER_EMAIL, USER_GENDER, USER_TYPE, USER_SIGNINTYPE, NUM
+			FROM (SELECT USER_SEQ, USER_ID, USER_NAME, USER_MOBILE, USER_EMAIL, USER_GENDER, USER_TYPE, USER_SIGNINTYPE, ROWNUM AS NUM
+			FROM ( SELECT USER_SEQ, USER_ID, USER_NAME, USER_MOBILE, USER_EMAIL, USER_GENDER, USER_TYPE, USER_SIGNINTYPE
+			FROM Yonolja_user WHERE not USER_ID= 'admin' ORDER BY USER_SEQ desc))
+			WHERE NUM BETWEEN #{param1} AND #{param2}
+	</select>
+	<select id='member_count' resultType="int">
+		select count(user_id) from Yonolja_user where not user_id='admin'
+	</select>
 	
 </mapper>
 
