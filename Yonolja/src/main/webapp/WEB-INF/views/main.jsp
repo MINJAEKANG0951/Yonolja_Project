@@ -133,6 +133,11 @@ section {
   padding-top: 150px; padding-bottom: 150px;
 }
 
+.sub{height:0px;}
+li{list-style:none;border:1px solid black;}
+
+
+
 
 </style>
 <body>
@@ -154,14 +159,22 @@ section {
 			<div class=last_header_item_item title="향후개발예정"> 당신의 공간을 Yonolja하세요</div>
 			<div class=last_header_item_item title="향후개발예정"><img id=world_img src="/img/website/earth.png"></div>
 			<div class=last_header_item_item>
-				<button id=mypage_button><img id=user_profile src="/img/website/user-profile.png"></button>
+				<ul class=sub>
+					<li><button id=mypage_button><img id=user_profile src="/img/website/user-profile.png"></button></li>
+					<li>로그인</li>
+					<li>회원가입</li>
+				</ul>
 			</div>
 		</div>
 </div>
 </header>
 
+
+
 <section>
 </section>
+
+
 
 <footer>
 <div class=footer_container>
@@ -191,6 +204,7 @@ section {
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
+
 
 
 
