@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -16,7 +17,9 @@
 			</tr>
 		</table>
 		<div>
-		<a>1</a>
+			<c:forEach var="i" begin="${start}" end="${end}">
+				<li class="page-item "><a id="paging${i }" class="page-link" onclick='memberlist(${i })'>${i }</a></li>
+            </c:forEach>
 		</div>
 	</div>
 </div>
@@ -29,24 +32,24 @@ $(document)
 		alert('잘못된 접근입니다')
 	}*/
 
-	memberList()
+	memberlist(1)
 })
 
-function memberList(){
-	$.ajax({
-		url:"/member_list",
-		data:{},
-		dataType:'json',
-		type:"post",
-		success:function(data){
-			;// 번호 이름 아이디 전화번호 성별 이메일 타입
-			$('#admin_member_management_table tr:gt(0)').remove();
-			for(i=0;i<data.length;i++){
-				let str=''
-				str+='<tr><td>'
-				+data[i]['user_seq']+'</td><td>'
-				+data[i]['user_name']+'</td><td>'
-				+data[i]['user_id']+'</td><td>'
+//function memberList(){
+//	$.ajax({
+//		url:"/member_list",
+//		data:{},
+	//	dataType:'json',
+//		type:"post",
+//		success:function(data){
+//			;// 번호 이름 아이디 전화번호 성별 이메일 타입
+//			$('#admin_member_management_table tr:gt(0)').remove();
+//			for(i=0;i<data.length;i++){
+//				let str=''
+//				str+='<tr><td>'
+//				+data[i]['user_seq']+'</td><td>'
+//				+data[i]['user_name']+'</td><td>'
+/* 				+data[i]['user_id']+'</td><td>'
 				+data[i]['user_mobile']+'</td><td>'
 				+data[i]['user_gender']+'</td><td>'
 				+data[i]['user_email']+'</td><td>'
@@ -57,6 +60,37 @@ function memberList(){
 			
 		}
 	})
+}*/
+function memberlist(page){
+	$('.page-item').removeClass("active");
+	$('#paging'+ page).parent().addClass("active");
+	
+
+	$.ajax({url:"/member_list",
+			data:{page:page},
+			dataType:"json",
+			type:"post",
+			success:function(data){
+				let str="";
+				$('#admin_member_management_table tr:gt(0)').remove();
+				for(var i=0;i<data.length;i++){
+					let str=''
+					str+='<tr><td>'
+					+data[i]['user_seq']+'</td><td>'
+					+data[i]['user_name']+'</td><td>'
+					+data[i]['user_id']+'</td><td>'
+					+data[i]['user_mobile']+'</td><td>'
+					+data[i]['user_gender']+'</td><td>'
+					+data[i]['user_email']+'</td><td>'
+					+data[i]['user_type']+'</td></tr>'
+					
+					$('#admin_member_management_table').append(str)
+				}
+				
+			}
+		})
+	
 }
+
 </script>
 </html>

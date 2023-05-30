@@ -12,7 +12,7 @@
 		<input type='hidden' id='adminCheck' value="${adcheck}">
 	</div>
 	<div class='admin_review'>
-		<a href="damin_review">고객리뷰관리</a>
+		<a href="admin_review">고객리뷰관리</a>
 	</div>
 	<div class='admin_post'>
 		<a href="admin_post">고객센터 관리</a>
