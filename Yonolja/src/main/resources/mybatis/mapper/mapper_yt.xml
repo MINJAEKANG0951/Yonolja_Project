@@ -5,6 +5,53 @@
 	
 <mapper namespace="com.human.springboot.DAO_YT">
 
+
+<select id="list" resultType="com.human.springboot.DTO_YT">
+    select 
+        post_seq , 
+        post_category , 
+        user_seq , 
+        post_content , 
+        post_date , 
+        post_comment
+    from post
+    order by post_seq DESC
+</select>
+
+<insert id="insertPost">
+    INSERT INTO post 
+    (
+        post_seq, 
+        post_category, 
+        user_seq, 
+        post_content, 
+        post_date,
+        post_comment
+    )
+    VALUES 
+    (
+        #{param1}, 
+        #{param2}, 
+        #{param3}, 
+        #{param4}, 
+        #{param5}, 
+        #{param6}
+    )
+</insert>
+
+
+<!-- 	<select id="list" resultType="com.human.springboot.QADTO"> -->
+<!-- 	select post_seq AS board_num, post_title AS Btitle, user_seq AS B_writer, post_date AS B_Create_date, post_comment AS B_rcount -->
+<!-- 	from Board -->
+<!-- 	order by post_seq DESC -->
+<!-- </select> -->
+
+<!-- <select id="getPostList" resultType="com.human.springboot.DTO_YT"> -->
+<!-- 	SELECT post_seq, post_category, user_seq, post_title, post_content, post_date, post_comment -->
+<!-- 	FROM Yonolja_post -->
+<!-- 	ORDER BY post_seq DESC -->
+<!-- </select> -->
+
 	
 	
 </mapper>
