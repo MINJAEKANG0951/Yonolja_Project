@@ -16,5 +16,9 @@
 		)
 	</insert>
 	
+	<select id="getPlaceOptions" resultType="com.human.springboot.DTO_MJ_placeOptionDTO">
+		select*from yonolja_place_option
+	</select>
+	
 </mapper>
 

@@ -10,14 +10,17 @@
 </head>
 <style>
 header {
-  display: grid;
-  place-items:center;
   position: fixed;
   top: 0; left: 0;
-  height: 100px;
+  height: 150px;
   width: 100%;
   background-color: white;
   border:1px solid #ddd;
+
+  display: grid;
+  grid-template-columns:1fr;
+  grid-template-rows:1fr 1fr;
+  place-items:center;
 }
 .header_container {
 	display:grid;
@@ -25,7 +28,6 @@ header {
 	grid-template-rows:1fr;
     place-items: center;
     width:95%;
-    height:100%;
 }
 #mypage_button{
 	border:2px solid #ddd;
@@ -80,6 +82,7 @@ header {
 .last_header_item_item:nth-child(1){
 	text-align:right;font-weight:bold;font-size:14px;cursor:pointer;
 		border-radius:5% 5% 5% 5% / 50% 50% 50% 50%;
+		min-width:120px;
 }
 .last_header_item_item:nth-child(1):hover{background-color:#ddd;transition:0.5s;}
 .last_header_item_item:nth-child(2){
@@ -133,15 +136,95 @@ section {
   padding-top: 150px; padding-bottom: 150px;
 }
 
-.sub{height:0px;}
-li{list-style:none;border:1px solid black;}
+.sub{
+	display:none;
+	position:absolute;
+	border-radius:10% 10% 10% 10%;
+	right:40px;
+	border:1px solid #ddd;
+	background-color:white;
+	
+	grid-template-columns:1fr;
+	grid-template-rows:1fr 1fr 1fr;
+}
+.sub_item{
+	cursor:pointer;
+	width:100%;
+	height:25px;
+	font-weight:bold;
+	font-size:17px;
+	text-indent:1em;
+	text-align:left;
+}
+.sub_item:hover{
+	background-color:#ddd;
+}
+.sub_item:nth-child(n+2){
+	border-top:1px solid #ddd;
+}
 
 
+.header_container2{
+	border-top:1px solid #ddd;
+	width:100%;
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr;
+	place-items:center;
+}
+.optionBox {
+	width:95%;
+	height:80px;
+	border:1px solid black;
+	
+	display:grid;
+	grid-template-columns:9fr 1fr;
+	grid-template-rows:1fr;
+}
+
+.btnBox{
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr;
+	place-items:center;
+}
+#filter{
+	width:80px;
+	height:50px;
+	background-color:white;
+	border-radius:10% 10% 10% 10%;
+	font-size:15px;
+	font-weight:bold;
+	border:0.5px solid black;
+	cursor:pointer;
+}
+#filter:hover{
+	box-shadow: 0px 0px 5px #444;transition:0.5s;
+}
+
+.options{
+	border:1px solid green;
+	white-space:nowrap;
+	overflow:hidden;
+	display:flex;
+	position:relative;
+}
+.option{
+	border:3px solid red;
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr 1fr;
+	margin-left:30px;
+	height:100%;
+}
+
+.option img{
+	height:40px;
+}
 
 
 </style>
 <body>
-
 <header>
 <div class=header_container>
 		<div class=header_item>
@@ -159,13 +242,49 @@ li{list-style:none;border:1px solid black;}
 			<div class=last_header_item_item title="향후개발예정"> 당신의 공간을 Yonolja하세요</div>
 			<div class=last_header_item_item title="향후개발예정"><img id=world_img src="/img/website/earth.png"></div>
 			<div class=last_header_item_item>
-				<ul class=sub>
-					<li><button id=mypage_button><img id=user_profile src="/img/website/user-profile.png"></button></li>
-					<li>로그인</li>
-					<li>회원가입</li>
-				</ul>
+				<button id=mypage_button><img id=user_profile src="/img/website/user-profile.png"></button>
+				<div class=sub>
+				
+				<% if( session.getAttribute("user_type")==null ){ %>
+					<div class=sub_item onclick="location.href='/login'">로그인</div>
+					<div class=sub_item onclick="location.href='/signin'">회원가입</div>
+					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
+				<% } else if(session.getAttribute("user_type").equals("customer")){ %>
+					<div class=sub_item onclick="location.href='/mypage'">마이페이지</div>
+					<div class=sub_item onclick="location.href='/logout'">로그아웃</div>
+					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
+				<% } else if(session.getAttribute("user_type").equals("owner")){ %>
+					<div class=sub_item onclick="location.href='/mypage'">마이페이지</div>
+					<div class=sub_item onclick="location.href='/logout'">로그아웃</div>
+					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
+				<% } else if(session.getAttribute("user_type").equals("admin")){ %>
+					<div class=sub_item onclick="location.href='/admin'">관리자페이지</div>
+					<div class=sub_item onclick="location.href='/logout'">로그아웃</div>
+					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
+				<% } %>
+				</div>
 			</div>
 		</div>
+</div>
+<div class=header_container2>
+	<div class=optionBox>
+		<div class=options>
+		
+			<div class=option>
+				<div class=option_picture>
+					<img src="/img/place_option/bathtub.png">
+				</div>
+				<div class=option_name>
+					욕조
+				</div>
+			</div>
+	
+		</div>
+		
+		<div class=btnBox>
+			<button id=filter>필터</button>
+		</div>
+	</div>
 </div>
 </header>
 
@@ -205,7 +324,43 @@ li{list-style:none;border:1px solid black;}
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
 
+// 내정보버튼 drop down
+$('html').click(function(e){
+	clicked = $(e.target).attr('id');
+	if(clicked=='user_profile'||clicked=='mypage_button'){
+		if( $('.sub').css('display')=='none'  ){ $('.sub').css('display','block')} 
+		else { $('.sub').css('display','none')}
+	} else { $('.sub').css('display','none') }
+})
 
+function fillPlaceOptions(){
+	
+	$('#options').empty();
+	
+	$.ajax({url:'/getPlaceOptions', type:'post', dataType:'json', 
+		
+		success:function(data){
+			
+			for(i=0;i<data.length;i++){
+				seq = data[i].seq;
+				name = data[i].name;
+				img = data[i].img;
+				
+				option_str = '';
+				$('.options').append(option_str);
+			}
+				
+		}
+	
+	})
+	
+}
+
+
+$(document)
+.ready(function(){
+	fillPlaceOptions();
+})
 
 
 

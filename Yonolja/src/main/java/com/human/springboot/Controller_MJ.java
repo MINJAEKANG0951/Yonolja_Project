@@ -2,11 +2,14 @@ package com.human.springboot;
 
 import java.util.ArrayList;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -17,6 +20,12 @@ public class Controller_MJ {
 	@Autowired
 	DAO_MJ mjdao;
 	
+	// 테스트
+	
+	@GetMapping("/test")
+	public String showtestPage() {
+		return "test/slideImgTest";
+	}
 	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
 	@GetMapping("/signin")
@@ -74,7 +83,8 @@ public class Controller_MJ {
 		return "main";
 	}
 	
-	// 로그인 
+	
+	// 로그인, 로그아웃
 	@GetMapping("/login")
 	public String showLogin() {
 		return "login";
@@ -116,7 +126,7 @@ public class Controller_MJ {
 		return "login";
 	}
 	
-	@GetMapping("/doLogout")
+	@GetMapping("/logout")
 	public String doLogout(HttpServletRequest req) {
 		HttpSession session = req.getSession();
 		session.invalidate();
@@ -124,14 +134,34 @@ public class Controller_MJ {
 	}
 	
 
+	// 메인
 	@GetMapping("/main")
 	public String showMain() {
 		return "main";
 	}
 	
 	
-	
-	
+	// PlaceOptions 가져오기
+	@PostMapping("/getPlaceOptions")
+	@ResponseBody
+	public String getPlaceOptions() {
+		
+		ArrayList<DTO_MJ_placeOptionDTO> placeOptions = mjdao.getPlaceOptions();
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<placeOptions.size();i++) {
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", placeOptions.get(i).getPlace_option_seq());
+			jo.put("name", placeOptions.get(i).getPlace_option_name());
+			jo.put("img", placeOptions.get(i).getPlace_option_img());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
 	
 	
 	
