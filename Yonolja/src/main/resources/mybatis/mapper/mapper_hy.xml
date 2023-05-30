@@ -4,14 +4,23 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.human.springboot.DAO_HY">
-<!-- host_addPlace관련  -->
-	<select id="showPtype" resultType="java.lang.String">
-		select place_type_name from yonolja_place_type 
+<!-- host_addPlace show select option 관련  -->
+	<select id="showPtype" resultType="com.human.springboot.DTO_HY_P">
+		select place_type_seq, place_type_name from yonolja_place_type 
 	</select>
 	
 	<select id="showPoption" resultType="com.human.springboot.DTO_HY_P">
     	select place_option_seq, place_option_name from yonolja_place_option order by place_option_seq asc
 	</select>
 
+<!-- host_addPlace DB insert 관련  -->
+
+	<insert id="addplace">
+		insert into yonolja_place values(
+			place_seq.nextval,#{param1}
+			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10}
+		)
+	</insert>
+	
 </mapper>
 
