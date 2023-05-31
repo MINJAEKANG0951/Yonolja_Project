@@ -6,27 +6,28 @@
 <mapper namespace="com.human.springboot.DAO_YT">
 
 
-<select id="list" resultType="com.human.springboot.DTO_YT">
-    select 
-        post_seq , 
-        post_category , 
-        user_seq , 
-        post_content , 
-        post_date , 
-        post_comment
-    from post
-    order by post_seq DESC
-</select>
+<!-- <select id="list" resultType="com.human.springboot.DTO_YT"> -->
+<!--     select  -->
+<!--         post_seq ,  -->
+<!--         post_category ,  -->
+<!--         user_seq ,  -->
+<!--         post_content ,  -->
+<!--         post_date ,  -->
+<!--         post_comment -->
+<!--     from post -->
+<!--     order by post_seq DESC -->
+<!-- </select> -->
 
 <insert id="insertPost">
-    INSERT INTO post 
+    INSERT INTO yonolja_post 
     (
         post_seq, 
         post_category, 
         user_seq, 
-        post_content, 
+        post_title,   
         post_date,
-        post_comment
+        post_comment,
+        post_content
     )
     VALUES 
     (
@@ -35,9 +36,12 @@
         #{param3}, 
         #{param4}, 
         #{param5}, 
-        #{param6}
+        #{param6},
+        #{param7}
     )
 </insert>
+
+
 
 
 <!-- 	<select id="list" resultType="com.human.springboot.QADTO"> -->
