@@ -13,4 +13,6 @@ public interface DAO_MJ {
 	
 	ArrayList<DTO_MJ_placeOptionDTO> getPlaceOptions();
 	
+	ArrayList<DTO_MJ_placeDTO> getPlaces();
+	
 }

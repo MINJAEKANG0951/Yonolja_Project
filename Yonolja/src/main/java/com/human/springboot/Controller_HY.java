@@ -11,8 +11,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
-import jakarta.mail.Multipart;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -57,7 +57,7 @@ public class Controller_HY {
 			
 			@RequestParam(value="pfeatures") String[] selectedOptions,
 			/* 사진도 받아야함 나중에 */
-			@RequestParam(value="file") Multipart multi
+			@RequestParam(value="file") MultipartFile multi
 			) {
 		
 

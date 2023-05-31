@@ -20,5 +20,9 @@
 		select*from yonolja_place_option
 	</select>
 	
+	<select id="getPlaces" resultType="com.human.springboot.DTO_MJ_placeDTO">
+		select*from yonolja_place
+	</select>
+	
 </mapper>
 

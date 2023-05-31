@@ -9,7 +9,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -21,18 +23,32 @@ public class Controller_MJ {
 	DAO_MJ mjdao;
 	
 	// 테스트
-	
 	@GetMapping("/test")
 	public String showtestPage() {
 		return "test/slideImgTest";
 	}
+	@GetMapping("/test2")
+	public String showtestPage2() {
+		return "test/ImgUploadTest";
+	}
+	@GetMapping("/test3")
+	public String showtestPage3() {
+		return "test/portraitModuleTest";
+	}
+	
 	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
 	@GetMapping("/signin")
 	public String showSignin() {
 		return "signin";
 	}
-	
+	@PostMapping("/getImg")
+	public void getImg(@RequestParam(value="img") MultipartFile img) {
+		
+		System.out.println(img);
+		
+		
+	}
 	@PostMapping("/doSignin")
 	public String doSignin(HttpServletRequest req, Model model) {
 		
@@ -89,7 +105,6 @@ public class Controller_MJ {
 	public String showLogin() {
 		return "login";
 	}
-	
 	@PostMapping("/doLogin")
 	public String doLogin(HttpServletRequest req, Model model) {
 		
@@ -125,7 +140,6 @@ public class Controller_MJ {
 		model.addAttribute("guide",guide);
 		return "login";
 	}
-	
 	@GetMapping("/logout")
 	public String doLogout(HttpServletRequest req) {
 		HttpSession session = req.getSession();
@@ -134,7 +148,7 @@ public class Controller_MJ {
 	}
 	
 
-	// 메인
+	// 메인 보여주기
 	@GetMapping("/main")
 	public String showMain() {
 		return "main";
@@ -162,6 +176,42 @@ public class Controller_MJ {
 		
 		return ja.toString();
 	}
+	
+	
+	// Place 가져오기
+	@PostMapping("/getPlaces")
+	@ResponseBody
+	public String getPlaces() {
+		
+		ArrayList<DTO_MJ_placeDTO> places = mjdao.getPlaces();
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<places.size();i++) {
+			JSONObject jo = new JSONObject();
+			
+			jo.put("place_seq", places.get(i).getPlace_seq());
+			jo.put("place_name", places.get(i).getPlace_seq());
+			jo.put("user_seq", places.get(i).getPlace_seq());
+			jo.put("place_type_seq", places.get(i).getPlace_seq());
+			jo.put("place_checkin_time", places.get(i).getPlace_seq());
+			jo.put("place_checkout_time", places.get(i).getPlace_seq());
+			jo.put("place_address", places.get(i).getPlace_seq());
+			jo.put("place_imgs", places.get(i).getPlace_seq());
+			jo.put("place_mobile", places.get(i).getPlace_seq());
+			jo.put("place_options", places.get(i).getPlace_seq());
+			jo.put("place_guide", places.get(i).getPlace_seq());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	
+	
+	
+	
 	
 	
 	

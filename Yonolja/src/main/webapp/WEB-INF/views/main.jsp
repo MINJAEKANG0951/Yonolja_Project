@@ -97,6 +97,9 @@ header {
 .last_header_item_item:nth-child(2):hover{
 	background-color:#ddd;transition:1s;
 }
+.last_header_item_item:nth-child(3){
+
+}
 #world_img{width:24px;cursor:pointer;}
 
 footer {
@@ -142,10 +145,11 @@ section {
 	border-radius:10% 10% 10% 10%;
 	right:40px;
 	border:1px solid #ddd;
-	background-color:white;
 	
 	grid-template-columns:1fr;
 	grid-template-rows:1fr 1fr 1fr;
+	background-color:white;
+	z-index:1000;
 }
 .sub_item{
 	cursor:pointer;
@@ -175,11 +179,13 @@ section {
 .optionBox {
 	width:95%;
 	height:80px;
-	border:1px solid black;
+	
 	
 	display:grid;
-	grid-template-columns:9fr 1fr;
+	grid-template-columns:1fr 30fr 1fr 3fr;
 	grid-template-rows:1fr;
+	place_items:center;
+
 }
 
 .btnBox{
@@ -188,6 +194,16 @@ section {
 	grid-template-rows:1fr;
 	place-items:center;
 }
+
+#leftBtnBox{
+	text-align:right;
+	margin:auto 0;
+}
+#rightBtnBox{
+	text-align:left;
+	margin:auto 0;
+}
+
 #filter{
 	width:80px;
 	height:50px;
@@ -203,24 +219,60 @@ section {
 }
 
 .options{
-	border:1px solid green;
 	white-space:nowrap;
 	overflow:hidden;
 	display:flex;
 	position:relative;
+	height:100%;
+	place-items:center;
+	box-sizing: border-box;
+ 	border-style: solid;
+	border:0px solid #ddd;
+	border-left:1px solid #f1f1f1;
+	border-right:1px solid #f1f1f1;
 }
 .option{
-	border:3px solid red;
+	
 	display:grid;
 	grid-template-columns:1fr;
-	grid-template-rows:1fr 1fr;
-	margin-left:30px;
-	height:100%;
+	grid-template-rows:1fr auto;
+	height:90%;
+	width:150px;
+	min-width:150px;
+	max-width:151px;
+	font-size:13px;
+	text-align:center;
+	cursor:pointer;
+	
+	transition:0.5s;
+
+}
+
+.option:hover{
+	background-color:#ddd;
+	font-size:bold;
 }
 
 .option img{
 	height:40px;
 }
+
+.option_left{
+	border-radius:50% 50% 50% 50%;
+	border:1px solid black;
+	cursor:pointer;
+	z-index:900;
+}
+.option_left:hover{border:2px solid black;font-weight:bold}
+.option_right{
+	border-radius:50% 50% 50% 50%;
+	border:1px solid black;
+	cursor:pointer;
+	z-index:900;
+}
+.option_right:hover{border:2px solid black;font-weight:bold}
+
+
 
 
 </style>
@@ -244,7 +296,6 @@ section {
 			<div class=last_header_item_item>
 				<button id=mypage_button><img id=user_profile src="/img/website/user-profile.png"></button>
 				<div class=sub>
-				
 				<% if( session.getAttribute("user_type")==null ){ %>
 					<div class=sub_item onclick="location.href='/login'">로그인</div>
 					<div class=sub_item onclick="location.href='/signin'">회원가입</div>
@@ -268,19 +319,13 @@ section {
 </div>
 <div class=header_container2>
 	<div class=optionBox>
+		<div id=leftBtnBox> <button class=option_left> < </button> </div>
 		<div class=options>
+
 		
-			<div class=option>
-				<div class=option_picture>
-					<img src="/img/place_option/bathtub.png">
-				</div>
-				<div class=option_name>
-					욕조
-				</div>
-			</div>
 	
 		</div>
-		
+		<div id=rightBtnBox> <button class=option_right> > </button> </div>
 		<div class=btnBox>
 			<button id=filter>필터</button>
 		</div>
@@ -291,6 +336,9 @@ section {
 
 
 <section>
+	
+	
+	
 </section>
 
 
@@ -332,7 +380,6 @@ $('html').click(function(e){
 		else { $('.sub').css('display','none')}
 	} else { $('.sub').css('display','none') }
 })
-
 function fillPlaceOptions(){
 	
 	$('#options').empty();
@@ -346,23 +393,36 @@ function fillPlaceOptions(){
 				name = data[i].name;
 				img = data[i].img;
 				
-				option_str = '';
+				
+				option_str = '<div class=option id='+ seq +'>';
+				option_str += '<div class=option_picture>'
+				option_str += "<img src='" + img + "'>"
+				option_str += '</div>'
+				option_str += '<div class=option_name>' + name + '</div>'
+				option_str += '</div>'
 				$('.options').append(option_str);
 			}
-				
+			option_scroll_coor_max = (data.length*150);
 		}
-	
 	})
-	
 }
-
 
 $(document)
 .ready(function(){
 	fillPlaceOptions();
 })
+.on('click','.option_left',function(){
+	$('.options').animate({scrollLeft:$('.options').scrollLeft()-350},250)
+})
+.on('click','.option_right',function(){
+	$('.options').animate({scrollLeft:$('.options').scrollLeft()+350},250)
+})
+.on('click','.option',function(){
+	seq = $(this).attr('id');
+	console.log(seq);
 
-
+})
+// 이제 portrait 모듈 만들기 
 
 
 </script>
