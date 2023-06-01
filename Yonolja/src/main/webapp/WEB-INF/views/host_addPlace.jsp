@@ -34,7 +34,7 @@ height:100%;
 
 
     <h2>사업장 정보 입력</h2>
-    <form action="/insertPlace" method="POST" id="fmt">
+    <form action="/insertPlace" method="POST" id="fmt" enctype="multipart/form-data">
     	
         <label for="pname">사업장 이름:</label><br>
         <input type="text" id="pname" name="pname"><br>
@@ -49,7 +49,7 @@ height:100%;
 		</select><br>
         
         <label for="paddress">사업장 위치:</label><br>
-        <input type="text" id="paddress" name="paddress"><br>
+   
         
         <div class="information5">
          <input type="address" class="address-input" id=pzip_code name=pzip_code placeholder="우편번호" readonly><input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>                                                                                               
@@ -74,17 +74,15 @@ height:100%;
       <label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>
       </c:forEach>
 
-        
-   
-     
-        <input type="file" id="pimage" name="pimage" multiple>
-        <button type="button" class="btn btn-secondary mb-2" onclick="document.getElementById('file-input').click()">파일 선택</button>
-        <div id="dropzone" class="dropzone" style=height:500px;>드래그 앤 드롭으로 이미지를 첨부하세요</div>
-      </div>
+  
+        <input type="file" id="pimage" name="img" accept="image/*" multiple>
+     <!--    <button type="button" class="btn btn-secondary mb-2" onclick="document.getElementById('file-input').click()">파일 선택</button>
+        <div id="dropzone" class="dropzone" style=height:500px;>드래그 앤 드롭으로 이미지를 첨부하세요</div> -->
+  
         
         
         <input type="submit" value="제출">
-    </form>`
+    </form>
 </body>
 
  <script src="https://code.jquery.com/jquery-latest.js"></script>

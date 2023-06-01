@@ -13,6 +13,7 @@
     	select place_option_seq, place_option_name from yonolja_place_option order by place_option_seq asc
 	</select>
 
+
 <!-- host_addPlace DB insert 관련  -->
 
 	<insert id="addplace">
@@ -21,6 +22,6 @@
 			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10}
 		)
 	</insert>
-	
+
 </mapper>
 
