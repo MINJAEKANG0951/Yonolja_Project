@@ -24,5 +24,14 @@
 		select*from yonolja_place
 	</select>
 	
+	<select id="getReviewRate" resultType="float">
+		select nvl(avg(review_star),0)
+		from yonolja_review review, yonolja_book book,yonolja_room room, yonolja_roomtype type, yonolja_place place
+		where 
+	    review.book_seq = book.book_seq and book.room_seq = room.room_seq and room.roomtype_seq = type.roomtype_seq and 
+	    type.place_seq = place.place_seq and place.place_seq=#{param1}
+	</select>
+	
+	
 </mapper>
 

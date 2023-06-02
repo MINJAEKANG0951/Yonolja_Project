@@ -9,18 +9,20 @@
 <title>main</title>
 </head>
 <style>
+.movingHeader{border-bottom:1px solid #ddd;}
 header {
   position: fixed;
   top: 0; left: 0;
-  height: 150px;
+  height: 170px;
   width: 100%;
   background-color: white;
-  border:1px solid #ddd;
+  border-top:1px solid #ddd;
 
   display: grid;
   grid-template-columns:1fr;
   grid-template-rows:1fr 1fr;
   place-items:center;
+  z-index:10000;
 }
 .header_container {
 	display:grid;
@@ -82,7 +84,7 @@ header {
 .last_header_item_item:nth-child(1){
 	text-align:right;font-weight:bold;font-size:14px;cursor:pointer;
 		border-radius:5% 5% 5% 5% / 50% 50% 50% 50%;
-		min-width:120px;
+		min-width:200px;
 }
 .last_header_item_item:nth-child(1):hover{background-color:#ddd;transition:0.5s;}
 .last_header_item_item:nth-child(2){
@@ -182,7 +184,7 @@ section {
 	
 	
 	display:grid;
-	grid-template-columns:1fr 30fr 1fr 3fr;
+	grid-template-columns:1fr 30fr 1fr 2fr;
 	grid-template-rows:1fr;
 	place_items:center;
 
@@ -228,33 +230,38 @@ section {
 	box-sizing: border-box;
  	border-style: solid;
 	border:0px solid #ddd;
-	border-left:1px solid #f1f1f1;
-	border-right:1px solid #f1f1f1;
+	border-left:0px solid #f1f1f1;
+	border-right:0px solid #f1f1f1;
 }
 .option{
 	
 	display:grid;
 	grid-template-columns:1fr;
 	grid-template-rows:1fr auto;
-	height:90%;
-	width:150px;
-	min-width:150px;
-	max-width:151px;
+	height:60%;
+	width:110px;
+	min-width:110px;
+	max-width:111px;
 	font-size:13px;
 	text-align:center;
 	cursor:pointer;
 	
 	transition:0.5s;
-
+}
+.option_picture{
+	height:30px;
 }
 
 .option:hover{
-	background-color:#ddd;
+	border-bottom:1px solid #ddd;
 	font-size:bold;
 }
 
+
 .option img{
-	height:40px;
+	height:25px;
+	width:25px;
+	margin:0px;
 }
 
 .option_left{
@@ -262,6 +269,8 @@ section {
 	border:1px solid black;
 	cursor:pointer;
 	z-index:900;
+	background-color:white;
+	display:none;
 }
 .option_left:hover{border:2px solid black;font-weight:bold}
 .option_right{
@@ -269,11 +278,39 @@ section {
 	border:1px solid black;
 	cursor:pointer;
 	z-index:900;
+	background-color:white;
+	display:none;
 }
 .option_right:hover{border:2px solid black;font-weight:bold}
+.optionBox:hover div button{display:block;}
 
+section{
+	margin-top:30px;
+	display: grid;
+    gap: 15px;
+    grid-template-columns: repeat(auto-fill, 300px); /* 200px짜리 영역을 갯수만큼 만듬 */
+    grid-auto-rows: 400px; /* 줄바꿈 될때마다 자동으로 200px 로우 생성 */
+    &__card { /* 카드의 크기는 각 grid 영역으로 잡음 */
+      width: 100%;
+      height: 100%;
+      background-color: #fff;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.07);
+      border-radius: 8px;
+      padding:20px;
+      font-size:1.4rem;
+      display:flex;
+      flex-direction: column;
+      justify-content: space-between;
+	}  
 
+}
 
+div[class*=portrait]{
+	margin:10px;
+}
+div[class*=portrait]:hover{
+	border-bottom:4px solid #ddd;
+}
 
 </style>
 <body>
@@ -372,6 +409,25 @@ section {
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
 
+
+
+$(document)
+.ready(function(){
+	getPlaceOptions();
+	getPlaces();
+})
+.on('click','.option_left',function(){
+	$('.options').animate({scrollLeft:$('.options').scrollLeft()-350},250)
+})
+.on('click','.option_right',function(){
+	$('.options').animate({scrollLeft:$('.options').scrollLeft()+350},250)
+})
+.on('click','.option',function(){
+	seq = $(this).attr('id');
+	console.log(seq);
+})
+
+
 // 내정보버튼 drop down
 $('html').click(function(e){
 	clicked = $(e.target).attr('id');
@@ -380,7 +436,18 @@ $('html').click(function(e){
 		else { $('.sub').css('display','none')}
 	} else { $('.sub').css('display','none') }
 })
-function fillPlaceOptions(){
+// 스크롤시 header 에 효과주기 
+$(window).scroll(function(){
+    if($(document).scrollTop() > 0) {
+        $('.header_container2').addClass('movingHeader');
+    } else {
+        $('.header_container2').removeClass('movingHeader');
+    }
+});
+
+
+// place-options 를 채우는 function
+function getPlaceOptions(){
 	
 	$('#options').empty();
 	
@@ -406,23 +473,231 @@ function fillPlaceOptions(){
 		}
 	})
 }
+// portrait-maker 를 통해 section 에 places 내역을 채우는 function
+function getPlaces(){
+	
+	$('section').empty();
+	
+	$.ajax({url:'/getPlaces', type:'post', dataType:'json', 
+		
+		success:function(data){
+		
+			for(a=0;a<data.length;a++){
+				
+				seq = data[a].place_seq;
+				name = data[a].place_name;
+				price = data[a].place_price;
+				address = data[a].place_address;
+				imgs = data[a].place_imgs;
+				reviewRate = data[a].place_reviewRate;
+				
+				portrait = makeStructure();
+				portrait.setMoveToUrl("/place/"+seq);
+				portrait.setBody(name,"★" + reviewRate ,address,/* price */ '');
+				
+				imgsArray = imgs.split(",");
+				for(b=0;b<imgsArray.length;b++){
+					portrait.add_picture(imgsArray[b]);
+				}
+				
+				cssStr = portrait.getPortraitCss();
+				tagStr = portrait.getPortrait();
+				
+				$('body').append(cssStr)
+				$('section').append(tagStr)
+				
 
-$(document)
-.ready(function(){
-	fillPlaceOptions();
-})
-.on('click','.option_left',function(){
-	$('.options').animate({scrollLeft:$('.options').scrollLeft()-350},250)
-})
-.on('click','.option_right',function(){
-	$('.options').animate({scrollLeft:$('.options').scrollLeft()+350},250)
-})
-.on('click','.option',function(){
-	seq = $(this).attr('id');
-	console.log(seq);
+			}		
+			
+		}
+	
+	})		// placePrice 는 나중에 db join 해서 1박기준 알아와야할듯.. 아니면 그냥 빈칸으로두던가
+}
 
-})
-// 이제 portrait 모듈 만들기 
+// portrait-maker function
+
+
+function makeStructure(){
+
+    uuid = self.crypto.randomUUID();
+    uuid = "a" + uuid.substring(0,10);
+
+    portraitStructure = {
+		
+        test:function(){console.log('hi')},
+        
+        moveToUrl:null,
+        setMoveToUrl:function(data){this.moveToUrl=data;},
+
+        portrait_code:uuid+ "-portrait",
+        portrait_style:'text-align:center;width:250px;height:400px;',
+        // portrait_width:'300px',
+        // portrait_height:'400px',
+        set_portrait_width:function(data){this.portrait_width=data;},
+
+        radio_code: uuid + '-slide',
+        radio_id  : uuid + '-radio',
+        radio_name: uuid + "-slide",
+
+        head_code:uuid+ "-head",
+        head_style:'width:100%;height:250px;position:relative;',
+        // head_height:"300px",
+        set_head_height:function(data){this.head_height=data;},
+
+        pictureList_code:uuid+ "-pictureList",
+        pictureList_style:'width:100%;height:100%;white-space:nowrap;overflow:hidden;padding:0px;font-size:0px;border:1px solid #ddd;border-radius:10% 10% 10% 10%;cursor:pointer;',
+        pictureList_elements:[],    // 사용자입력 
+
+        add_picture:function(data){this.pictureList_elements.push(data)},
+        pictureList_li_code:uuid+ "-pictureList",
+        pictureList_li_style:'list-style:none; display:inline-block; width:100%; height:100%; transition:0.5s;',
+
+        control_code:uuid+ "-control",
+        control_style:'font-weight:bold;',
+
+        left_code:uuid+"-left",
+        left_style:'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);left:10px;width:30px;height:30px;',
+        left_img:"/img/test/left.png",
+
+        right_code:uuid+"-right",
+        right_style:'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);right:10px;width:30px;height:30px;',   
+        right_img:"/img/test/right.png",
+
+        body_code:uuid+ "-body",
+        body_style:	'display:grid;grid-template-columns:3fr 1fr;grid-template-rows:0.5fr 1fr 1fr;height:100px;padding:0px;cursor:pointer;',
+        // body_height:'100px',
+		
+        body_element_name:null,
+        body_element_review:null,
+        body_element_address:null,
+        body_element_price:null,
+
+        setBody:function(name,review,address,price){
+            this.body_element_name = name;
+            this.body_element_review = review;
+            this.body_element_address = address;
+            this.body_element_price = price;
+        },     
+
+        getPortrait:function(){
+            
+            if(this.pictureList_elements.length==0){console.log('portrait에 사진을 넣어주세요');return false;}
+
+            radiostr = '';
+            imgstr = '';
+            controlstr = '';
+
+            for(i=0;i<this.pictureList_elements.length;i++){
+                
+                if(i==0){
+                    radiostr += '<input type=radio class=' + this.radio_code + ' id='+ this.radio_id + i + ' name='+ this.radio_name + ' style="display:none" checked>'
+                } else {
+                    radiostr += '<input type=radio class=' + this.radio_code + ' id='+ this.radio_id + i + ' name='+ this.radio_name +' style="display:none">'
+                }
+               
+                
+                imgstr += '<li class=' + this.pictureList_li_code + ' style="' + this.pictureList_li_style + '">'
+                imgstr += '<img src="' + this.pictureList_elements[i] + '">'
+                imgstr += '</li>'
+
+                if(i==0){
+                    controlstr += '<div class=' + this.control_code + i + ' style="'+ this.control_style +'">';
+                    controlstr += '<label class=' + this.left_code + ' for=' + this.radio_id + (this.pictureList_elements.length-1) +' style='+ this.left_style +'>'
+                    controlstr += '<img src="' + this.left_img +'" style="'+ this.left_style +'"></label>';
+                    controlstr += '<label class=' + this.right_code + ' for=' + this.radio_id + (i+1) +' style='+ this.right_style +'>'
+                    controlstr += '<img src="' + this.right_img +'" style="'+ this.right_style +'"></label>';
+                    controlstr += '</div>'
+                } else if(i==this.pictureList_elements.length-1){
+                    controlstr += '<div class=' + this.control_code + i + ' style="'+ this.control_style +'">';
+                    controlstr += '<label class=' + this.left_code + ' for=' + this.radio_id + (i-1) +' style='+ this.left_style +'>'
+                    controlstr += '<img src="' + this.left_img +'" style="'+ this.left_style +'"></label>';
+                    controlstr += '<label class=' + this.right_code + ' for=' + this.radio_id + (0) +' style='+ this.right_style +'>'
+                    controlstr += '<img src="' + this.right_img +'" style="'+ this.right_style +'"></label>';
+                    controlstr += '</div>'
+                } else {
+                    controlstr += '<div class=' + this.control_code + i + ' style="'+ this.control_style +'">';
+                    controlstr += '<label class=' + this.left_code + ' for=' + this.radio_id + (i-1) +' style='+ this.left_style +'>'
+                    controlstr += '<img src="' + this.left_img +'" style="'+ this.left_style +'"></label>';
+                    controlstr += '<label class=' + this.right_code + ' for=' + this.radio_id + (i+1) +' style='+ this.right_style +'>'
+                    controlstr += '<img src="' + this.right_img +'" style="'+ this.right_style +'"></label>';
+                    controlstr += '</div>'
+                }
+            }
+
+            portraitStr = "";
+                                // 여기 sectionItem 임시로 전체클래스 준거임. 나중에 고치던가하셈
+            portraitStr += '<div class=' + this.portrait_code + ' style="' + this.portrait_style +'">';
+                portraitStr += radiostr;
+
+                portraitStr += '<div class=' + this.head_code + ' style="' + this.head_style + '">'
+                    
+                    portraitStr += '<ul class=' + this.pictureList_code + ' style="' + this.pictureList_style + '" onclick=\'location.href="'+ this.moveToUrl +'"\'>' 
+                        portraitStr += imgstr;
+                    portraitStr += '</ul>'
+                    
+                    portraitStr += '<div class=' + this.control_code + '>';
+                        portraitStr += controlstr;
+                    portraitStr += '</div>'
+
+                portraitStr += '</div>';
+
+                portraitStr += '<div class=' + this.body_code + ' style="'+ this.body_style + '" onclick=\'location.href="'+ this.moveToUrl +'"\'>' 
+                    portraitStr += '<div></div> <div></div>'
+                    portraitStr += '<div style="text-align:left;font-weight:bold;">' + this.body_element_name + '</div>'
+                    portraitStr += '<div style="text-align:right">' + this.body_element_review + '</div>'
+                    portraitStr += '<div style="text-align:left;color:gray;">' + this.body_element_address + '</div>'
+                    portraitStr += '<div></div>'
+/*                  portraitStr += '<div style="text-align:left">' + this.body_element_price + '</div>'
+                    portraitStr += '<div></div>' */
+                portraitStr += '</div>';
+            portraitStr += '</div>'
+
+            return portraitStr;
+        },
+
+        getPortraitCss:function(){
+            
+            cssStr1 = '';
+            cssStr2 = '';
+            cssStr3 = '.' + this.head_code + " img{width:100%;height:100%}\n";
+            cssStr4 = '.' + this.left_code + "{display:none;}\n";
+            cssStr5 = '.' + this.right_code + "{display:none;}\n";
+
+            for(i=0;i<this.pictureList_elements.length;i++){
+
+                cssStr1 += "." + this.radio_code + ":nth-child(" + (i+1) + "):checked ~ ." + 
+                            this.head_code + " ul li{transform:translateX(" + (i*(-100)) + "%);}\n" 
+                
+                if(this.pictureList_elements.length==1){
+                	
+                } else if(i==0){
+                	cssStr2 += '.' + this.portrait_code + ":hover ." + this.radio_code +":nth-child(" + (i+1) + 
+                    "):checked ~ ." + this.head_code + " div div:nth-child(" + (i+1) + ") ." + this.right_code +
+                    "{display:block;}\n" 
+                } else if(i==this.pictureList_elements.length-1){
+                	cssStr2 += '.' + this.portrait_code + ":hover ." + this.radio_code +":nth-child(" + (i+1) + 
+                    "):checked ~ ." + this.head_code + " div div:nth-child(" + (i+1) + ") ." + this.left_code +
+                    "{display:block;}\n" 
+                } else {
+                	  cssStr2 += '.' + this.portrait_code + ":hover ." + this.radio_code +":nth-child(" + (i+1) + 
+                      "):checked ~ ." + this.head_code + " div div:nth-child(" + (i+1) + ") label" +
+                      "{display:block;}\n" 
+                }
+             
+            }
+            
+            portraitCssStr = '<style>' + cssStr1 + cssStr2 +  cssStr3 + cssStr4 + cssStr5 + "</style>";
+
+            return portraitCssStr;
+        }
+
+    }
+    return portraitStructure;
+}
+
+
+
+
 
 
 </script>

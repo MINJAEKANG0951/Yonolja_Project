@@ -35,6 +35,10 @@ public class Controller_MJ {
 	public String showtestPage3() {
 		return "test/portraitModuleTest";
 	}
+	@GetMapping("/test4")
+	public String showtestPage4() {
+		return "test/portraitModuleTest2";
+	}
 	
 	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
@@ -94,7 +98,7 @@ public class Controller_MJ {
 			}
 		}
 		
-		mjdao.addUser(id, ps_check, name, email, mobile, gender, type, "normal");
+		mjdao.addUser(id, ps_check, name, mobile, email ,gender, type, "normal");
 		
 		return "main";
 	}
@@ -183,33 +187,49 @@ public class Controller_MJ {
 	@ResponseBody
 	public String getPlaces() {
 		
-		ArrayList<DTO_MJ_placeDTO> places = mjdao.getPlaces();
 		
+		// 추가해야할기능, review 가져와야함. 각자방에대한 review average 를 가져와야함.
+		ArrayList<DTO_MJ_placeDTO> places = mjdao.getPlaces();
+	
 		JSONArray ja = new JSONArray();
 		
 		for(int i=0;i<places.size();i++) {
 			JSONObject jo = new JSONObject();
 			
 			jo.put("place_seq", places.get(i).getPlace_seq());
-			jo.put("place_name", places.get(i).getPlace_seq());
-			jo.put("user_seq", places.get(i).getPlace_seq());
-			jo.put("place_type_seq", places.get(i).getPlace_seq());
-			jo.put("place_checkin_time", places.get(i).getPlace_seq());
-			jo.put("place_checkout_time", places.get(i).getPlace_seq());
-			jo.put("place_address", places.get(i).getPlace_seq());
-			jo.put("place_imgs", places.get(i).getPlace_seq());
-			jo.put("place_mobile", places.get(i).getPlace_seq());
-			jo.put("place_options", places.get(i).getPlace_seq());
-			jo.put("place_guide", places.get(i).getPlace_seq());
+			jo.put("place_name", places.get(i).getPlace_name());
+			jo.put("user_seq", places.get(i).getUser_seq());
+			jo.put("place_type_seq", places.get(i).getPlace_type_seq());
+			jo.put("place_checkin_time", places.get(i).getPlace_checkin_time());
+			jo.put("place_checkout_time", places.get(i).getPlace_checkout_time());
+			jo.put("place_address", places.get(i).getPlace_address());
+			jo.put("place_imgs", places.get(i).getPlace_imgs());
+			jo.put("place_mobile", places.get(i).getPlace_mobile());
+			jo.put("place_options", places.get(i).getPlace_options());
+			jo.put("place_guide", places.get(i).getPlace_guide());
+			
+
+			// review average 도 가져오기
+			jo.put("place_reviewRate", mjdao.getReviewRate( places.get(i).getPlace_seq() ));
 			
 			ja.put(jo);
 		}
+		
+		
+	
 		
 		return ja.toString();
 	}
 	
 	
-	
+	// keyword 를 통해 room 가져오기
+	@PostMapping("/getPlacesByKeyword")
+	@ResponseBody
+	public String getPlacesByKeyword() {
+		
+		
+		return "";
+	}
 	
 	
 	

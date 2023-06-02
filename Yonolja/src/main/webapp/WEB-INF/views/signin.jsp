@@ -53,8 +53,8 @@ table{border-collapse:collapse;margin:0 auto;margin-top:15%;border:1px solid #dd
 		<tr>
 			<td>회원유형</td>
 			<td>
-				고객<input name=user_type type=radio value='owner'> &nbsp; 
-				업주<input name=user_type type=radio value='customer'>
+				고객<input name=user_type type=radio value='customer'> &nbsp; 
+				업주<input name=user_type type=radio value='owner'>
 			</td>
 		</tr>
 		<tr> 

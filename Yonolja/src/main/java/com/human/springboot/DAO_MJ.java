@@ -8,11 +8,12 @@ import org.apache.ibatis.annotations.Mapper;
 public interface DAO_MJ {
 	
 	ArrayList<DTO_MJ_userDTO> getNormalUsers();
-	void addUser(String id, String ps, String name, String email, String mobile, String gender, String type, String SigninType);
+	void addUser(String id, String ps, String name, String mobile, String email, String gender, String type, String SigninType);
 	
 	
 	ArrayList<DTO_MJ_placeOptionDTO> getPlaceOptions();
 	
 	ArrayList<DTO_MJ_placeDTO> getPlaces();
 	
+	float getReviewRate(int placeSeq);
 }
