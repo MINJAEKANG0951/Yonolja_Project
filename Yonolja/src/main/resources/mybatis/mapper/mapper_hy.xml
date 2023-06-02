@@ -22,6 +22,15 @@
 			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10}
 		)
 	</insert>
+	
+	<!-- host_managePlace ptype, poption select 관련  -->
+		<select id="showmyPtype" resultType="com.human.springboot.DTO_HY_P">
+		select place_type_seq, place_type_name from yonolja_place_type 
+	 	</select>
+	 	
+	 	<select id="showmyPopt" resultType="com.human.springboot.DTO_HY_P">
+    	select place_option_seq, place_option_name from yonolja_place_option order by place_option_seq asc
+		</select>
 
 </mapper>
 

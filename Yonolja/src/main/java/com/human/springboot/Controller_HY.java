@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -146,8 +147,17 @@ public class Controller_HY {
 	
 	//////////////////////////managePlace page///////////////////////////
 	
-	@GetMapping("/host_managePlace")
-	public String managePlace() {
+	@GetMapping("/host_managePlace/{place_Seq}")
+	public String managePlace(@PathVariable("place_Seq") String place_Seq){
+		
+		
+		///////////////place type, option select box 관련 ////////
+		
+		  ArrayList<DTO_HY_P> ptypes = hydao.showPtype(); // DB에서 옵션 데이터 조회
+		    model.addAttribute("ptypes", ptypes); // JSP로 데이터 전달 // 변수명 수정해야함
+		    
+		    ArrayList<DTO_HY_P> pfeatures = hydao.showPoption();
+		    model.addAttribute("pfeatures", pfeatures); // JSP로 데이터 전달
 		
 		return "host_managePlace";
 		
