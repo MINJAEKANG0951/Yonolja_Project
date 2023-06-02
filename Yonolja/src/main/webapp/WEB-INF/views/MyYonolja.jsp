@@ -550,7 +550,7 @@ var password = prompt("비밀번호를 입력해주세요.");
 .on("click", ".place_img", function() {
   var place_seq = $(this).next("input[type='text']").val();
   console.log("place_seq: " + place_seq);
-  window.location.href = '/host_addPlace/' + place_seq;
+  window.location.href = '/host_managePlace/' + place_seq;
 })
 
 
