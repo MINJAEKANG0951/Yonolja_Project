@@ -18,30 +18,50 @@
 <!--     order by post_seq DESC -->
 <!-- </select> -->
 
+
+<!-- 	<select id="selectPost" resultType="com.human.springboot.DTO_YT"> -->
+<!-- 		select post_seq, post_category, post_title, post_date -->
+<!-- 		from yonolja_post -->
+<!-- 	</select> -->
+
+	<select id="selectPost" resultType="com.human.springboot.DTO_YT">
+    select 
+    a.post_seq, 
+    a.post_category, 
+    a.post_title, 
+    a.post_date, 
+    b.USER_ID
+from 
+    yonolja_post a
+join 
+    Yonolja_user b 
+on 
+    a.user_seq = b.user_seq
+    ORDER BY 
+    a.post_seq desc
+</select>
+	
+
+<select id="postview" resultType="com.human.springboot.DTO_YT">
+
+select a.post_title, a.post_content, a.post_date, b.user_id
+from yonolja_post a
+join yonolja_user b 
+on a.user_seq = b.user_seq
+
+</select>
+
+<select id="getPost" resultType="com.human.springboot.DTO_YT_postDTO">
+	select*from yonolja_post where post_seq = #{param1}
+</select>
+
 <insert id="insertPost">
-    INSERT INTO yonolja_post 
-    (
-        post_seq, 
-        post_category, 
-        user_seq, 
-        post_title,   
-        post_date,
-        post_comment,
-        post_content
-    )
-    VALUES 
-    (
-        #{param1}, 
-        #{param2}, 
-        #{param3}, 
-        #{param4}, 
-        #{param5}, 
-        #{param6},
-        #{param7}
-    )
+    insert into yonolja_post values(post_seq.nextval, #{param1},#{param2},#{param3},#{param4},to_char(sysdate,'yyyymmdd'),null,#{param5})
 </insert>
 
-
+<select id="getUserName" resultType="String">
+	select user_id from yonolja_user where user_seq = #{param1}
+</select>
 
 
 <!-- 	<select id="list" resultType="com.human.springboot.QADTO"> -->

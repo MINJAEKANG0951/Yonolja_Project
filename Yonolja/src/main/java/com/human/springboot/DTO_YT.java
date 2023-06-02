@@ -11,4 +11,6 @@ public class DTO_YT {
     String post_date;
     String post_comment;
     String post_content;
+    String user_id;
+    
 }

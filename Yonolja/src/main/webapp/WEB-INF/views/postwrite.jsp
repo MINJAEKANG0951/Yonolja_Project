@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
 <title>main</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 </head>
 <style>
 header {
@@ -197,7 +198,7 @@ section {
         <input type="text" class="form-control" id="title" name="title" placeholder="제목을 입력하세요">
       </div>
       <div class="form-group">
-        <label for="comment">𝑐𝑜ntent</label>
+        <label for="content">𝑐𝑜ntent</label>
         <textarea class="form-control" id="content" name="content" rows="3" placeholder="내용을 입력하세요"></textarea>
       </div>
       <div class="form-group">
@@ -213,7 +214,7 @@ section {
       </div>
       <div class="form-group">
         <label>𝑖𝑚𝑎𝑔𝑒</label>
-        <input type="file" id="image" name="image" accept="image/*"> <!--  style="display:none;"> -->
+        <input type="file" id="file-input" name="image" accept="image/*" style="display:none;"> <!--  style="display:none;"> -->
         <button type="button" class="btn btn-secondary mb-2" onclick="document.getElementById('file-input').click()">파일 선택</button>
         <div id="dropzone" class="dropzone">드래그 앤 드롭으로 이미지를 첨부하세요</div>
       </div>
@@ -257,46 +258,49 @@ $(document)
 })
 
 
-var dropzone = document.getElementById('dropzone');
-    var fileInput = document.getElementById('file-input');
+$(document).ready(function() {
+    var dropzone = $('#dropzone');
+    var fileInput = $('#file-input');
 
     function readAndPreview(file) {
-      var reader = new FileReader();
-      reader.onload = function(event) {
-        var imgElement = document.createElement('img');
-        imgElement.src = event.target.result;
-        dropzone.innerHTML = '';
-        dropzone.appendChild(imgElement);
-      };
-      reader.readAsDataURL(file);
+        var reader = new FileReader();
+
+        reader.onload = function(event) {
+            var imgElement = $('<img>').attr('src', event.target.result);
+            dropzone.empty().append(imgElement);
+        };
+
+        reader.readAsDataURL(file);
     }
 
-    dropzone.ondragover = function() {
-      this.classList.add('bg-light');
-      return false;
-    };
+    dropzone.on({
+        dragover: function() {
+            dropzone.addClass('bg-light');
+            return false;
+        },
+        dragleave: function() {
+            dropzone.removeClass('bg-light');
+            return false;
+        },
+        drop: function(e) {
+            e.preventDefault();
+            dropzone.removeClass('bg-light');
 
-    dropzone.ondragleave = function() {
-      this.classList.remove('bg-light');
-      return false;
-    };
+            var file = e.originalEvent.dataTransfer.files[0];
+            fileInput.get(0).files = e.originalEvent.dataTransfer.files;  // Add this line
+            readAndPreview(file);
+        }
+    });
 
-    dropzone.ondrop = function(e) {
-      e.preventDefault();
-      this.classList.remove('bg-light');
+    fileInput.on('change', function(e) {
+        var file = e.target.files[0];
+        readAndPreview(file);
+    });
 
-      var file = e.dataTransfer.files[0];
-      readAndPreview(file);
-    };
-
-    fileInput.onchange = function(e) {
-      var file = e.target.files[0];
-      readAndPreview(file);
-    };
-
-    
-    
-    
+    $('#mypage_button').on('click', function(){
+        // Handle the mypage_button click event here
+    });
+});
     
     
 </script>

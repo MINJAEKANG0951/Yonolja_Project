@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
 <title>main</title>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 </head>
 <style>
 
@@ -236,33 +237,33 @@ label {
     <h3 class="mt-3 mb-3" >𝐏𝐨𝐬𝐭 𝐖𝐫𝐢𝐭𝐞</h3>
     <br>
 </div>
-    <form action="/modifyview" method="Post">
+    <form action="postview" method="post">
+    
 			<table>
-		
         <tr>
           <td>
             <div class="post-info">
               𝑇𝑖𝑡𝑙𝑒 &nbsp;&nbsp;
-              <input class=form-control type=text value="${btitle}" id="Btitle" name=Btitle readonly>
+              <input class=form-control type=text value="${post_title}" id="post_title" name=post_title readonly>
             </div>
           </td>
           <td>
             <div class="post-info">
-              ℎ𝑖𝑡𝑠&nbsp;&nbsp;&nbsp;&nbsp;
-              <input class=form-control type=text id=B_rcount name=B_rcount value="${b_rcount}" style='width:30px;' readonly>
-              &nbsp; 𝑊𝑟𝑖𝑡𝑒𝑟
-              <input class=form-control type=text id=B_writer name=B_writer value="${b_writer}" style='width:45%' readonly>
+              
+              
+               𝑊𝑟𝑖𝑡𝑒𝑟
+              <input class=form-control type=text id="user_id" name="user_id" value="${post_writer}" style='width:45%' readonly>
             </div>
           </td>
         </tr>
         
         <tr>
           <td><label for="Bcontent">𝑐𝑜𝑛𝑡𝑒𝑛𝑡</label></td>
-          <td><textarea class=form-control cols="80" rows="20" id=Bcontent name=Bcontent readonly>${bcontent}</textarea></td>
+          <td><textarea class=form-control cols="80" rows="20" id=post_content name=post_content readonly>${post_content}</textarea></td>
         </tr>
         <tr>
           <td><label for="B_Create_date">𝐷𝑎𝑡𝑒 𝐶𝑟𝑒𝑎𝑡𝑒𝑑</label></td>
-          <td><input class=form-control type=text id=B_Create_date name=B_Create_date value="${b_create_date}" style='width:90%' readonly></td>
+          <td><input class=form-control type=text id="post_date" name="post_date" value="${post_date}" style='width:90%' readonly></td>
         </tr>
         <tr>
           <td><label for="B_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛 𝑑𝑎𝑡𝑒</label></td>
@@ -274,14 +275,14 @@ label {
 			<tr><td><input type=hidden id="board_num" value="${board_num}" name=board_num></td></tr>
 <%-- 			<tr>${button}</tr>		 --%>
 			
-			 <c:if test="${id == b_writer}">
+<%-- 			 <c:if test="${id == b_writer}"> --%>
 			<td colspan=2>
 						<input class="btn btn-danger" type="button" value="삭제" id=btnDelete >
 			</td>
 			<td>
 				<input class="btn btn-success" type="submit" value="수정" id=btnModify>
 				</td>
-			</c:if>
+<%-- 			</c:if> --%>
 			<td>
 				<input class="btn btn-primary" type="button" value="목록보기" id=btnShow>
 			</td>
@@ -329,42 +330,42 @@ $(document)
 })
 
 
-var dropzone = document.getElementById('dropzone');
-    var fileInput = document.getElementById('file-input');
+// var dropzone = document.getElementById('dropzone');
+//     var fileInput = document.getElementById('file-input');
 
-    function readAndPreview(file) {
-      var reader = new FileReader();
-      reader.onload = function(event) {
-        var imgElement = document.createElement('img');
-        imgElement.src = event.target.result;
-        dropzone.innerHTML = '';
-        dropzone.appendChild(imgElement);
-      };
-      reader.readAsDataURL(file);
-    }
+//     function readAndPreview(file) {
+//       var reader = new FileReader();
+//       reader.onload = function(event) {
+//         var imgElement = document.createElement('img');
+//         imgElement.src = event.target.result;
+//         dropzone.innerHTML = '';
+//         dropzone.appendChild(imgElement);
+//       };
+//       reader.readAsDataURL(file);
+//     }
 
-    dropzone.ondragover = function() {
-      this.classList.add('bg-light');
-      return false;
-    };
+//     dropzone.ondragover = function() {
+//       this.classList.add('bg-light');
+//       return false;
+//     };
 
-    dropzone.ondragleave = function() {
-      this.classList.remove('bg-light');
-      return false;
-    };
+//     dropzone.ondragleave = function() {
+//       this.classList.remove('bg-light');
+//       return false;
+//     };
 
-    dropzone.ondrop = function(e) {
-      e.preventDefault();
-      this.classList.remove('bg-light');
+//     dropzone.ondrop = function(e) {
+//       e.preventDefault();
+//       this.classList.remove('bg-light');
 
-      var file = e.dataTransfer.files[0];
-      readAndPreview(file);
-    };
+//       var file = e.dataTransfer.files[0];
+//       readAndPreview(file);
+//     };
 
-    fileInput.onchange = function(e) {
-      var file = e.target.files[0];
-      readAndPreview(file);
-    };
+//     fileInput.onchange = function(e) {
+//       var file = e.target.files[0];
+//       readAndPreview(file);
+//     };
 
 </script>
 </html>
