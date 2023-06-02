@@ -53,7 +53,7 @@ $(document)
 })
 
 function review_list(){
-	$.ajax({url:'/review_list'},
+	$.ajax({url:'/review_list',
 			data:{pageNumber:$('#pageNumber').val()},
 			dataType:'json',
 			type:'post',
@@ -69,7 +69,8 @@ function review_list(){
  					
 				}
 				
-			})
+			}
+	})
 
 }
 

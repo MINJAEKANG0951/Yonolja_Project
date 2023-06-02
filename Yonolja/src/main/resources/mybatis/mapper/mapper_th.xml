@@ -17,17 +17,50 @@
 			FROM Yonolja_user WHERE not USER_ID= 'admin' ORDER BY USER_SEQ desc))
 			WHERE NUM BETWEEN #{param1} AND #{param2}
 	</select>
+	<!--  -->
 	<select id='member_count' resultType="int">
 		select count(user_id) from Yonolja_user where not user_id='admin'
 	</select>
 	
 	<!-- 회원게시판 관리 -->
 	<select id='post_list' resultType="com.human.springboot.DTO_TH">
-		select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
-		from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'
+
+		 SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, NUM
+		FROM (SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, ROWNUM AS NUM
+		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
+				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin' ORDER BY a.post_seq desc))
+		WHERE NUM BETWEEN #{param1} AND #{param2}
 	</select>
+	<!-- 전체 게시판 숫자 -->
 	<select id='post_count' resultType="int">
-		select count(*) from Yonolja_user where not user_id='admin'
+		select count(*) from Yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'
 	</select>
+	<!-- 다이얼로그 데이터 -->
+	<select id='post_seq_data' resultType="com.human.springboot.DTO_TH">
+		select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment,a.post_content 
+		from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and a.post_seq=#{param1}
+	</select>
+	<!-- 회원게시판 검색 관리 통합-->
+	<select id='post_list_search' resultType="com.human.springboot.DTO_TH">
+		SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, NUM
+		FROM (SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, ROWNUM AS NUM
+		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
+				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and (a.post_title like '%' || #{param1} || '%'
+                  or  a.post_content like '%' || #{param1} || '%' 
+                  or  b.user_id like '%' || #{param1} || '%' 
+                  or a.post_comment like '%' || #{param1} || '%') ORDER BY a.post_seq ASC))
+		WHERE NUM BETWEEN #{param2} AND #{param3}
+	</select>
+	<!--  검색된 게시글 숫자 -->
+	<select id='post_list_search_count' resultType="int">
+		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (a.post_title like '%' || #{parma1} || '%'
+                  or  a.post_content like '%' || #{parma1} || '%' 
+                  or  b.user_id like '%' || #{parma1} || '%')
+	</select>
+	
+	<!-- 답변 관리 -->
+	<update id='post_admin_comment'>
+		update yonolja_post set post_comment = #{param1} where post_seq=#{param2}
+	</update>
 </mapper>
 
