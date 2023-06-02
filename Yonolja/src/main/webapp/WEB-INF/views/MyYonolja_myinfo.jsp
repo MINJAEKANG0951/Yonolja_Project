@@ -3,11 +3,12 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="true"%>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-<title>MyYonolja</title>
+<meta charset="UTF-8">
+<title>myinfo</title>
 </head>
+
 <style>
 header {
   position: fixed;
@@ -279,95 +280,9 @@ header, footer {
 
 /* 위까지 헤더, footer 설정 */
 
-a {
-    text-decoration: none; /* a 요소의 밑줄 없애기 */
-}
-
-.mynolja {
-    width: 800px; /* .nolja의 width와 동일하게 설정 */
-    margin: auto; /* 가운데 정렬 */
-    text-align: left; /* 텍스트를 왼쪽 정렬 */
-    padding-top: 150px; /* 헤더의 높이와 동일한 값으로 설정 */
-    position: relative;
-    z-index: 1;
-}
-
-.nolja {
-  border: 1px solid black; /* 외부에 네모난 선 추가 */
-  /*width: fit-content;  요소의 너비를 내용에 맞춤 */
-  border-radius: 15px;
-  width: 800px;
-  margin: auto; /* 가운데 정렬 */
-  padding: 20px; /* 내부 패딩 추가 for better appearance */
-  position: relative;
-}
-.myname {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-.mylist {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-.mypost {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-.myhotel {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.s_con {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-}
-
-.slider {
-    display: flex;
-    width: fit-content;
-    transition: transform 0.3s ease-in-out;
-    position: relative;
-    z-index: 1;
-}
-
-.place_s {
-    margin-right: 20px;
-    position: relative;
-    z-index: 1;
-}
-
-.s_control {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-}
-
-.s_prev,
-.s_next {
-    margin: 0 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
-
 </style>
+
 <body>
-<%-- <jsp:include page="./structure/all.jsp"></jsp:include> --%>
-<%-- <jsp:include page="main.jsp"></jsp:include> --%>
 
 <header>
 <div class=header_container>
@@ -424,81 +339,24 @@ a {
 </header>
 
 <section>
-<div class="mynolja">
-	<span><b>My 요놀자</b></span>
-</div><br>
 
-<div class="nolja">
-	<div class="myname">
-		<span>${user_name}</span><br>
-		<span>${user_type}</span><br>
-		<a href="#" id="myinfo">내정보 관리</a>
-		<input type="hidden" value="${user_password}" class="user_ps">
-<%-- 		<span>${user_email}</span> --%>
-	</div><br>
-	
-	<div class="mylist">
-		<span><b>후기</b></span><br>
-		<a href="#" id="myreviews">나의후기</a><br>
-		
-		<span><b>예약</b></span><br>
-		<a href="#" id="mybooks">예약내역조회</a><br>
-		
-		<span><b>찜</b></span><br>
-		<a href="#" id="mylikes">찜한 호텔</a><br>
-	</div><br>
-	
-	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
-		<div class="myhotel">
-		    <span><b>나의 비즈니스</b></span><br>
-		    <div class="s_con">
-		        <div class="slider">
-		            <c:forEach items="${placeList}" var="place" varStatus="loop">
-		            	<c:if test="${place.user_seq eq sessionScope.user_seq}">
-		            		<c:set var="imagePaths" value="${place.place_imgs.split(',')}" />
-		            		<c:forEach items="${imagePaths}" var="imagePath">
-				                <div class="place_s" style="display: ${loop.index<3? 'block': 'none'}">
-				                    <img src="${imagePath}" alt="Image" class="place_img">
-				                    <input type="text" value="${place.place_seq}" class="place_seq">
-				                </div>
-			                </c:forEach>
-		                </c:if>
-		            </c:forEach>
-		        </div>
-		        
-		        
-            <c:choose>
-                <c:when test="${not empty placeList}">
-                    <div class="s_control">
-                        <button class="s_prev">이전</button>
-                        <button class="s_next">다음</button>
-                        <button>호텔 추가</button>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <span>등록된 호텔 정보가 없습니다.</span><br><br>
-                    <button>호텔 등록</button>
-                </c:otherwise>
-            </c:choose>
-            
-		    </div>
-		</div><br>
-	</c:if>
-	
-	<div class="mypost">
-		<span><b>고객센터</b></span><br>
-		<a href="#" id="post">문의하러가기</a><br>
-		<a href="#" id="mypostlist">나의문의</a><br>
-	</div>
-
+<div class="user_change">
+	<span>아이디 ${user_id}</span><input type=hidden value="${user_id}" readonly id="id"><br>
+	<span>이메일 </span><input type=text value="${user_email}" id="email"><br>
+	<span>비밀번호 </span><input type=text id="ps1"><br>
+	<span>비밀번호확인 </span><input type=text id="ps2"><br>
+	<span>실명 ${user_name}</span><input type=hidden value="${user_name}" readonly id="name"><br>
+	<span>전화번호 </span><input type=text value="${user_mobile}" id="mobile"><br>
+	<span>성별 ${user_gender}</span><input type=hidden value="${user_gender}" readonly id="gender"><br><br>
+	<button class="btnO">수정</button>
+	<button class="btnC">취소</button><br><br>
+	<a href="#" class="yoBye">탈퇴하기</a>
+	<input type=hidden value="${user_seq}" id=user_seq>
 </div>
-</section>
 
+</section>
 <footer>
 </footer>
-
-
-
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -518,70 +376,6 @@ $(document)
 	console.log(seq);
 
 })
-
-$(document).ready(function() {
-	  var slider = $(".slider");
-	  var scrollAmount = $(".place_s").outerWidth(true);
-	  var totalSlides = slider.find(".place_s").length;
-	  var currentSlide = 0;
-
-	  function updateSlider() {
-	    slider.animate({ scrollLeft: scrollAmount * currentSlide }, 500);
-	  }
-
-	  function showSlides() {
-	    var start = currentSlide * 3;
-	    var end = start + 3;
-	    slider.find(".place_s").hide().slice(start, end).show();
-	  }
-
-	  $(".s_prev").click(function() {
-	    if (currentSlide > 0) {
-	      currentSlide--;
-	      updateSlider();
-	      showSlides();
-	    }
-	  })
-
-	  $(".s_next").click(function() {
-	    if (currentSlide < Math.ceil(totalSlides / 3) - 1) {
-	      currentSlide++;
-	      updateSlider();
-	      showSlides();
-	    }
-	  })
-
-	  showSlides();
-	})
-
-/* .on("click", "#myinfo", function() {
-var password = prompt("비밀번호를 입력해주세요.");
-
-	if (password === '123') {
-		window.location.href = '/MyYonolja_myinfo';
-	} else {
-		alert('비밀번호가 틀렸습니다.');
-	}
-}) */
-
-.on("click", "#myinfo", function() {
-	var password = prompt("비밀번호를 입력해주세요.");
-	var user_ps = $(".user_ps").val();
-
-		if (password === user_ps) {
-			window.location.href = '/MyYonolja_myinfo';
-		} else {
-			alert('비밀번호가 틀렸습니다.');
-		}
-})
-
-.on("click", ".place_img", function() {
-  var place_seq = $(this).next("input[type='text']").val();
-  console.log("place_seq: " + place_seq);
-  window.location.href = '/host_managePlace/' + place_seq;
-})
-
-
 // 내정보버튼 drop down
 $('html').click(function(e){
 	clicked = $(e.target).attr('id');
@@ -616,8 +410,82 @@ function fillPlaceOptions(){
 		}
 	})
 }
+
+//
+$(document)
+
+// 수정 버튼 눌렀을 때
+.on("click", ".btnO", function() {
+    var ps1 = $("#ps1").val();
+    var ps2 = $("#ps2").val();
+    var email = $("#email").val();
+    var mobile = $("#mobile").val();
+    var seq = $("#user_seq").val();
+    
+    if(ps1==""||ps2==""||email==""||mobile=="") {
+    	alert("빈 칸을 모두 채워주세요.");
+    	console.log("비었음");
+    }
+    else if(ps1==ps2) {
+    	console.log("동일함");
+    	
+    	$.ajax({
+    	    url:"/updateUserNolja",
+    	    type: "post",
+    	    data: {user_seq:seq, 
+    	    	   user_email:email, 
+    	    	   user_password:ps1, 
+    	    	   user_mobile:mobile},
+    	    dataType:"text",
+    	    success:function(data) {
+    	        console.log("updateUserNolja data=", data);
+    	        if(data=="ok") {
+    	            alert("수정되었습니다.");
+    	            window.location.href='/mypage';
+    	        }
+    	    }
+    	})
+    	
+    	
+    } else {
+    	alert("비밀번호가 일치하지 않습니다. 다시 확인해주세요.");
+    	console.log("틀림");
+    }
+    //console.log(ps1);
+})
+
+// 취소 버튼 눌렀을 때
+.on("click", ".btnC", function() {
+	window.location.href='/mypage';
+})
+
+// 탈퇴 눌렀을 때
+.on("click", ".yoBye", function() {
+	console.log("Bye");
+	
+	var seq = $("#user_seq").val();
+	
+	if(!confirm("정말로 탈퇴하시겠습니까?")) return false;
+	
+	$.ajax({
+		url:"/YonoljaBye",
+		data: {user_seq:seq},
+		type:"post",
+		dataType:"text",
+		success:function(data) {
+			console.log("YonoljaBye data=", data);
+			
+			if(data=="ok") {
+				alert("탈퇴되었습니다.");
+				window.location.href='/logout';
+			}
+		}
+	})
+	return false;
+	
+})
  
 
 </script>
-</html>
 
+</html>
