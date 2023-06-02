@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -34,6 +35,7 @@
         <div class="modal-body">
           <h2>사업장 정보 입력</h2>
           <form action="/insertPlace" method="POST" id="fmt" enctype="multipart/form-data">
+            
             <label for="pname">사업장 이름:</label><br>
             <input type="text" id="pname" name="pname"><br>
             
@@ -72,14 +74,18 @@
             </c:forEach>
 
             <input type="file" id="pimage" name="img" accept="image/*" multiple>
-  
-            <input type="submit" value="제출">
-          </form>
+            
+            
+            
+       
+         
+        
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary">저장</button>
+          <button type="submit" class="btn btn-primary">저장</button>
         </div>
+          </form>
       </div>
     </div>
   </div>
@@ -211,15 +217,52 @@
       </tbody>
     </table>
   </div>
-
-  <!-- Bootstrap JS 및 jQuery -->
-  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
   
-  <script src="https://code.jquery.com/jquery-latest.js"></script>
-  <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+  
+  <!-- 삭제 모달 -->
+  <div class="modal fade" id="deletePlaceModal" tabindex="-1" role="dialog" aria-labelledby="deletePlaceModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="deletePlaceModalLabel">업장 삭제</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p>업장을 삭제하시겠습니까?</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">취소</button>
+          <button type="button" class="btn btn-danger">삭제</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <button type="button" class="btn btn-danger delete-button">
+  업장 삭제
+</button>
+  
+  
+
+
+<!-- jQuery 라이브러리 -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
   <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
   <script>
+  
+  $(document).ready(function() {
+      $(".delete-button").click(function() {
+        $("#deletePlaceModal").modal("show");
+      });
+    });
   function getRooms() {
       var roomTypeId = document.getElementById("roomTypeSelect").value;
       // AJAX 요청을 통해 서버에 해당 객실타입에 속하는 객실들을 조회하는 로직 작성

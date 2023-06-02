@@ -148,16 +148,20 @@ public class Controller_HY {
 	//////////////////////////managePlace page///////////////////////////
 	
 	@GetMapping("/host_managePlace/{place_Seq}")
-	public String managePlace(@PathVariable("place_Seq") String place_Seq){
+	public String managePlace(@PathVariable("place_Seq") String place_Seq, Model model){
 		
 		
 		///////////////place type, option select box 관련 ////////
 		
-		  ArrayList<DTO_HY_P> ptypes = hydao.showPtype(); // DB에서 옵션 데이터 조회
-		    model.addAttribute("ptypes", ptypes); // JSP로 데이터 전달 // 변수명 수정해야함
-		    
-		    ArrayList<DTO_HY_P> pfeatures = hydao.showPoption();
-		    model.addAttribute("pfeatures", pfeatures); // JSP로 데이터 전달
+	    ArrayList<DTO_HY_P> ptypes = hydao.showPtype(); // DB에서 옵션 데이터 조회
+	    model.addAttribute("ptypes", ptypes); // JSP로 데이터 전달
+	    
+	    ArrayList<DTO_HY_P> pfeatures = hydao.showPoption();
+	    model.addAttribute("pfeatures", pfeatures); // JSP로 데이터 전달
+	    
+	    //////////////////업장 정보수정창에서 해당 place 정보 기본셋팅//////////////
+	    
+	    
 		
 		return "host_managePlace";
 		
