@@ -64,19 +64,19 @@ public class Controller_TH {
 		  
 		   int pageend=tdao.member_count();
 		   int pageval=pageend%10;
-		   
+		   	   if(pageval==0) {
+			   
+			   pageend=pageend/10;
+		   } else {
+			   pageend=(pageend/10)+1;
+		   }
 		   
 			   model.addAttribute("start",1);
 			   model.addAttribute("end",pageend);
 			   model.addAttribute("cur",1);
 			   
 		 
-		   if(pageval==0) {
-			   
-			   pageend=pageend/10;
-		   } else {
-			   pageend=(pageend/10)+1;
-		   }
+	
 	
 	
 		   return "admin_user";

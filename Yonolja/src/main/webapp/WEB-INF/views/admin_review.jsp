@@ -18,6 +18,7 @@
 <div class='admin_review'>
 	<div class='admin_page_login'>
 		<input type='hidden' id='adminCheck' value="${adcheck}">
+		
 	</div>
 	<!--
 		// 스타일 grid 
@@ -33,6 +34,9 @@
 		<div class="item">숙소이름</div>
 	</div>
  	-->
+ 	<div>
+ 		<h2>리뷰 관리 게시판</h2><a href='/admin'>관리자 페이지</a>
+ 	</div>
  	<table border="1px solid:black" id='admin_review_management'>
  		<tr>
  			<td>번호</td><td>숙소이름</td><td>제목</td><td>날짜</td><td>평점</td>

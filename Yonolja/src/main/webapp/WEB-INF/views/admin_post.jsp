@@ -11,7 +11,7 @@
 </head>
 <body>
 <div id="admin_post_page">
-	<h3><a id='admin_post_page_reset'>문의 관리 게시판</a></h3><input type=hidden id=admin_post_reset value=0>
+	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><a href='/admin'>관리자 페이지</a><input type=hidden id=admin_post_reset value=0>
 	<table border=1px id=admin_post_page_table>
 		<tr>
 			<td>문의번호</td><td>문의분류</td><td>문의제목</td><td>아이디</td><td>문의일</td><td>문의상태</td><td>답변작성</td>

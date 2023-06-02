@@ -10,7 +10,9 @@
 <body>
 <div class="amdin_user">
 	<div class=admin_user_management>
+		
 		<h2>회원관리</h2>
+		<a href='/admin'>관리자 페이지</a>
 		<table border="1px solid:black" id='admin_member_management_table'>
 			<tr>
 				<td>회원번호</td><td>이름</td><td>아이디</td><td>전화번호</td><td>성별</td><td>회원이메일</td><td>타입</td>
