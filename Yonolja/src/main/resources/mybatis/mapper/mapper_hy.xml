@@ -19,7 +19,7 @@
 	<insert id="addplace">
 		insert into yonolja_place values(
 			place_seq.nextval,#{param1}
-			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10}
+			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10},#{param11}
 		)
 	</insert>
 	
@@ -41,15 +41,24 @@
 
 
 	<!-- 사업장정보 place_seq와 일치하는 정보 기본셋팅 -->
-	<select id="showMyP" resultType="com.human.springboot.DTO_HY_placeDTO">
-		select place_seq, place_name, place_type_seq, checkin_time,checkout_time,
-				address,imgs,mobile,place_options,place_guide
-		from yonolja_place
-		where place_seq = #{param1}
+	
+	<select id="getEnvironments"  resultType="com.human.springboot.DTO_HY_P">
+		select*from yonolja_place_environment
 	</select>
 	
 
-
-
+	
+	<select id="getPlace" resultType="com.human.springboot.DTO_HY_placeDTO">
+		select * from yonolja_place where place_seq = #{param1}
+	</select>
+	
+<!-- 	업장정보수정모달관련코드 -->
+	<update id="updateMyplace">
+		UPDATE yonolja_place SET place_name = #{param1} ,place_type_seq=#{param3}, place_checkin_time=#{param4}, 
+					  place_checkout_time=#{param5}, place_address=#{param6}, place_environment=#{param7}, 
+					  	  place_mobile=#{param8}, place_options=#{param9}, place_guide=#{param10}
+					WHERE place_seq = #{param2} 
+	</update>
+		
 </mapper>
 

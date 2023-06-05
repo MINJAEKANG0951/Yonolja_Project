@@ -18,7 +18,11 @@ public class DTO_HY_P {
 	    }
 	
 	  
-
+	// place_environment 
+	  
+	int place_environment_seq;
+	String place_environment_name;
+	String place_environment_img;
 	
 
 	  
