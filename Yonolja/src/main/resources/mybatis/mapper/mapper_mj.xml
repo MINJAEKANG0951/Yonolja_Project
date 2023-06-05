@@ -19,9 +19,11 @@
 	<select id="getPlaceOptions" resultType="com.human.springboot.DTO_MJ_placeOptionDTO">
 		select*from yonolja_place_option
 	</select>
-	
+	<select id="getPlaceEnvironments" resultType="com.human.springboot.DTO_MJ_placeEnvironmentDTO">
+		select*from yonolja_place_environment 
+	</select>
 	<select id="getPlaces" resultType="com.human.springboot.DTO_MJ_placeDTO">
-		select*from yonolja_place
+		select*from yonolja_place ${param1}
 	</select>
 	
 	<select id="getReviewRate" resultType="float">

@@ -16,6 +16,7 @@ public class DTO_MJ_placeDTO {
 	  String place_mobile;
 	  String place_options;
 	  String place_guide;
+	  String place_environment;
 	  
 	public int getPlace_seq() {
 		return place_seq;
@@ -83,8 +84,14 @@ public class DTO_MJ_placeDTO {
 	public void setPlace_guide(String place_guide) {
 		this.place_guide = place_guide;
 	}
-	  
+	public String getPlace_environment() {
+		return place_environment;
+	}
+	public void setPlace_environment(String place_environment) {
+		this.place_environment = place_environment;
+	}
 	
+	  
 	
 	  
 	  
