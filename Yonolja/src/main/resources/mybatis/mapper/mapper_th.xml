@@ -21,7 +21,12 @@
 	<select id='member_count' resultType="int">
 		select count(user_id) from Yonolja_user where not user_id='admin'
 	</select>
-	
+	<!-- 나중에 타입별 보여주기
+	 
+	<select id='admin_user_type' resultType='com.human.springboot.DTO_TH'>
+		select * from yonolja_user where user_type=#{param1}
+	</select>
+	 -->
 	<!-- 회원게시판 관리 -->
 	<select id='post_list' resultType="com.human.springboot.DTO_TH">
 
@@ -51,16 +56,70 @@
                   or a.post_comment like '%' || #{param1} || '%') ORDER BY a.post_seq ASC))
 		WHERE NUM BETWEEN #{param2} AND #{param3}
 	</select>
+	
 	<!--  검색된 게시글 숫자 -->
 	<select id='post_list_search_count' resultType="int">
 		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (a.post_title like '%' || #{parma1} || '%'
                   or  a.post_content like '%' || #{parma1} || '%' 
                   or  b.user_id like '%' || #{parma1} || '%')
 	</select>
-	
+	<!-- 아이디 검색 -->
+	<select id='post_list_search_id' resultType="com.human.springboot.DTO_TH">
+		SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, NUM
+		FROM (SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, ROWNUM AS NUM
+		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
+				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and 
+				(b.user_id like '%' || #{param1} || '%' 
+                 ) ORDER BY a.post_seq ASC))
+		WHERE NUM BETWEEN #{param2} AND #{param3}
+	</select>
+		<!-- 검색한 아이디 게시글 숫자-->
+	<select id='post_list_search_id_count' resultType="int">
+		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (
+                b.user_id like '%' || #{parma1} || '%')
+	</select>
+		<!-- 제목 검색 -->
+	<select id='post_list_search_title' resultType="com.human.springboot.DTO_TH">
+		SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, NUM
+		FROM (SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, ROWNUM AS NUM
+		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
+				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and 
+				(a.post_title like '%' || #{param1} || '%' 
+                 ) ORDER BY a.post_seq ASC))
+		WHERE NUM BETWEEN #{param2} AND #{param3}
+	</select>
+		<!-- 검색한 제목 게시글 숫자-->
+	<select id='post_list_search_title_count' resultType="int">
+		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (
+                a.post_title like '%' || #{parma1} || '%')
+	</select>
+		<!-- 내용 검색 -->
+	<select id='post_list_search_content' resultType="com.human.springboot.DTO_TH">
+		SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, NUM
+		FROM (SELECT post_seq, post_category, user_id, post_title, post_date, post_comment, ROWNUM AS NUM
+		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
+				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and 
+				(a.post_content like '%' || #{param1} || '%' 
+                 ) ORDER BY a.post_seq ASC))
+		WHERE NUM BETWEEN #{param2} AND #{param3}
+	</select>
+		<!-- 검색한 내용 게시글 숫자-->
+	<select id='post_list_search_content_count' resultType="int">
+		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (
+                a.post_content like '%' || #{parma1} || '%')
+	</select>
 	<!-- 답변 관리 -->
 	<update id='post_admin_comment'>
 		update yonolja_post set post_comment = #{param1} where post_seq=#{param2}
 	</update>
+	
+	<!-- 호텔 옵션타입관리 -->
+	<select id='yonolja_place_type_list' resultType='com.human.springboot.DTO_TH'>
+		select * from yonolja_place_type
+	</select>
+	<!-- 호텔 편이시설 관리 -->
+	<select id='yonolja_place_option_list' resultType='com.human.springboot.DTO_TH'>
+		select * from yonolja_place_option
+	</select>
 </mapper>
 
