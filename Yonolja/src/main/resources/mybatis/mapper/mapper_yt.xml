@@ -44,12 +44,13 @@ on
 
 <select id="postview" resultType="com.human.springboot.DTO_YT">
 
-select a.post_title, a.post_content, a.post_date, b.user_id
+select a.post_title, a.post_content, a.post_date, a.post_img, b.user_id
 from yonolja_post a
 join yonolja_user b 
 on a.user_seq = b.user_seq
 
 </select>
+
 
 <select id="getPost" resultType="com.human.springboot.DTO_YT_postDTO">
 	select*from yonolja_post where post_seq = #{param1}
@@ -63,6 +64,17 @@ on a.user_seq = b.user_seq
 	select user_id from yonolja_user where user_seq = #{param1}
 </select>
 
+
+<delete id="deletePost" >
+    delete from yonolja_post where post_seq = #{param1}
+</delete>
+
+
+
+<update id="updatePost">
+		update yonolja_post
+		set post_title=#{param1}, post_content=#{param2} where post_seq=#{param3}
+	</update>
 
 <!-- 	<select id="list" resultType="com.human.springboot.QADTO"> -->
 <!-- 	select post_seq AS board_num, post_title AS Btitle, user_seq AS B_writer, post_date AS B_Create_date, post_comment AS B_rcount -->

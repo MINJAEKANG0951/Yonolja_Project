@@ -15,6 +15,9 @@ public interface DAO_YT {
     
     
     DTO_YT_postDTO getPost(int post_seq);
-    String getUserName(int user_seq);
     
+    String getUserName(int user_seq);
+	void deletePost(int post_seq);
+	
+	void updatePost(String post_title, String post_content, int post_seq);
 } 

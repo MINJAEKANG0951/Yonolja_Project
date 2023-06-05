@@ -10,6 +10,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 </head>
+
 <style>
 
 
@@ -205,6 +206,20 @@ label {
 .Postwrite1{
 	padding-bottom:50px;
 }
+
+.content-container {
+  display: flex;
+  align-items: center;
+}
+.text-content {
+  margin-left: 10px;
+}
+
+/* .text-content{ */
+/* height:500px; */
+/* width:500px; */
+/* } */
+
 </style>
 <body>
 <div class="center">
@@ -244,44 +259,51 @@ label {
           <td>
             <div class="post-info">
               𝑇𝑖𝑡𝑙𝑒 &nbsp;&nbsp;
-              <input class=form-control type=text value="${post_title}" id="post_title" name=post_title readonly>
-            </div>
-          </td>
-          <td>
-            <div class="post-info">
-              
-              
-               𝑊𝑟𝑖𝑡𝑒𝑟
-              <input class=form-control type=text id="user_id" name="user_id" value="${post_writer}" style='width:45%' readonly>
-            </div>
-          </td>
-        </tr>
-        
-        <tr>
-          <td><label for="Bcontent">𝑐𝑜𝑛𝑡𝑒𝑛𝑡</label></td>
-          <td><textarea class=form-control cols="80" rows="20" id=post_content name=post_content readonly>${post_content}</textarea></td>
-        </tr>
-        <tr>
-          <td><label for="B_Create_date">𝐷𝑎𝑡𝑒 𝐶𝑟𝑒𝑎𝑡𝑒𝑑</label></td>
-          <td><input class=form-control type=text id="post_date" name="post_date" value="${post_date}" style='width:90%' readonly></td>
-        </tr>
-        <tr>
-          <td><label for="B_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛 𝑑𝑎𝑡𝑒</label></td>
-          <td><input class=form-control type=text id=B_Update_date name=B_Update_date value="${b_update_date}" style='width:90%' readonly></td>
-        </tr>
+              <input  class="form-control" type="text" value="${post_title}" id="post_title" name="post_title" readonly >
+           </div>
+         </td>
+         <td>
+           <div class="post-info">    
+              𝑊𝑟𝑖𝑡𝑒𝑟
+             <input class=form-control type=text id="user_id" name="user_id" value="${post_writer}" style='width:45%' readonly>
+           </div>
+         </td>
+       </tr>
+       
+       <tr>
+     
+       	<td><label for="Bcontent">𝑐𝑜𝑛𝑡𝑒𝑛𝑡</label></td>
+		<td class="form-control" cols="90" rows="20" id="post_content" name="post_content" readonly>
 
-			</table>
-			<table align=center>
-			<tr><td><input type=hidden id="board_num" value="${board_num}" name=board_num></td></tr>
+		  <div class="content-container">
+		    <img src="${post_img}" alt="im1a123ge">
+		    <div class="text-content">
+		      ${post_content}
+		    </div>
+		  </div>
+		</td>
+  </tr>
+       <tr>
+         <td><label for="B_Create_date">𝐷𝑎𝑡𝑒 𝐶𝑟𝑒𝑎𝑡𝑒𝑑</label></td>
+         <td><input class=form-control type=text id="post_date" name="post_date" value="${post_date}" style='width:90%' readonly></td>
+       </tr>
+       <tr>
+         <td><label for="revision_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛 𝑑𝑎𝑡𝑒</label></td>
+         <td><input class=form-control type=text id=B_Update_date name=B_Update_date value="${b_update_date}" style='width:90%' readonly></td>
+       </tr>
+
+		</table>
+		<table align=center>
+		<tr><td><input type=hidden id="board_num" value="${board_num}" name=board_num></td></tr>
 <%-- 			<tr>${button}</tr>		 --%>
-			
+		
 <%-- 			 <c:if test="${id == b_writer}"> --%>
-			<td colspan=2>
-						<input class="btn btn-danger" type="button" value="삭제" id=btnDelete >
+		<td colspan=2>
+					<input class="btn btn-danger" type="button" value="삭제" id=btnDelete data-post_seq="${post_seq}" >
+		</td>
+		<td>
+			<input class="btn btn-success" type="button" value="수정" id=btnModify >
 			</td>
-			<td>
-				<input class="btn btn-success" type="submit" value="수정" id=btnModify>
-				</td>
 <%-- 			</c:if> --%>
 			<td>
 				<input class="btn btn-primary" type="button" value="목록보기" id=btnShow>
@@ -323,12 +345,20 @@ label {
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(document)
 .on('click','#mypage_button',function(){
 	
 })
-
+.on("click","#btnSave",function(){
+	
+	update()
+})
+//목록보기
+document.getElementById("btnShow").addEventListener("click", function() {
+    window.location.href = "http://localhost:8081/postboard";
+});
 
 // var dropzone = document.getElementById('dropzone');
 //     var fileInput = document.getElementById('file-input');
@@ -366,6 +396,74 @@ $(document)
 //       var file = e.target.files[0];
 //       readAndPreview(file);
 //     };
+
+
+//  게시판 delete
+$('#btnDelete').click(function() {
+    var post_seq = $(this).data('post_seq');  
+    $.ajax({
+        url: '/postview/' + post_seq, 
+        type: 'post', 
+        success: function(result) {
+        	
+        	
+        	alert("삭제되었습니다.");
+            window.location.href="/postboard";
+        }
+    });
+});
+
+// 게시판 update
+// 수정 가능 상태로 변경 버튼 클릭 이벤트
+$('#btnModify').click(function() {
+    // 모든 input 필드의 readonly 상태를 해제
+    $('input').removeAttr('readonly');
+
+    // 혹은 특정 input 필드만 선택하여 readonly 상태를 해제
+    $('#post_title').removeAttr('readonly');
+    $('#post_content').removeAttr('readonly');
+    // 기타 필요한 필드들도 추가
+
+    // 사용자에게 알림
+    alert("수정 가능 상태로 변경되었습니다. 수정이 완료되면 '수정 완료' 버튼을 눌러주세요.");
+    
+    $('#btnModify').removeAttr('id', 'btnModify');
+    
+    $('.btn-success').attr('id','btnSave');
+});
+
+function update(){
+		
+		var post_seq = $('#btnDelete').data('post_seq');
+		console.log(post_seq)
+	    var updated_title = $('#post_title').val();
+	    var updated_content = $('.text-content').text();
+// 	    console.log("수정될 내용: "+updated_content)
+
+	  $.ajax({
+	        url: '/postview/' + post_seq,
+	        type: 'put', 
+	        data: {
+	            post_title: updated_title,
+	            post_content: updated_content
+	        },
+	        beforeSend:function(){
+	        	console.log("수정될 제목:" + updated_title+"수정될 내용: "+updated_content)
+	        },
+	        success: function(result) {
+	            // input 필드를 다시 readonly 상태로 변경
+	            $('input').attr('readonly', 'readonly');
+
+	            $('#post_title').val(result.updatedTitle); 
+	            $('#post_content').val(result.updatedContent); 
+	            alert("수정되었습니다.");
+	        }
+	    });
+}
+
+
+
+
 
 </script>
 </html>
