@@ -3,17 +3,17 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="true"%>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-<title>MyYonolja</title>
+<meta charset="UTF-8">
+<title>MyPost</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 </head>
+
 <style>
 header {
   position: fixed;
-  top: 0; 
-  left: 0;
+  top: 0; left: 0;
   height: 150px;
   width: 100%;
   background-color: white;
@@ -139,8 +139,7 @@ footer {
 	font-size:5px;
 }
 section {
-  padding-top: 150px; 
-  padding-bottom: 150px;
+  padding-top: 150px; padding-bottom: 150px;
 }
 
 .sub{
@@ -282,22 +281,7 @@ header, footer {
 
 /* 위까지 헤더, footer 설정 */
 
-a {
-    text-decoration: none; /* a 요소의 밑줄 없애기 */
-}
-
-.mynolja {
-    width: 800px; /* .nolja의 width와 동일하게 설정 */
-    margin: auto; /* 가운데 정렬 */
-    text-align: left; /* 텍스트를 왼쪽 정렬 */
-    padding-top: 150px; /* 헤더의 높이와 동일한 값으로 설정 */
-    position: relative;
-    z-index: 1;
-}
-
-.nolja {
-  border: 1px solid black; /* 외부에 네모난 선 추가 */
-  /*width: fit-content;  요소의 너비를 내용에 맞춤 */
+.h1_post {
   border-radius: 15px;
   width: 800px;
   margin: auto; /* 가운데 정렬 */
@@ -305,76 +289,19 @@ a {
   position: relative;
 }
 
-.myname {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.mylist {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.mypost {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.myhotel {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.s_con {
-    position: relative;
-    overflow: hidden;
-    width: 100%;
-}
-
-.slider {
-    display: flex;
-    width: fit-content;
-    transition: transform 0.3s ease-in-out;
-    position: relative;
-    z-index: 1;
-}
-
-.place_s {
-    margin-right: 20px;
-    position: relative;
-    z-index: 1;
-}
-
-.s_control {
-    margin-top: 10px;
-    display: flex;
-    justify-content: center;
-}
-
-.s_prev,
-.s_next {
-    margin: 0 10px;
-    padding: 5px 10px;
-    cursor: pointer;
-}
-
+/* .div_post {
+  border: 1px solid black; /* 외부에 네모난 선 추가 */
+  /*width: fit-content;  요소의 너비를 내용에 맞춤 */
+  border-radius: 15px;
+  width: 800px;
+  margin: auto; /* 가운데 정렬 */
+  padding: 20px; /* 내부 패딩 추가 for better appearance */
+  position: relative;
+} */
 
 </style>
+
 <body>
-<%-- <jsp:include page="./structure/all.jsp"></jsp:include> --%>
-<%-- <jsp:include page="main.jsp"></jsp:include> --%>
 
 <header>
 <div class=header_container>
@@ -431,77 +358,49 @@ a {
 </header>
 
 <section>
-<div class="mynolja">
-	<span><h1><b>My 요놀자</b></h1></span>
-</div><br>
 
-<div class="nolja">
-	<div class="myname">
-		<span>${user_name}</span><br>
-		<span>${user_type}</span><br>
-		<a href="#" id="myinfo">내정보 관리</a>
-		<input type="hidden" value="${user_password}" class="user_ps">
-<%-- 		<span>${user_email}</span> --%>
-	</div><br>
+<div>
+	<span><h1 class=h1_post>나의문의</h1></span>
+	<div class="div_post">
 	
-	<div class="mylist">
-		<span><b>후기</b></span><br>
-		<a href="#" id="myreviews">나의후기</a><br>
-		
-		<span><b>예약</b></span><br>
-		<a href="#" id="mybooks">예약내역조회</a><br>
-		
-		<span><b>찜</b></span><br>
-		<a href="#" id="mylikes">찜한 호텔</a><br>
-	</div><br>
+		<span>#</span>
+		<span>제목</span>
+		<span>작성일</span>
+		<span>답변여부</span>
 	
-	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
-		<div class="myhotel">
-		    <span><b>나의 비즈니스</b></span><br>
-		    <div class="s_con">
-		        <div class="slider">
-		            <c:forEach items="${placeList}" var="place" varStatus="loop">
-		            	<c:if test="${place.user_seq eq sessionScope.user_seq}">
-		            		<c:set var="imagePaths" value="${place.place_imgs.split(',')}" />
-		            		<c:forEach items="${imagePaths}" var="imagePath">
-				                <div class="place_s" style="display: ${loop.index<3? 'block': 'none'}">
-				                    <img src="${imagePath}" alt="Image" class="place_img">
-				                    <input type="text" value="${place.place_seq}" class="place_seq">
-				                </div>
-			                </c:forEach>
-		                </c:if>
-		            </c:forEach>
-		        </div>
-		        
-		        
-            <c:choose>
-                <c:when test="${not empty placeList}">
-                    <div class="s_control">
-                        <button class="s_prev">이전</button>
-                        <button class="s_next">다음</button>
-                        <button>호텔 추가</button>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <span>등록된 호텔 정보가 없습니다.</span><br><br>
-                    <button>호텔 등록</button>
-                </c:otherwise>
-            </c:choose>
-            
-		    </div>
-		</div><br>
-	</c:if>
-	
-	<div class="mypost">
-		<span><b>고객센터</b></span><br>
-		<a href="#" id="post">문의하러가기</a><br>
-		<a href="#" id="mypostlist">나의문의</a><br>
 	</div>
-
+	<div class="post_click">
+<%-- 		<c:forEach items="${mypost}" var="post" varStatus="status">
+			<c:if test="${status.index > 0 && post.post_seq != mypost[status.index - 1].post_seq}">
+				<br>
+			</c:if>
+			<span class="post_link">${post.post_seq}</span>
+			<span class="post_link">${post.post_title}</span>
+			<span class="post_link">${post.post_date}</span>
+			<span class="post_link">답변 안함</span>
+			<input type=text value="${post.post_seq}" id="seq">
+			<input type="text" value="${post.post_seq}" id="seq_${post.post_seq}">
+			
+		</c:forEach> --%>
+		
+		<c:forEach items="${mypost}" var="post" varStatus="status">
+			<c:if test="${status.index > 0 && post.post_seq != mypost[status.index - 1].post_seq}">
+				<br>
+			</c:if>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_seq}</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_title}</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_date}</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">답변 안함</span>
+			<input type="hidden" value="${post.post_seq}" id="seq_${post.post_seq}">
+		</c:forEach>
+		
+		
+	</div>
 </div>
-</section>
 
+</section>
 <footer>
+
 <div class=footer_container>
 	<div class=footer_item>
 		<div>
@@ -525,9 +424,6 @@ a {
 </div>
 
 </footer>
-
-
-
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -547,79 +443,6 @@ $(document)
 	console.log(seq);
 
 })
-
-$(document).ready(function() {
-	  var slider = $(".slider");
-	  var scrollAmount = $(".place_s").outerWidth(true);
-	  var totalSlides = slider.find(".place_s").length;
-	  var currentSlide = 0;
-
-	  function updateSlider() {
-	    slider.animate({ scrollLeft: scrollAmount * currentSlide }, 500);
-	  }
-
-	  function showSlides() {
-	    var start = currentSlide * 3;
-	    var end = start + 3;
-	    slider.find(".place_s").hide().slice(start, end).show();
-	  }
-
-	  $(".s_prev").click(function() {
-	    if (currentSlide > 0) {
-	      currentSlide--;
-	      updateSlider();
-	      showSlides();
-	    }
-	  })
-
-	  $(".s_next").click(function() {
-	    if (currentSlide < Math.ceil(totalSlides / 3) - 1) {
-	      currentSlide++;
-	      updateSlider();
-	      showSlides();
-	    }
-	  })
-
-	  showSlides();
-	})
-
-/* .on("click", "#myinfo", function() {
-var password = prompt("비밀번호를 입력해주세요.");
-
-	if (password === '123') {
-		window.location.href = '/MyYonolja_myinfo';
-	} else {
-		alert('비밀번호가 틀렸습니다.');
-	}
-}) */
-
-.on("click", "#myinfo", function() {
-	var password = prompt("비밀번호를 입력해주세요.");
-	var user_ps = $(".user_ps").val();
-
-		if (password === user_ps) {
-			window.location.href = '/MyYonolja_myinfo';
-		} else {
-			alert('비밀번호가 틀렸습니다.');
-		}
-})
-
-.on("click", ".place_img", function() {
-  var place_seq = $(this).next("input[type='text']").val();
-  console.log("place_seq: " + place_seq);
-  window.location.href = '/host_managePlace/' + place_seq;
-})
-
-.on("click", "#post", function() {
-	console.log("post click!");
-	window.location.href="/postboard";
-})
-
-.on("click", "#mypostlist", function() {
-	window.location.href ="/MyYonolja_mypost";
-})
-
-
 // 내정보버튼 drop down
 $('html').click(function(e){
 	clicked = $(e.target).attr('id');
@@ -654,8 +477,28 @@ function fillPlaceOptions(){
 		}
 	})
 }
- 
 
+//
+function redirectToPostView(postSeq) {
+    window.location.href = '/postview/' + postSeq;
+  }
+//
+$(document)
+
+
+/* .on('click', '.post_link', function() {
+	var post_seq = $('#seq').val(); 
+	window.location.href = '/postview/' + post_seq;
+	}) */
+	
+/*  	.on('click', '.post_link', function() {
+	    var post_seq = $(this).prev().prev().prev().text();
+	    var seq_input = $(this).next();
+	    seq_input.val(post_seq);
+	    var seq_value = seq_input.val();
+	    window.location.href = '/postview/' + seq_value;
+	})  */
+	
+	
 </script>
 </html>
-
