@@ -22,14 +22,16 @@ header {
   grid-template-columns:1fr;
   grid-template-rows:1fr 1fr;
   place-items:center;
-  z-index:10000;
+  z-index:2;
 }
 .header_container {
 	display:grid;
+	background-color:white;
 	grid-template-columns:1fr  1fr  1fr;
 	grid-template-rows:1fr;
     place-items: center;
     width:95%;
+    z-index:4;
 }
 #mypage_button{
 	border:2px solid #ddd;
@@ -61,6 +63,7 @@ header {
 	grid-template-columns:4fr 4fr 4fr 1fr;
 	grid-template-rows:1fr;
 	place-items: center;
+	opacity:1;
 }
 #searchbar:hover{ box-shadow: 0px 0px 5px #444;transition:0.5s;}
 .searchbar_item{width:100%}
@@ -151,7 +154,7 @@ section {
 	grid-template-columns:1fr;
 	grid-template-rows:1fr 1fr 1fr;
 	background-color:white;
-	z-index:1000;
+	z-index:1;
 }
 .sub_item{
 	cursor:pointer;
@@ -171,14 +174,15 @@ section {
 
 
 .header_container2{
+	background-color:white;
 	border-top:1px solid #ddd;
 	width:100%;
 	display:grid;
 	grid-template-columns:1fr;
 	grid-template-rows:1fr;
 	place-items:center;
-}
-.optionBox {
+} 
+.environmentBox {
 	width:95%;
 	height:80px;
 	
@@ -220,7 +224,7 @@ section {
 	box-shadow: 0px 0px 5px #444;transition:0.5s;
 }
 
-.options{
+.environments{
 	white-space:nowrap;
 	overflow:hidden;
 	display:flex;
@@ -233,8 +237,7 @@ section {
 	border-left:0px solid #f1f1f1;
 	border-right:0px solid #f1f1f1;
 }
-.option{
-	
+.environment{
 	display:grid;
 	grid-template-columns:1fr;
 	grid-template-rows:1fr auto;
@@ -244,47 +247,52 @@ section {
 	max-width:111px;
 	font-size:13px;
 	text-align:center;
+	color:gray;
 	cursor:pointer;
 	
 	transition:0.5s;
 }
-.option_picture{
+.environment_selected{
+	border-bottom:1px solid black;
+	font-size:bold;
+	color:black;
+}
+.environment_picture{
 	height:30px;
 }
-
-.option:hover{
+.environment:hover{
 	border-bottom:1px solid #ddd;
 	font-size:bold;
+	color:black;
 }
-
-
-.option img{
+.environment img{
 	height:25px;
 	width:25px;
 	margin:0px;
 }
 
-.option_left{
+.environment_left{
 	border-radius:50% 50% 50% 50%;
 	border:1px solid black;
 	cursor:pointer;
-	z-index:900;
+	z-index:1;
 	background-color:white;
 	display:none;
 }
-.option_left:hover{border:2px solid black;font-weight:bold}
-.option_right{
+.environment_left:hover{border:2px solid black;font-weight:bold}
+.environment_right{
 	border-radius:50% 50% 50% 50%;
 	border:1px solid black;
 	cursor:pointer;
-	z-index:900;
+	z-index:1;
 	background-color:white;
 	display:none;
 }
-.option_right:hover{border:2px solid black;font-weight:bold}
-.optionBox:hover div button{display:block;}
+.environment_right:hover{border:2px solid black;font-weight:bold}
+.environmentBox:hover div button{display:block;}
 
 section{
+	width:100%;
 	margin-top:30px;
 	display: grid;
     gap: 15px;
@@ -312,8 +320,83 @@ div[class*=portrait]:hover{
 	border-bottom:4px solid #ddd;
 }
 
+
+
+
+/*				modal css 부분 				*/
+
+
+#modal{
+	border:2px solid #ddd;
+	border-radius:5% 5% 5% 5% / 50% 50% 50% 50%;
+	background-color:white;
+	height:60px;
+	z-index:3;
+	display:none;
+	overflow:hidden;
+}
+#modal.show{
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr;
+	place-items:center;
+	width:50%;
+	min-width:515px;
+}
+.header_container2.hide{
+	display:none;
+}
+#modal_background{
+	top:0;
+	left:0;
+	position:fixed;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:2;
+	display:none;
+}
+#modal_background.show{
+	display:block;
+}
+#modal_content{
+	display:grid;
+	grid-template-columns:1fr 1fr 1fr;
+	grid-template-rows:1fr;
+	place-items:center;
+	width:100%;
+	height:100%;
+	font-size:16px;
+}
+#modal_content div{
+	width:100%;
+	height:100%;
+	text-align:center;
+	line-height:60px;
+	cursor:pointer;
+}
+#modal_content div:hover{
+	background-color:#ddd;
+}
+#modal_content div:nth-child(-n+2){
+	border-right:1px solid #ddd;
+}
+#searchbar.hide{
+	display:none;
+}
+#just_sentence{
+	display:none;
+}
+#just_sentence.show{
+	display:block;
+}
 </style>
+<div id=modal_background></div>
 <body>
+
+
+
+
 <header>
 <div class=header_container>
 		<div class=header_item>
@@ -326,6 +409,7 @@ div[class*=portrait]:hover{
 				<div class=searchbar_item>게스트추가</div>
 				<div class=searchbar_item><img id=search_img src="/img/website/search.png"></div>
 			</button>
+			<div id=just_sentence><h1>카테고리 검색</h1></div>
 		</div>
 		<div class=header_item>
 			<div class=last_header_item_item title="향후개발예정"> 당신의 공간을 Yonolja하세요</div>
@@ -354,15 +438,27 @@ div[class*=portrait]:hover{
 			</div>
 		</div>
 </div>
+
+<div id="modal">
+		<div id="modal_content">
+			<div><b>여행지</b></div>
+			<div><b>날짜</b></div>
+			<div><b>인원수</b></div>
+		</div>
+</div>
+
+
+
 <div class=header_container2>
-	<div class=optionBox>
-		<div id=leftBtnBox> <button class=option_left> < </button> </div>
-		<div class=options>
+
+	<div class=environmentBox>
+		<div id=leftBtnBox> <button class=environment_left> < </button> </div>
+		<div class=environments>
 
 		
 	
 		</div>
-		<div id=rightBtnBox> <button class=option_right> > </button> </div>
+		<div id=rightBtnBox> <button class=environment_right> > </button> </div>
 		<div class=btnBox>
 			<button id=filter>필터</button>
 		</div>
@@ -372,8 +468,9 @@ div[class*=portrait]:hover{
 
 
 
+
 <section>
-	
+
 	
 	
 </section>
@@ -408,23 +505,58 @@ div[class*=portrait]:hover{
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
+////////////////////////////////////  javascript /////////////////////////////////////////
+
+searchbar =  document.getElementById('searchbar');
+modal = document.getElementById('modal');
+header_container2 = document.getElementsByClassName('header_container2')[0];
+modal_background = document.getElementById('modal_background');
+just_sentence = document.getElementById('just_sentence');
+
+searchbar.addEventListener('click',function(){
+	if(! (header_container2.classList.contains('hide') && modal.classList.contains('show') ))
+	{
+		header_container2.classList.add('hide');
+		modal.classList.add('show');
+		modal_background.classList.add('show');
+		this.classList.add('hide');
+		just_sentence.classList.add('show');
+	} 
+})
+
+document.addEventListener('click',function(event){
+	if( event.target.id === 'modal_background' ){
+		header_container2.classList.remove('hide');
+		modal.classList.remove('show');
+		modal_background.classList.remove('show');
+		searchbar.classList.remove('hide');
+		just_sentence.classList.remove('show');
+	}
+})
 
 
-
+////////////////////////////////////  jquery	//////////////////////////////////////////
 $(document)
 .ready(function(){
-	getPlaceOptions();
+	getPlaceEnvironments();
 	getPlaces();
 })
-.on('click','.option_left',function(){
-	$('.options').animate({scrollLeft:$('.options').scrollLeft()-350},250)
+.on('click','.environment_left',function(){
+	$('.environments').animate({scrollLeft:$('.environments').scrollLeft()-350},250)
 })
-.on('click','.option_right',function(){
-	$('.options').animate({scrollLeft:$('.options').scrollLeft()+350},250)
+.on('click','.environment_right',function(){
+	$('.environments').animate({scrollLeft:$('.environments').scrollLeft()+350},250)
 })
-.on('click','.option',function(){
+
+// environment 클릭시 그 환경을 가진 places 만 출력 
+.on('click','.environment',function(){
+	
+	$('.environment_selected').removeClass('environment_selected');
+	
 	seq = $(this).attr('id');
-	console.log(seq);
+	$(this).addClass('environment_selected');
+	selected_environment = seq;
+	getPlaces('environment');
 })
 
 
@@ -444,14 +576,23 @@ $(window).scroll(function(){
         $('.header_container2').removeClass('movingHeader');
     }
 });
+/////////////////////////////////////////////////////////////////////////////////////////
 
 
-// place-options 를 채우는 function
-function getPlaceOptions(){
+
+/////////////////////////////////// global variables ////////////////////////////////////
+let selected_environment = null;
+
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////// functions ////////////////////////////////////// 
+// place-environments 를 채우는 function
+function getPlaceEnvironments(){
+	$('.environments').empty();
 	
-	$('#options').empty();
-	
-	$.ajax({url:'/getPlaceOptions', type:'post', dataType:'json', 
+	$.ajax({url:'/getPlaceEnvironments', type:'post', dataType:'json', 
 		
 		success:function(data){
 			
@@ -461,24 +602,73 @@ function getPlaceOptions(){
 				img = data[i].img;
 				
 				
-				option_str = '<div class=option id='+ seq +'>';
-				option_str += '<div class=option_picture>'
-				option_str += "<img src='" + img + "'>"
-				option_str += '</div>'
-				option_str += '<div class=option_name>' + name + '</div>'
-				option_str += '</div>'
-				$('.options').append(option_str);
+				environment_str = '<div class=environment id='+ seq +'>';
+				environment_str += '<div class=environment_picture>'
+				environment_str += "<img src='" + img + "'>"
+				environment_str += '</div>'
+				environment_str += '<div class=environment_name>' + name + '</div>'
+				environment_str += '</div>'
+				$('.environments').append(environment_str);
 			}
-			option_scroll_coor_max = (data.length*150);
 		}
 	})
 }
 // portrait-maker 를 통해 section 에 places 내역을 채우는 function
-function getPlaces(){
+function getPlaces(keyword){
+	
+	$('section').empty();
+	
+	
+	
+	$.ajax({url:'/getPlaces', type:'post', dataType:'json', 
+		
+		data:{
+			
+			keyword:keyword,
+			selected_environment:selected_environment,
+		
+		},
+		success:function(data){
+			
+			for(a=0;a<data.length;a++){
+				
+				seq = data[a].place_seq;
+				name = data[a].place_name;
+				price = data[a].place_price;
+				address = data[a].place_address;
+				imgs = data[a].place_imgs;
+				reviewRate = data[a].place_reviewRate;
+				
+				portrait = makeStructure();
+				portrait.setMoveToUrl("/place/"+seq);
+				portrait.setBody(name,"★" + reviewRate ,address,/* price */ '');
+				
+				imgsArray = imgs.split(",");
+				for(b=0;b<imgsArray.length;b++){
+					portrait.add_picture(imgsArray[b]);
+				}
+				
+				cssStr = portrait.getPortraitCss();
+				tagStr = portrait.getPortrait();
+				
+				$('body').append(cssStr)
+				$('section').append(tagStr)
+				
+
+			}		
+			
+		}
+	
+	})		// placePrice 는 나중에 db join 해서 1박기준 알아와야할듯.. 아니면 그냥 빈칸으로두던가
+}
+
+function getPlacesByKeyword(keyword){
 	
 	$('section').empty();
 	
 	$.ajax({url:'/getPlaces', type:'post', dataType:'json', 
+		
+		data:{keyword:keyword},
 		
 		success:function(data){
 		
@@ -515,8 +705,6 @@ function getPlaces(){
 }
 
 // portrait-maker function
-
-
 function makeStructure(){
 
     uuid = self.crypto.randomUUID();
@@ -694,7 +882,7 @@ function makeStructure(){
     }
     return portraitStructure;
 }
-
+/////////////////////////////////////////////////////////////////////////////////////////
 
 
 

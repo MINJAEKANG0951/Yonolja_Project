@@ -15,7 +15,12 @@
 		<a href='/admin'>관리자 페이지</a>
 		<table border="1px solid:black" id='admin_member_management_table'>
 			<tr>
-				<td>회원번호</td><td>이름</td><td>아이디</td><td>전화번호</td><td>성별</td><td>회원이메일</td><td>타입</td>
+				<td>회원번호</td><td>이름</td><td>아이디</td><td>전화번호</td><td>성별</td><td>회원이메일</td>
+				<td>
+					<select id=post_user_type>
+						<option value=0>전체</option>	
+					</select>
+				</td>
 			</tr>
 		</table>
 		<div>
@@ -25,6 +30,7 @@
 		</div>
 	</div>
 </div>
+
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script>
@@ -36,7 +42,28 @@ $(document)
 
 	memberlist(1)
 })
-
+/*
+.on('click','#post_user_type',function(){
+	$.ajax({
+		url:'/admin_user_type',
+		data:{},
+		dataType:'json',
+		type:'post',
+		success:function(data){
+			if(data){
+				str=""
+				for(var i=1;data.lenght;i++){
+					str+='<option value=select_data'+i+'>'+data[i]['one']+'</option>'
+					+<
+					
+				}
+				$('#admin_user_type').append(str)
+			}
+		}
+		
+	})
+})
+*/
 //function memberList(){
 //	$.ajax({
 //		url:"/member_list",

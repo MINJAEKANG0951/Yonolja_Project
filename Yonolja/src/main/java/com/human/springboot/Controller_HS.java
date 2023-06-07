@@ -105,6 +105,18 @@ public class Controller_HS {
     	return retval;
     }
     
+    // 나의문의 페이지
+    @GetMapping("/MyYonolja_mypost")
+    public String MyYonolja_mypost(Model model, HttpServletRequest req) {
+        HttpSession session = req.getSession();
+        int user_seq = (int) session.getAttribute("user_seq");
+
+        List<DTO_HS_postDTO> mypost = hsdao.myPostlist(user_seq);
+        model.addAttribute("mypost", mypost);
+
+        return "MyYonolja_mypost";
+    }
+    
 	// 에러 메시지 체크
     private void printExceptionMsg(String methodName, String msg) {
 	      System.out.println("Exception[" + methodName + "]: " + msg);

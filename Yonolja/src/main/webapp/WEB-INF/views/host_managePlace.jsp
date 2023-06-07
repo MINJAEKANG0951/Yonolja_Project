@@ -3,12 +3,14 @@
 <!DOCTYPE html>
 <html>
 <head>
+	
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
+<input type=hidden id=place_seq value="${place_seq}" readonly>
   <!-- 업장정보 수정 버튼 -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modifyBusinessModal">
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modifyBusinessModal" id="updatePlace">
     업장정보 수정
   </button>
 
@@ -34,7 +36,7 @@
         </div>
         <div class="modal-body">
           <h2>사업장 정보 입력</h2>
-          <form action="/insertPlace" method="POST" id="fmt" enctype="multipart/form-data">
+          <form action="updateMyplace" method="POST" id="fmt" enctype="multipart/form-data">
             
             <label for="pname">사업장 이름:</label><br>
             <input type="text" id="pname" name="pname"><br>
@@ -68,6 +70,13 @@
             <label for="guide">안내문:</label><br>
             <textarea id="pguide" name="pguide"></textarea><br>
             
+            <h3> 사업장 주변 환경 </h3>
+             <c:forEach items="${environments}" var="environment">
+              <input type="checkbox" id="environment${environment.place_environment_seq}" name="environments" value="${environment.place_environment_seq}">
+              <label for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
+            </c:forEach>
+            
+            <h3> 사업장 보유 옵션 </h3>
             <c:forEach items="${pfeatures}" var="pfeature">
               <input type="checkbox" id="pfeature${pfeature.place_option_seq}" name="pfeatures" value="${pfeature.place_option_seq}">
               <label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>
@@ -83,7 +92,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-          <button type="submit" class="btn btn-primary">저장</button>
+          <button type="submit" id="btnsubmit" class="btn btn-primary">저장</button>
         </div>
           </form>
       </div>
@@ -249,14 +258,13 @@
 
 
 <!-- jQuery 라이브러리 -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 
+<script src="https://code.jquery.com/jquery-latest.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <!-- Bootstrap JS -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-  <script>
+ <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+ <script>
   
   $(document).ready(function() {
       $(".delete-button").click(function() {
@@ -337,6 +345,167 @@
         });
       }
     }
+    
+    
+$(document)
+.on('click','#updatePlace',function(){
+	
+	
+	// ajax 로 정보수정.
+	
+	// 비우기
+	$('#pname').val(null);
+	$('#ptype option').prop('selected',false);
+	$('#pzip_code').val(null);
+	$('#paddress1').val(null);
+	$('#paddress2').val(null);
+	
+	$('#pcheckin').val(null);
+	$('#pcheckout').val(null);
+	
+	$('#pguide').val(null);
+	$('input[name=environments]').prop('checked',false);
+	$('input[name=pfeatures]').prop('checked',false);
+	
+	
+	// 채우기
+	place_seq = $('#place_seq').val();
+	
+	$.ajax({url:'/getPlaceInfo', type:'post', dataType:'json', 
+		
+		data:{place_seq:place_seq},
+		success:function(data){
+		
+			data.name;
+			data.type_seq;
+			data.address;
+			data.mobile;
+			data.checkin;
+			data.checkout;
+			data.guide;
+			data.environments;
+			data.options;
+			
+			$('#pname').val(data.name);
+			for(i=0;i<$('#ptype option').length;i++){
+				option_value = $('#ptype option:eq('+i+')').val();
+				if(option_value==data.type_seq){
+					$('#ptype option:eq('+i+')').prop('selected',true);
+					break;
+				}
+			}
+			console.log(data.address)
+			addressElements = data.address.split(",");
+			$('#pzip_code').val(addressElements[0]);
+			$('#paddress1').val(addressElements[1]);
+			$('#paddress2').val(addressElements[2]);
+			
+			$('#pmobile').val(data.mobile);
+			
+			$('#pcheckin').val(data.checkin);
+			$('#pcheckout').val(data.checkout);
+			$('#pguide').val(data.guide);
+			
+			
+			
+			if(data.environments==null){
+				console.log('place_envrionment 없음.')
+			} else {
+				evElements = data.environments.split(",");
+				for(i=0;i<$('input[name=environments]').length;i++){
+					evSeq = $('input[name=environments]:eq('+i+')').val();
+					if( evElements.includes(evSeq)  ){
+						$('input[name=environments]:eq('+i+')').prop('checked',true);
+					}
+				}
+			}
+			if(data.options==null){
+			} else {
+				optionElements = data.options.split(",");
+				for(i=0;i<$('input[name=pfeatures]').length;i++){
+					option_seq = $('input[name=pfeatures]:eq('+i+')').val();
+					if( optionElements.includes(option_seq)  ){
+						$('input[name=pfeatures]:eq('+i+')').prop('checked',true);
+					}
+				}
+			}
+			
+		}
+	
+	})
+	
+	
+	
+	
+})
+
+
+
+.on('click','#btnsubmit',function(){
+	
+	var pzip_code = $('#pzip_code').val();
+	var paddress1 = $('#paddress1').val();
+	var paddress2 = $('#paddress2').val();
+	var paddress = pzip_code +','+paddress1+','+paddress2;
+	
+	
+	 var checkEnv = []; // 주변환경 체크박스 인서트
+	  $("input[name='environments']:checked").each(function() {
+		  checkEnv.push($(this).val());
+	    });
+	 
+	  var checkOpt = [];
+	   $("input[name='pfeatures']:checked").each(function() {
+		   checkOpt.push($(this).val());
+	    });
+	  
+	
+	// 배열로 만들어서 값을  컨트롤러에서 values처리를 해서 넣어줌.  
+	
+	
+	$.ajax({
+		url:'/updateMyplace',
+		type:'post',
+		dataType:'json', 
+        data:{
+        	  place_seq:$('#place_seq').val(),
+        	  pname:$('#pname').val(),
+        	  ptype:$('#ptype').val(),
+        	  paddress:paddress,
+        	  pmobile:$('#pmobile').val(),
+        	  pcheckin:$('#pcheckin').val(),
+			  pcheckout:$('#pcheckout').val(),
+			  pguide:$('#pguide').val(),
+			  checkEnv:checkEnv,
+			  checkOpt:checkOpt
+			  // 사진 수정 기능 필요 
+			  },
+              
+              success:function(data){
+                  
+                  
+                  if(data=="ok") {
+                 	 
+ 					  
+                  } else {	
+                 	 
+ 		               alert(data);
+                  }
+                  
+                
+          }
+              
+	});
+	
+	
+})
+  
+ document.getElementById('pcheckin').onclick = function(){
+	a= $(this).val();
+	console.log(a);
+}
+    
+    
   </script>
 </body>
 </html>

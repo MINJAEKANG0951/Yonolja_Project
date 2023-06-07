@@ -4,21 +4,21 @@
 	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 	
 <mapper namespace="com.human.springboot.DAO_HS">
+	<!-- 마이페이지 -->
+
 	<select id="host_imgs" resultType="com.human.springboot.DTO_HS_userDTO">
 		select a.user_seq, a.user_id, b.place_imgs, b.place_seq, a.user_type
 		from yonolja_user a, yonolja_place b where a.user_seq = b.user_seq
 		order by b.place_seq
 	</select>
-<!-- 	<select id="user_ch" resultType="com.human.springboot.DTO_HS_userDTO">
-		select user_password
-		from yonolja_user
-		where #{param1}=user_seq
-	</select> -->
+	
 	<select id="user_all" resultType="com.human.springboot.DTO_HS_userDTO">
 		SELECT user_seq, user_id, user_password, user_name, user_mobile, user_email, user_gender, user_type, user_signinType
 		FROM yonolja_user
 		WHERE user_seq = #{param1}
 	</select>	
+	
+	<!-- 내정보관리 -->
 	
 	<update id="updateUserNolja">
 		update yonolja_user set user_email=#{param2}, user_password=#{param3}, user_mobile=#{param4}
@@ -29,6 +29,14 @@
 		delete from yonolja_user where user_seq=#{param1}
 	</delete>
 	
+	<!-- 나의문의 -->
+	
+	<select id="myPostlist" resultType="com.human.springboot.DTO_HS_postDTO">
+	    select b.post_seq, b.post_title, b.post_date
+	    from yonolja_user a, yonolja_post b 
+	    where a.user_seq = b.user_seq and b.user_seq = #{param1}
+	    order by b.post_seq
+	</select>
 	
 </mapper>
 

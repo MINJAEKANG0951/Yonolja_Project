@@ -68,7 +68,14 @@ height:100%;
         
         <label for="guide">안내문:</label><br>
         <textarea id="pguide" name="pguide"></textarea><br>
-        
+       
+      <h3>사업장 주변 환경</h3>
+       <c:forEach items="${environments}" var="environment">
+         <input type="checkbox" id="environment${environment.place_environment_seq}" name="environments" value="${environment.place_environment_seq}">
+         <label for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
+       </c:forEach>
+       
+      <h3>사업장 보유 옵션</h3>
       <c:forEach items="${pfeatures}" var="pfeature">
       <input type="checkbox" id="pfeature${pfeature.place_option_seq}" name="pfeatures" value="${pfeature.place_option_seq}">
       <label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>

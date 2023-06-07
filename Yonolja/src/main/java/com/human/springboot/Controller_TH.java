@@ -129,9 +129,10 @@ public class Controller_TH {
 		   int pageend=tdao.post_count();
 		   int pageval=pageend%10;
 		   
-		   if( logIn.getAttribute("search")!=null) {
+		   if( logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="0") {
 			   model.addAttribute("search",logIn.getAttribute("search"));
 			   pageend=tdao.post_list_search_count((String)logIn.getAttribute("search"));
+			   
 			   if(pageval==0) {
 				   
 				   pageend=pageend/10;
@@ -141,6 +142,43 @@ public class Controller_TH {
 			   model.addAttribute("search_page_start",1);  
 			   model.addAttribute("search_page_end",pageend);
 
+		   }else if(logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="1"){
+			   model.addAttribute("search",logIn.getAttribute("search"));
+			   model.addAttribute("select",logIn.getAttribute("select"));
+			   pageend=tdao.post_list_search_title_count((String)logIn.getAttribute("search"));
+			   
+			   if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   } 
+			   model.addAttribute("search_page_start",1);  
+			   model.addAttribute("search_page_end",pageend);
+		   }else if(logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="2"){
+			   model.addAttribute("search",logIn.getAttribute("search"));
+			   pageend=tdao.post_list_search_id_count((String)logIn.getAttribute("search"));
+			   
+			   if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   } 
+			   model.addAttribute("search_page_start",1);  
+			   model.addAttribute("search_page_end",pageend);
+		   }else if(logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="3"){
+			   model.addAttribute("search",logIn.getAttribute("search"));
+			   pageend=tdao.post_list_search_content_count((String)logIn.getAttribute("search"));
+			   
+			   if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   } 
+			   model.addAttribute("search_page_start",1);  
+			   model.addAttribute("search_page_end",pageend);
 		   }else {
 			   if(pageval==0) {
 				   
@@ -284,34 +322,84 @@ public class Controller_TH {
 	public String post_search(HttpServletRequest req) {
 		
 		String search=req.getParameter("admin_post_searchBar");
-		HttpSession search_session= req.getSession();
+		HttpSession search_session=req.getSession();
+		ArrayList<DTO_TH> list=null;
 		
-		
+
+		String select=req.getParameter("admin_post_search_select");
+		System.out.println("select test"+select);
 		search_session.setAttribute("search", search);
+		search_session.setAttribute("select", select);
 		
-		String select_select=req.getParameter("admin_post_search_select");
 		String page=req.getParameter("page");
-		   
-		int pageend=tdao.post_list_search_count(search);
-		int pageval=pageend%10;
-		 if(pageval==0) {
-			   
-			   pageend=pageend/10;
-		   } else {
-			   pageend=(pageend/10)+1;
-		   }
+		JSONArray ja= new JSONArray();
+		
+		if(select.equals("0")) {
+			int pageend=tdao.post_list_search_count(search);
+			int pageval=pageend%10;
+			 if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   }
 		   int curpage=Integer.parseInt(page);
 		   int rowSize=10;
 		   int start=curpage*rowSize-(rowSize-1);;
 		   int end=curpage*rowSize;
-		
-		ArrayList<DTO_TH> list=tdao.post_list_search(search,start,end);
-		JSONArray ja= new JSONArray();
-		
+	
+		   list=tdao.post_list_search(search,start,end);
+	
+		}else if(select.equals("1")) {
+			int pageend=tdao.post_list_search_title_count(search);
+			int pageval=pageend%10;
+			 if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   }
+		   int curpage=Integer.parseInt(page);
+		   int rowSize=10;
+		   int start=curpage*rowSize-(rowSize-1);;
+		   int end=curpage*rowSize;
+	
+		   list=tdao.post_list_search_title(search,start,end);
+		}else if(select.equals("2")) {
+			int pageend=tdao.post_list_search_id_count(search);
+			int pageval=pageend%10;
+			 if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   }
+		   int curpage=Integer.parseInt(page);
+		   int rowSize=10;
+		   int start=curpage*rowSize-(rowSize-1);;
+		   int end=curpage*rowSize;
+	
+		   list=tdao.post_list_search_id(search,start,end);
+		} else {
+			int pageend=tdao.post_list_search_content_count(search);
+			int pageval=pageend%10;
+			 if(pageval==0) {
+				   
+				   pageend=pageend/10;
+			   } else {
+				   pageend=(pageend/10)+1;
+			   }
+		   int curpage=Integer.parseInt(page);
+		   int rowSize=10;
+		   int start=curpage*rowSize-(rowSize-1);;
+		   int end=curpage*rowSize;
+	
+		   list=tdao.post_list_search_content(search,start,end);
+		}
 
+		
 		String str="";
 
-		
 		for(int i=0;i<list.size();i++) {
 			
 			JSONObject jo=new JSONObject();
@@ -332,8 +420,9 @@ public class Controller_TH {
 
 			ja.put(jo);
 			System.out.println("test search");
-			
 		}
+		
+		
 		System.out.println(ja.toString());
 		return ja.toString();
 				
@@ -358,5 +447,13 @@ public class Controller_TH {
 		
 	}
 	
+	@GetMapping("/admin_place_option")
+	public String admin_place_option(HttpServletRequest req) {
+		HttpSession session=req.getSession();
+		session.getAttribute("login");
+		
+		
+		return "admin_place_option";
+	}
 	
 }

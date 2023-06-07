@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,7 +40,14 @@ public class Controller_MJ {
 	public String showtestPage4() {
 		return "test/portraitModuleTest2";
 	}
-	
+	@GetMapping("/modalTest")
+	public String showModalTestPage() {
+		return "/test/modal_practice";
+	}
+	@GetMapping("/modalTest2")
+	public String showModalTestPage2() {
+		return "/test/modal_byMyself";
+	}
 	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
 	@GetMapping("/signin")
@@ -182,18 +190,63 @@ public class Controller_MJ {
 	}
 	
 	
+	// PlaceEnvironment 가져오기
+	@PostMapping("/getPlaceEnvironments")
+	@ResponseBody
+	public String getPlaceEnvironments() {
+		
+		ArrayList<DTO_MJ_placeEnvironmentDTO> placeEnvironments = mjdao.getPlaceEnvironments();
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<placeEnvironments.size();i++) {
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", placeEnvironments.get(i).getPlace_environment_seq());
+			jo.put("name", placeEnvironments.get(i).getPlace_environment_name());
+			jo.put("img", placeEnvironments.get(i).getPlace_environment_img());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	
 	// Place 가져오기
 	@PostMapping("/getPlaces")
 	@ResponseBody
-	public String getPlaces() {
+	public String getPlaces(HttpServletRequest req) {
+		
+		ArrayList<DTO_MJ_placeDTO> places = null;
 		
 		
-		// 추가해야할기능, review 가져와야함. 각자방에대한 review average 를 가져와야함.
-		ArrayList<DTO_MJ_placeDTO> places = mjdao.getPlaces();
-	
+		if( req.getParameter("keyword")==null ) {
+			
+			places = mjdao.getPlaces(null);
+			
+		} else if( req.getParameter("keyword").equals("environment") ) {
+			
+			String environment_seq = req.getParameter("selected_environment");
+			String sql = "where place_environment like '" + environment_seq + ",%'";
+			sql += "or place_environment like'%," + environment_seq + ",%'";		 
+			sql += "or place_environment like'%," + environment_seq + "'";			 
+			sql += "or place_environment like'" + environment_seq + "'";			 
+			places = mjdao.getPlaces(sql);
+			
+		} else if( req.getParameter("keyword").equals("address") ) {
+			
+		} else if( req.getParameter("keyword").equals("forHowLong") ) {
+			
+		} else if( req.getParameter("keyword").equals("amountOfPeople") ) {
+			
+		}
+
+
 		JSONArray ja = new JSONArray();
 		
 		for(int i=0;i<places.size();i++) {
+			
 			JSONObject jo = new JSONObject();
 			
 			jo.put("place_seq", places.get(i).getPlace_seq());
@@ -207,29 +260,36 @@ public class Controller_MJ {
 			jo.put("place_mobile", places.get(i).getPlace_mobile());
 			jo.put("place_options", places.get(i).getPlace_options());
 			jo.put("place_guide", places.get(i).getPlace_guide());
-			
-
+		
 			// review average 도 가져오기
 			jo.put("place_reviewRate", mjdao.getReviewRate( places.get(i).getPlace_seq() ));
 			
 			ja.put(jo);
 		}
 		
-		
-	
-		
 		return ja.toString();
 	}
 	
 	
-	// keyword 를 통해 room 가져오기
-	@PostMapping("/getPlacesByKeyword")
-	@ResponseBody
-	public String getPlacesByKeyword() {
-		
-		
-		return "";
-	}
+	
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

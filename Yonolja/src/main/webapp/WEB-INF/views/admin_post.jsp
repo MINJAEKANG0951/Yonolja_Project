@@ -37,8 +37,9 @@
 			<option value=0>통합검색
 			<option value=1>제목
 			<option value=2>아이디
-			<option value=3>문의상태
+			<option value=3>내용
 		</select>
+		<input type=hidden id=admin_post_select_hidden value="${select }">
 		<input type=text id=admin_post_searchBar value="${search}">
 		<input type=button id=admin_post_search_btn value=검색>
 	</div>
@@ -107,7 +108,10 @@ $(document)
 		
 		post_list(1)
 	} else{
-		search_list(1)	
+		$('#admin_post_search_select').val($('#admin_post_select_hidden').val())
+		console.log($('#admin_post_search_select').val())
+		search_list(1,$('#admin_post_search_select').val())
+		
 	}
 	
 	
@@ -198,8 +202,8 @@ $(document)
 
 .on('click','#admin_post_search_btn',function(){
 	console.log($('#admin_post_searchBar').val())
-	
-	search_list(1)
+	console.log($('#admin_post_search_select').val())
+	search_list(1,$('#admin_post_search_select').val())
 	window.location.href = "http://localhost:8081/admin_post"
 	
 })
@@ -243,14 +247,14 @@ function post_list(page){
 	})
 }
 
-function search_list(page){
+function search_list(page,select_val){
 	$('.page-item').removeClass("active");
 	$('#paging_search'+ page).parent().addClass("active");
-	
+	console.log($('#admin_post_search_select').val())
 	$.ajax({
 		url:'/post_search',
 		data:{admin_post_searchBar:$('#admin_post_searchBar').val(),
-			admin_post_search_select:$('#admin_post_search_select').val(),
+			admin_post_search_select:select_val,
 			page:page},
 		dataType:'json',
 		type:'post',

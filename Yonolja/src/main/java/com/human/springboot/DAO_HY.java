@@ -14,8 +14,16 @@ public interface DAO_HY {
 	
 	// 업장추가페이지에서 db에 업장 insert
 	
-	void addplace(String pname, int user_seq, int ptype, String checkin, String checkout, String address, String img, String mobile, String options, String guide);
-
-
+	void addplace(String pname, int user_seq, int ptype, String checkin, String checkout, String address, String img, String mobile, String options, String guide, String place_environments);
+	ArrayList<DTO_HY_P> getEnvironments();
+	
+	DTO_HY_placeDTO getPlace(int place_seq);
+	
+	
+	// host_managePlace 관련 정보수정 
+	
+	void updateMy(int place_seq, String place_name, int user_seq, int place_type_seq, String place_checkin_time,
+			String place_checkout_time, String place_address,String place_mobile, String place_options,
+			String place_guide,String place_environment);
 
 }

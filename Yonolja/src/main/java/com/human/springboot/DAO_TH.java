@@ -17,7 +17,16 @@ public interface DAO_TH {
 	DTO_TH post_seq_data(int seq);
 	
 	void post_admin_comment(String comment, int post_seq);
-	
+	// 통합검색
 	ArrayList<DTO_TH> post_list_search(String search,int start, int end);
 	int post_list_search_count(String search);
+	// 아이디 검색
+	ArrayList<DTO_TH>post_list_search_id(String search,int start, int end);
+	int post_list_search_id_count(String search);
+	// 제목 검색
+	ArrayList<DTO_TH>post_list_search_title(String search,int start, int end);
+	int post_list_search_title_count(String search);
+	// 내용 검색
+	ArrayList<DTO_TH>post_list_search_content(String search,int start, int end);
+	int post_list_search_content_count(String search);
 }
