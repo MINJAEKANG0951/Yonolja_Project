@@ -106,14 +106,10 @@
           </button>
         </div>
         <div class="modal-body">
-          <h2>객실 정보 입력</h2>
-          <form action="/insertRoomType" method="POST" id="roomTypeForm" enctype="multipart/form-data">
-<!--             <label for="roomTypeId">객실타입 ID:</label><br> -->
-<!--             <input type="text" id="roomTypeId" name="roomTypeId"><br> -->
-            
-<!--             <label for="hotelId">호텔 ID:</label><br> -->
-<!--             <input type="text" id="hotelId" name="hotelId"><br> -->
-			<input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
+          <form action="${roomType != null && roomType.roomtype_seq != '' ? '/modifyRoomtype' : '/insertRoomType'}" method="POST" id="roomTypeForm" enctype="multipart/form-data">
+    <input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
+    <label for="roomtype_seq">객실 타입 번호:</label><br>
+    <input type="text" id="roomtype_seq" name="roomtype_seq" value="${roomType != null && roomType.roomtype_seq != '' ? roomType.roomtype_seq : ''}" readonly><br>
             
             <label for="roomName">객실 이름:</label><br>
             <input type="text" id="roomtype_name" name="roomtype_name"><br>
@@ -134,11 +130,12 @@
             <textarea id="roomtype_guide" name="roomtype_guide"></textarea><br>
             
             <input type="submit" value="제출">
+       
           </form>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary">저장</button>
+         
         </div>
       </div>
     </div>
@@ -180,9 +177,10 @@
   <!-- 보유 객실타입 표시 -->
   <div>
     <h2>보유 객실타입</h2>
-    <table class="table">
+    <table id = "tblRoomtype" class="table">
       <thead>
         <tr>
+          <th>객실타입 번호</th>
           <th>객실타입 이름</th>
           <th>객실타입 사진</th>
           <th>객실 최대인원 </th>
@@ -192,14 +190,19 @@
         </tr>
       </thead>
       <tbody>
-        <c:forEach items="${roomTypes}" var="roomType">
+        <c:forEach items="${roomTypes}" var="roomType" >
           <tr>
-            <td>${roomType.rtName}</td>
-            <td>${roomType.rtImg}</td>
-            <td>${roomType.rtCapacity}</td>
-            <td>${roomType.rtPrice}</td>
-<%--             <td>${roomType.rtOption}</td> --%>
-            <td>${roomType.rtGuide}</td>
+          	<td>${roomType.roomtype_seq}</td>
+            <td>${roomType.roomtype_name}</td>
+             <td>
+       			 <c:forEach items="${roomType.roomtype_imgs.split(',')}" var="image">
+          		 <img src="${image}" alt="객실타입 이미지" style="max-width: 100%; height: 100px;">
+        		</c:forEach>
+      		</td>
+            <td>${roomType. roomtype_capacity}</td>
+            <td>${roomType.roomtype_price}</td>
+            <td>${roomType.roomtype_options}</td>
+            <td>${roomType.roomtype_guide}</td>
           </tr>
         </c:forEach>
       </tbody>
@@ -210,11 +213,11 @@
   <div>
     <h2>객실 조회</h2>
     <label for="roomTypeSelect">객실타입 선택:</label>
-    <select id="roomTypeSelect">
-      <c:forEach items="${roomTypes}" var="roomType">
-        <option value="${roomType.roomTypeId}">${roomType.roomName}</option>
-      </c:forEach>
-    </select>
+<!--     <select id="roomTypeSelect"> -->
+<%--       <c:forEach items="${roomTypes}" var="roomType"> --%>
+<%--         <option value="${roomType.roomTypeId}">${roomType.roomName}</option> --%>
+<%--       </c:forEach> --%>
+<!--     </select> -->
     <button type="button" onclick="getRooms()">조회</button>
 
     <table class="table" id="roomTable" style="display: none;">
@@ -530,9 +533,57 @@ $("input[name='environments']:checked").each(function(index) {
     a = $(this).val();
     console.log(a);
   }
+/////////////// 기존 객실타입 수정 /////////////////
+
+
+$(document)
+.on('click','#btnRoomtype',function(){//객실타입 비우기
+	
+	$("#roomtype_seq").val(null);	
+    $("#roomtype_name").val(null);
+    $("#roomtype_capacity").val(null);
+    $("#roomtype_price").val(null);
+    $("#roomtype_guide").val(null);
+    $("input[type=submit]").val("제출");
+   
+})
+	
+   
+  $(document).ready(function() {
+    $("#tblRoomtype tbody > tr").click(function() {  // 테이블의 행을 클릭하면
+      var roomtype_seq = $(this).find("td:eq(0)").text();  // 첫번째 열의 값 (객실타입 ID)을 가져옵니다
+      var roomtype_name = $(this).find("td:eq(1)").text(); // 두번째 열의 값 (객실타입 이름)을 가져옵니다
+      var roomtype_img = $(this).find("td:eq(2)").text();
+      var roomtype_capacity = $(this).find("td:eq(3)").text();
+      var roomtype_price = $(this).find("td:eq(4)").text();
+      var roomtype_option = $(this).find("td:eq(5)").text();
+      var roomtype_guide = $(this).find("td:eq(6)").text();
+      
+      console.log(roomtype_seq);
+  
+      
+      // 모달의 객실타입 이름 필드에 값을 채웁니다
+      
+      $("#roomtype_seq").val(roomtype_seq);
+      $("#roomtype_name").val(roomtype_name);
+      $("#roomtype_capacity").val(roomtype_capacity);
+      $("#roomtype_price").val(roomtype_price);
+      $("#roomtype_guide").val(roomtype_guide);
+      
+      // input type submit value를 수정으로 바꿉니다.
+      $("input[type=submit]").val("수정");
+      
+      var actionUrl = roomtype_seq !== '' ? '/modifyRoomtype' : '/insertRoomType';
+      $("#roomTypeForm").attr("action", actionUrl);
+
+      $("#roomTypeModal").modal("show");  // 모달을 엽니다
+    });
+  });
+
 
     
     
-  </script>
+    
+ </script>
 </body>
 </html>

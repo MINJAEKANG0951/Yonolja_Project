@@ -91,6 +91,22 @@
         SELECT * FROM yonolja_roomtype
         where place_seq = #{param1}
     </select>
+    
+    
+<!--     Roomtype update 코드 PART -->
+
+ 	<update id="modifyRoomtype">
+    	UPDATE yonolja_roomtype SET
+	        roomtype_name = #{param2},
+	        place_seq = #{param3},
+	        roomtype_imgs = #{param4},
+	        roomtype_capacity = #{param5},
+	        roomtype_price = #{param6},
+	        roomtype_guide = #{param7}
+   		 WHERE roomtype_seq= #{param1}
+	</update>
+
+
 
 
 </mapper>

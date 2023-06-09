@@ -179,9 +179,11 @@ public class Controller_HY {
 	    //////////////////업장 정보수정창에서 해당 place 정보 기본셋팅//////////////
 	   
 	    model.addAttribute("place_seq", place_Seq);
+	   
 	    /////////////////객실타입 게시하는 코드시작/////////////
-	    ArrayList<DTO_HY_roomtypeDTO> rooms = hydao.getRoomtype(Integer.parseInt(req.getParameter("place_seq") ));
-        model.addAttribute("rooms", rooms);
+	   
+	    ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
+        model.addAttribute("roomTypes", roomTypes);
 		
 		return "host_managePlace";
 		
@@ -250,6 +252,7 @@ public class Controller_HY {
 	public String insertRoomType(HttpServletRequest req, Model model,
 			
 			@RequestParam(value="place_seq") String place_Seq,
+//			@RequestParam(value="roomtype_seq") String roomtype_seq,
 			@RequestParam(value="roomtype_name") String rname,
 			@RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
 			@RequestParam(value="roomtype_capacity") String rcap,
@@ -259,6 +262,7 @@ public class Controller_HY {
 			) {
 		
 			int place_seq = Integer.parseInt(place_Seq);
+			//int roomtype_Seq = Integer.parseInt(roomtype_seq);
 			System.out.println(place_seq);
 			int maxCapacity = Integer.parseInt(rcap);
 			System.out.println(maxCapacity);
@@ -295,5 +299,56 @@ public class Controller_HY {
 	
 	
 	
+	///////////////////객실타입 수정 코드 /////////////////
+	@PostMapping("/modifyRoomtype")
+	public String modifyRoomtype(HttpServletRequest req, Model model,
+	        @RequestParam(value="place_seq") String place_Seq,
+	        @RequestParam(value="roomtype_seq") int roomtype_seq,//수정부분
+	        @RequestParam(value="roomtype_name") String rname,
+	        @RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
+	        @RequestParam(value="roomtype_capacity") String rcap,
+	        @RequestParam(value="roomtype_price") String nightrate,
+//	        @RequestParam(value="roomtype_options") String amenities,
+	        @RequestParam(value="roomtype_guide") String roomGuide
+	        ) {
+	    
+	    int place_seq = Integer.parseInt(place_Seq);
+	    System.out.println(place_seq);
+	    int roomtype_Seq = req.getParameter("roomtype_seq") != null ? Integer.parseInt(req.getParameter("roomtype_seq")) : 0;
+	    System.out.println(roomtype_Seq);
+	    int maxCapacity = Integer.parseInt(rcap);
+	    System.out.println(maxCapacity);
+	    int nightRate = Integer.parseInt(nightrate);
+	    System.out.println(nightRate);
+	    System.out.println(rname);
+	    System.out.println(roomGuide);
+
+	    // 사진파트
+	    String DBpath = "";
+	    for(int i=0;i<imgs.length;i++) {
+	        MultipartFile img = imgs[i];
+	        
+	        String realName = img.getOriginalFilename();
+	        UUID randomStr = UUID.randomUUID();
+	        String rstr = (""+randomStr).substring(0,8);
+	        
+	        String saveName = rstr + "-" + realName;
+	        
+	        File file = new File(roomtype_optionImgPath,saveName);
+	        try { img.transferTo(file); }
+	        catch(Exception e) { System.out.println("fail"); }
+	        
+	        DBpath += "," + "/img/roomtype_option/" + saveName;
+	    }
+	    DBpath = DBpath.replaceFirst(",", "");
+	    // 사진파트 끝
+
+	    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, DBpath, maxCapacity, nightRate, roomGuide);
+	    
+	    return "main";
+	}
+
+
+
 	
 }

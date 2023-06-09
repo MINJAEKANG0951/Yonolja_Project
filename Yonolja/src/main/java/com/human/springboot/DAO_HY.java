@@ -32,6 +32,10 @@ public interface DAO_HY {
 	
 	// RoomType select
 	
-	DTO_HY_roomtypeDTO getRoomtype(int place_seq);
+	ArrayList<DTO_HY_roomtypeDTO> getRoomtype(int place_seq);
+	
+	//Roomtype update
+	
+	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq, String roomtype_imgs, int roomtype_capacity, int roomtype_price, String roomtype_guide);
 
 }
