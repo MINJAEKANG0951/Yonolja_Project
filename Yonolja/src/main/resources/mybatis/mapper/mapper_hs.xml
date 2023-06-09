@@ -7,7 +7,7 @@
 	<!-- 마이페이지 -->
 
 	<select id="host_imgs" resultType="com.human.springboot.DTO_HS_userDTO">
-		select a.user_seq, a.user_id, b.place_imgs, b.place_seq, a.user_type
+		select a.user_seq, a.user_id, b.place_imgs, b.place_seq, a.user_type, b.place_name
 		from yonolja_user a, yonolja_place b where a.user_seq = b.user_seq
 		order by b.place_seq
 	</select>

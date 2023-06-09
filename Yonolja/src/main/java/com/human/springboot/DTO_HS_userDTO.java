@@ -16,4 +16,5 @@ public class DTO_HS_userDTO {
 	
 	String place_imgs;
 	int place_seq; 
+	String place_name;
 }

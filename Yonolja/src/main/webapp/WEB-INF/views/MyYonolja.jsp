@@ -2,6 +2,8 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="true"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -337,6 +339,17 @@ a {
   padding: 20px;
 }
 
+.myhotel img, .place_img {
+    width: 200px; /* 너비 조절. */
+    height: 200px; /* 높이 조절. */
+    padding: 8px;
+}
+
+.myB {
+	padding: 8px;
+}
+
+
 .s_con {
     position: relative;
     overflow: hidden;
@@ -369,6 +382,34 @@ a {
     padding: 5px 10px;
     cursor: pointer;
 }
+
+/* 이미지 내부 화살표 버튼 */
+
+.image_container {
+    position: relative;
+    display: inline-block;
+}
+
+.arrow_prev,
+.arrow_next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1em;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 0.5em;
+    cursor: pointer;
+}
+
+.arrow_prev {
+    left: -5px;
+}
+
+.arrow_next {
+    right: -5px;
+}
+
 
 
 </style>
@@ -457,40 +498,54 @@ a {
 	
 	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
 		<div class="myhotel">
-		    <span><b>나의 비즈니스</b></span><br>
-		    <div class="s_con">
-		        <div class="slider">
-		            <c:forEach items="${placeList}" var="place" varStatus="loop">
-		            	<c:if test="${place.user_seq eq sessionScope.user_seq}">
-		            		<c:set var="imagePaths" value="${place.place_imgs.split(',')}" />
-		            		<c:forEach items="${imagePaths}" var="imagePath">
-				                <div class="place_s" style="display: ${loop.index<3? 'block': 'none'}">
-				                    <img src="${imagePath}" alt="Image" class="place_img">
-				                    <input type="text" value="${place.place_seq}" class="place_seq">
-				                </div>
-			                </c:forEach>
-		                </c:if>
-		            </c:forEach>
-		        </div>
-		        
-		        
-            <c:choose>
-                <c:when test="${not empty placeList}">
-                    <div class="s_control">
-                        <button class="s_prev">이전</button>
-                        <button class="s_next">다음</button>
-                        <button>호텔 추가</button>
-                    </div>
-                </c:when>
-                <c:otherwise>
-                    <span>등록된 호텔 정보가 없습니다.</span><br><br>
-                    <button>호텔 등록</button>
-                </c:otherwise>
-            </c:choose>
-            
-		    </div>
+		<span class="myB"><b>My Business</b></span><br>
+			<div class="s_con">
+				<div class="slider">
+					<c:forEach items="${placeList}" var="place" varStatus="loop">
+						<c:if test="${place.user_seq eq sessionScope.user_seq}">
+							<c:set var="imagePaths" value="${place.place_imgs.split(',')}" />
+							<c:choose>
+								<c:when test="${fn:length(imagePaths) > 1}">
+									<div class="place_s">
+										<div class="image_container">
+											<div class="slide_container">
+												<c:forEach items="${imagePaths}" var="imagePath" varStatus="imageLoop">
+													<img src="${imagePath}" alt="Image" class="place_img ${imageLoop.index == 0 ? 'active' : ''}" style="${imageLoop.index > 0 ? 'display: none' : ''}">
+												</c:forEach>
+											</div>
+											<div class="arrow_prev">&lt;</div>
+											<div class="arrow_next">&gt;</div>
+										</div>
+									<div><span>${place.place_name}</span></div>
+									<input type="hidden" value="${place.place_seq}" class="place_seq">
+									</div>
+								</c:when>
+								<c:otherwise>
+									<div class="place_s">
+										<div class="image_container">
+											<img src="${imagePaths[0]}" alt="Image" class="place_img">
+										</div>
+										<div>
+										<span>${place.place_name}</span>
+										</div>
+										<input type="hidden" value="${place.place_seq}" class="place_seq">
+									</div>
+								</c:otherwise>
+							</c:choose>
+						
+						</c:if>
+					</c:forEach>
+				</div>
+			
+				<div class="s_control">
+					<button class="s_prev">이전</button>
+					<button class="s_next">다음</button>
+					<button>호텔추가</button>
+				</div>
+			</div>
 		</div><br>
 	</c:if>
+
 	
 	<div class="mypost">
 		<span><b>고객센터</b></span><br>
@@ -582,6 +637,8 @@ $(document).ready(function() {
 
 	  showSlides();
 	})
+	
+
 
 /* .on("click", "#myinfo", function() {
 var password = prompt("비밀번호를 입력해주세요.");
@@ -605,10 +662,13 @@ var password = prompt("비밀번호를 입력해주세요.");
 })
 
 .on("click", ".place_img", function() {
-  var place_seq = $(this).next("input[type='text']").val();
-  console.log("place_seq: " + place_seq);
-  window.location.href = '/host_managePlace/' + place_seq;
+    var place_seq = $(this).closest(".place_s").find(".place_seq").val();
+    console.log("place_seq: " + place_seq);
+    window.location.href = '/host_managePlace/' + place_seq;
 })
+
+
+
 
 .on("click", "#post", function() {
 	console.log("post click!");
@@ -618,6 +678,46 @@ var password = prompt("비밀번호를 입력해주세요.");
 .on("click", "#mypostlist", function() {
 	window.location.href ="/MyYonolja_mypost";
 })
+
+//
+
+.on("click", ".arrow_prev", function(e) {
+    e.stopPropagation();
+    var container = $(this).siblings(".slide_container");
+    var images = container. find(".place_img");
+    var activeImage = images.filter(".active");
+    var prevImage = activeImage.prev(".place_img");
+
+    if (prevImage. length === 0) {
+        prevImage = images.last();
+    }
+
+    activeImage.removeClass("active").hide();
+    prevImage.addClass("active").show();
+    // 이미지의 크기를 조정합니다.
+/*     prevImage.css('width', '150px');
+    prevImage.css('height', '150px'); */
+})
+
+.on("click", ".arrow_next", function(e) {
+    e.stopPropagation();
+    var container = $(this).siblings(".slide_container");
+    var images = container. find(".place_img");
+    var activeImage = images.filter(".active");
+    var nextImage = activeImage.next(".place_img");
+
+    if (nextImage.length === 0) {
+        nextImage = images.first();
+    }
+
+    activeImage.removeClass("active").hide();
+    nextImage.addClass("active").show();
+    // 이미지의 크기를 조정합니다.
+/*     nextImage.css('width', '150px');
+    nextImage.css('height', '150px'); */
+})
+
+
 
 
 // 내정보버튼 drop down
