@@ -287,17 +287,49 @@ header, footer {
   margin: auto; /* 가운데 정렬 */
   padding: 20px; /* 내부 패딩 추가 for better appearance */
   position: relative;
+  
+  text-align: center;
 }
 
-/* .div_post {
-  border: 1px solid black; /* 외부에 네모난 선 추가 */
-  /*width: fit-content;  요소의 너비를 내용에 맞춤 */
-  border-radius: 15px;
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.div_post {
   width: 800px;
-  margin: auto; /* 가운데 정렬 */
-  padding: 20px; /* 내부 패딩 추가 for better appearance */
-  position: relative;
-} */
+  margin: auto;
+  text-align: center;
+  
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr 1fr;
+  align-items: center;
+  padding: 15px; /* 수정된 부분 */
+  border-bottom: 1px solid black;
+}
+
+.div_post2 {
+  width: 800px;
+  margin: auto;
+  text-align: center;
+  
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr 1fr;
+  align-items: center;
+  padding: 15px; /* 수정된 부분 */
+  border-bottom: 1px solid black;
+}
+
+
+.div_post > span {
+  padding: 4px;
+  display: grid;
+  align-items: center;
+}
+
+
+
 
 </style>
 
@@ -360,16 +392,27 @@ header, footer {
 <section>
 
 <div>
-	<span><h1 class=h1_post>나의문의</h1></span>
+	<h1 class=h1_post><span>나의문의</span></h1>
 	<div class="div_post">
-	
 		<span>#</span>
 		<span>제목</span>
 		<span>작성일</span>
-		<span>답변여부</span>
-	
+		<span>답변여부</span>		
 	</div>
 	<div class="post_click">
+	
+	<c:forEach items="${mypost}" var="post" varStatus="status">
+		<div class="div_post2">
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_seq}</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_title}</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_date}</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">답변 안함</span>
+			<input type="hidden" value="${post.post_seq}" id="seq_${post.post_seq}">
+		</div>
+	</c:forEach>
+
+
+	
 <%-- 		<c:forEach items="${mypost}" var="post" varStatus="status">
 			<c:if test="${status.index > 0 && post.post_seq != mypost[status.index - 1].post_seq}">
 				<br>
@@ -381,19 +424,7 @@ header, footer {
 			<input type=text value="${post.post_seq}" id="seq">
 			<input type="text" value="${post.post_seq}" id="seq_${post.post_seq}">
 			
-		</c:forEach> --%>
-		
-		<c:forEach items="${mypost}" var="post" varStatus="status">
-			<c:if test="${status.index > 0 && post.post_seq != mypost[status.index - 1].post_seq}">
-				<br>
-			</c:if>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_seq}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_title}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_date}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">답변 안함</span>
-			<input type="hidden" value="${post.post_seq}" id="seq_${post.post_seq}">
-		</c:forEach>
-		
+		</c:forEach> --%>	
 		
 	</div>
 </div>

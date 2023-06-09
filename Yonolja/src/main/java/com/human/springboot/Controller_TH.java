@@ -1,5 +1,6 @@
 package com.human.springboot;
 
+import java.io.File;
 import java.lang.reflect.Array;
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.human.springboot.DTO_TH;
 
@@ -24,7 +26,9 @@ import com.human.springboot.DAO_TH;
 
 @Controller
 public class Controller_TH {
-
+	String imgUrl="";
+	String urlPass="C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type";
+	String urlPass_option="C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_option";
 	@Autowired
 	DAO_TH tdao;
 	
@@ -33,11 +37,7 @@ public class Controller_TH {
 		return "admin";
 	}
 	
-	@GetMapping("/admin_review")
-	public String admin_review() {
-		return "admin_review";
-	}
-	
+
 
 	@GetMapping("/admin_user")
 	public String admin_user(Model model, HttpServletRequest req) {
@@ -455,5 +455,329 @@ public class Controller_TH {
 		
 		return "admin_place_option";
 	}
+	
+	@PostMapping("/yonolja_place_type_list")
+	@ResponseBody
+	public String yonolja_place_type_list(HttpServletRequest req) {
+		
+		ArrayList<DTO_TH> list = tdao.yonolja_place_type_list();
+		JSONArray ja= new JSONArray();
+		
+		for(int i=0;i<list.size();i++) {
+			JSONObject jo=new JSONObject();
+			jo.put("seq",list.get(i).getPlace_type_seq());
+			jo.put("name",list.get(i).getPlace_type_name());
+			jo.put("img",list.get(i).getPlace_type_img());
+			ja.put(jo);
+		
+		}
+		System.out.println(ja.toString());
+		return ja.toString();
+	}
+	
+	
+	
+	   @PostMapping("/type_img")
+	   @ResponseBody
+	   public String type_Img(HttpServletRequest req, MultipartFile file) {
+	      String img="ok";
+	  
+		   try {
+	         String fileName = file.getOriginalFilename();
+//	         String fileName = file.getOriginalFilename();
+	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_type");
+	         String filePath = uploadDir + "\\" + fileName;
+//	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type
+	         // webapp 폴더까지의 경로 정보를 가져온다. 
+	         String data_img_url="/img/place_type/" + fileName;
+	         System.out.println(filePath);
+	         file.transferTo(new File(urlPass+"\\"+fileName));
+	         System.out.println("check list");
+	         imgUrl=data_img_url;
+//	        System.out.println("main test="+sub_url);
+//	         hdao.main_img(sub_url);
+	        System.out.println("??");
+	      } catch (Exception ex) {
+	         System.out.println(ex.getMessage());
+	         img="fail";
+	      }
+		   return img;
+	   	}
+	
+	
+	@PostMapping("/yonolja_place_type_add")
+	@ResponseBody
+	public String yonolja_place_type_add(HttpServletRequest req) {
+		String checkVal="ok";
+		String seq="";
+		String name=req.getParameter("name");
+		try {
+			tdao.yonolja_place_type_add(name, imgUrl);
+
+	
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			checkVal="fail";
+		}
+		
+		return checkVal;
+		
+	}
+	
+	@PostMapping("/update_type_name")
+	@ResponseBody
+	public String update_type_name(HttpServletRequest req) {
+		String checkVal="ok";
+		String name=req.getParameter("name");
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		try {
+			tdao.yonolja_place_type_update_name(seq, name);
+		} catch (Exception e) {
+			checkVal="fail";
+				System.out.println(e.getMessage());
+		}
+		
+		
+		return checkVal;
+	}
+	
+	@PostMapping("/update_type_img")
+	@ResponseBody
+	   public String update_type_Img(HttpServletRequest req, MultipartFile file) {
+	      String img="ok";
+	  
+		   try {
+	         String fileName = file.getOriginalFilename();
+//	         String fileName = file.getOriginalFilename();
+	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_type");
+	         String filePath = uploadDir + "\\" + fileName;
+//	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type
+	         // webapp 폴더까지의 경로 정보를 가져온다. 
+	         String data_img_url="/img/place_type/" + fileName;
+	         System.out.println(filePath);
+	         file.transferTo(new File(urlPass+"\\"+fileName));
+	         System.out.println("check list");
+	         imgUrl=data_img_url;
+//	        System.out.println("main test="+sub_url);
+//	         hdao.main_img(sub_url);
+	        System.out.println("??");
+	      } catch (Exception ex) {
+	         System.out.println(ex.getMessage());
+	         img="fail";
+	      }
+		   return img;
+	   	}
+	
+	@PostMapping("/yonolja_place_type_update")
+	@ResponseBody
+	public String yonolja_place_type_update(HttpServletRequest req) {
+		String checkVal="ok";
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		String name=req.getParameter("name")
+				;
+		try {
+			tdao.yonolja_place_type_update_all(seq,name, imgUrl);
+		
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			checkVal="fail";
+		}
+		
+		return checkVal;
+		
+	}
+	@PostMapping("/place_type_delete")
+	@ResponseBody
+	public String place_type_delete(HttpServletRequest req) {
+		String checkVal="ok";
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		System.out.println(seq);
+		try {
+			tdao.yonolja_place_type_delete(seq);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			checkVal="fail";
+		}
+		
+		return checkVal;		
+	}
+	@PostMapping("/yonolja_place_option_list")
+	@ResponseBody
+	public String yonolja_place_option_list(HttpServletRequest req) {
+		
+		ArrayList<DTO_TH> list = tdao.yonolja_place_option_list();
+		JSONArray ja= new JSONArray();
+		
+		for(int i=0;i<list.size();i++) {
+			JSONObject jo=new JSONObject();
+			jo.put("seq",list.get(i).getPlace_option_seq());
+			jo.put("name",list.get(i).getPlace_option_name());
+			jo.put("img",list.get(i).getPlace_option_img());
+			ja.put(jo);
+		
+		}
+		System.out.println(ja.toString());
+		return ja.toString();
+	}
+	
+	
+	
+	   @PostMapping("/option_img")
+	   @ResponseBody
+	   public String option_Img(HttpServletRequest req, MultipartFile file) {
+	      String img="ok";
+	  
+		   try {
+	         String fileName = file.getOriginalFilename();
+//	         String fileName = file.getOriginalFilename();
+	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_option");
+	         String filePath = uploadDir + "\\" + fileName;
+//	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_option
+	         // webapp 폴더까지의 경로 정보를 가져온다. 
+	         String data_img_url="/img/place_option/" + fileName;
+	         System.out.println(filePath);
+	         file.transferTo(new File(urlPass_option+"\\"+fileName));
+	         System.out.println("check list");
+	         imgUrl=data_img_url;
+//	        System.out.println("main test="+sub_url);
+//	         hdao.main_img(sub_url);
+	        System.out.println("??");
+	      } catch (Exception ex) {
+	         System.out.println(ex.getMessage());
+	         img="fail";
+	      }
+		   return img;
+	   	}
+	
+	
+	@PostMapping("/yonolja_place_option_add")
+	@ResponseBody
+	public String yonolja_place_option_add(HttpServletRequest req) {
+		String checkVal="ok";
+		String name=req.getParameter("name");
+		try {
+			tdao.yonolja_place_option_add(name, imgUrl);
+
+	
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			checkVal="fail";
+		}
+		
+		return checkVal;
+		
+	}
+	
+	@PostMapping("/update_option_name")
+	@ResponseBody
+	public String update_option_name(HttpServletRequest req) {
+		String checkVal="ok";
+		String name=req.getParameter("name");
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		try {
+			tdao.yonolja_place_option_update_name(seq, name);
+		} catch (Exception e) {
+			checkVal="fail";
+				System.out.println(e.getMessage());
+		}
+		
+		
+		return checkVal;
+	}
+	
+	@PostMapping("/update_option_img")
+	@ResponseBody
+	   public String update_option_Img(HttpServletRequest req, MultipartFile file) {
+	      String img="ok";
+	  
+		   try {
+	         String fileName = file.getOriginalFilename();
+//	         String fileName = file.getOriginalFilename();
+	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_option");
+	         String filePath = uploadDir + "\\" + fileName;
+//	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_option
+	         // webapp 폴더까지의 경로 정보를 가져온다. 
+	         String data_img_url="/img/place_option/" + fileName;
+	         System.out.println(filePath);
+	         file.transferTo(new File(urlPass_option+"\\"+fileName));
+	         System.out.println("check list");
+	         imgUrl=data_img_url;
+//	        System.out.println("main test="+sub_url);
+//	         hdao.main_img(sub_url);
+	        System.out.println("??");
+	      } catch (Exception ex) {
+	         System.out.println(ex.getMessage());
+	         img="fail";
+	      }
+		   return img;
+	   	}
+	
+	@PostMapping("/yonolja_place_option_update")
+	@ResponseBody
+	public String yonolja_place_option_update(HttpServletRequest req) {
+		String checkVal="ok";
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		String name=req.getParameter("name")
+				;
+		try {
+			tdao.yonolja_place_option_update_all(seq,name, imgUrl);
+		
+
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			checkVal="fail";
+		}
+		
+		return checkVal;
+		
+	}
+	@PostMapping("/place_option_delete")
+	@ResponseBody
+	public String place_option_delete(HttpServletRequest req) {
+		String checkVal="ok";
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		System.out.println(seq);
+		try {
+			tdao.yonolja_place_option_delete(seq);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			checkVal="fail";
+		}
+		
+		return checkVal;		
+	}
+	
+	
+	@GetMapping("/admin_review")
+	public String admin_review() {
+		return "admin_review";
+	}
+	
+	
+	@PostMapping("/review_list")
+	@ResponseBody
+	public String review_list(HttpServletRequest req) {
+		ArrayList<DTO_TH> list=tdao.yonolja_review_list();
+		ArrayList<DTO_TH> listtest = tdao.yonolja_place_option_list();
+		System.out.println(list);
+		System.out.println("test="+listtest);
+		JSONArray ja= new JSONArray();
+		
+		for(int i=0;i<list.size();i++) {
+			JSONObject jo= new JSONObject();
+			jo.put("review_seq", list.get(i).getReview_seq_test());
+			jo.put("place_name", list.get(i).getBook_seq());
+			jo.put("review_content", list.get(i).getReview_content());
+			jo.put("review_date", list.get(i).getReview_date());
+			jo.put("review_star", list.get(i).getReview_star());
+			System.out.println(jo);
+			ja.put(jo);
+		}
+		System.out.println("system test");
+		System.out.println(ja);
+		return ja.toString();
+	}
+	
 	
 }

@@ -31,4 +31,11 @@ public class DTO_TH {
 	int place_option_seq;
 	String place_option_name;
 	String place_option_img;
+	
+	// 관리자 리뷰관리 
+	String review_content;
+	int review_seq_test;
+	String review_date;
+	int review_star;
+	int book_seq;
 }
