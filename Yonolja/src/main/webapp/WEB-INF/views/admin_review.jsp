@@ -54,17 +54,23 @@ $(document)
 	/*if($('#adminCheck').val()!='3'){	관리자 인지 확인
 	alert('잘못된 접근입니다')
 }*/
+	console.log("hi")
+	review_list()
 })
 
 function review_list(){
+	console.log('why?')
 	$.ajax({url:'/review_list',
-			data:{pageNumber:$('#pageNumber').val()},
+			data:{},
 			dataType:'json',
 			type:'post',
-			suecces:function(data){
+			success:function(data){
+				console.log(data)
 				$('#admin_review_management tr:gt(0)').remove();
+				console.log("test")
 				let str='';
-				for(i=0;i<data.lenght;i++){
+				console.log(data.length)
+				for(i=0;i<data.length;i++){
 					str+='<tr><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
 					+data[i]['place_name']+"</td><td>"//book_seq 를 활용하여 place_name 을 가져온다
  					+data[i]['review_content']+"</td><td>"
@@ -72,7 +78,7 @@ function review_list(){
  					+data[i]['review_star']+"</td></tr>"
  					
 				}
-				
+				$('#admin_review_management').append(str);	
 			}
 	})
 

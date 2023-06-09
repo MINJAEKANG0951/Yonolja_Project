@@ -117,9 +117,43 @@
 	<select id='yonolja_place_type_list' resultType='com.human.springboot.DTO_TH'>
 		select * from yonolja_place_type
 	</select>
+	<insert id="yonolja_place_type_add">
+		insert into yonolja_place_type values(PLACE_TYPE_SEQ.nextval,#{param1},#{param2})
+	</insert>
+	<!-- 이미지 이름 전부 변경 -->
+	<update id="yonolja_place_type_update_all">
+		update yonolja_place_type set place_type_name=#{param2}, place_type_img=#{param3} where place_type_seq=#{param1}
+	</update>
+	<!-- 이름만 변경 -->
+	<update id="yonolja_place_type_update_name">
+		update yonolja_place_type set place_type_name=#{param2} where place_type_seq=#{param1}
+	</update>
+	<delete id="yonolja_place_type_delete">
+		delete from yonolja_place_type where place_type_seq=#{param1}
+	</delete>
 	<!-- 호텔 편이시설 관리 -->
 	<select id='yonolja_place_option_list' resultType='com.human.springboot.DTO_TH'>
 		select * from yonolja_place_option
+	</select>
+	<insert id="yonolja_place_option_add">
+		insert into yonolja_place_option values(PLACE_option_SEQ.nextval,#{param1},#{param2})
+	</insert>
+	<!-- 이미지 이름 전부 변경 -->
+	<update id="yonolja_place_option_update_all">
+		update yonolja_place_option set place_option_name=#{param2}, place_option_img=#{param3} where place_option_seq=#{param1}
+	</update>
+	<!-- 이름만 변경 -->
+	<update id="yonolja_place_option_update_name">
+		update yonolja_place_option set place_option_name=#{param2} where place_option_seq=#{param1}
+	</update>
+	<delete id="yonolja_place_option_delete">
+		delete from yonolja_place_option where place_option_seq=#{param1}
+	</delete>
+	
+	<select id="yonolja_review_list" resultType='com.human.springboot.DTO_TH'>
+		select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,num from
+    	(select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,rownum as num from review)
+    	where num between 1 and 10 order by num desc
 	</select>
 </mapper>
 
