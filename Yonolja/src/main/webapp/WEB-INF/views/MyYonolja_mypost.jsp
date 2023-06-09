@@ -2,6 +2,14 @@
     pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="true"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%
+// 세션 만료 여부 확인
+if (session.getAttribute("user_id") == null) {
+    // 세션 만료 시 /main으로 이동
+    response.sendRedirect("/main");
+}
+%>
 <!DOCTYPE html>
 <html>
 <head>

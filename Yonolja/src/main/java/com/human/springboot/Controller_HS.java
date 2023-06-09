@@ -117,6 +117,21 @@ public class Controller_HS {
         return "MyYonolja_mypost";
     }
     
+    // 예약내역조회 페이지
+    @GetMapping("/MyYonolja_mybooklist")
+    public String MyYonolja_mybooklist(Model model, HttpServletRequest req) {
+    	
+    	return "MyYonolja_mybooklist";
+    }
+    
+    // 내후기보기 페이지
+    @GetMapping("/MyYonolja_myreview")
+    public String MyYonolja_myreview(Model model, HttpServletRequest req) {
+    	
+    	return "MyYonolja_myreview";
+    }
+    
+    
 	// 에러 메시지 체크
     private void printExceptionMsg(String methodName, String msg) {
 	      System.out.println("Exception[" + methodName + "]: " + msg);

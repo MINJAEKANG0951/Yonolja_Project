@@ -3,7 +3,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="true"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-
+<%
+// 세션 만료 여부 확인
+if (session.getAttribute("user_id") == null) {
+    // 세션 만료 시 /main으로 이동
+    response.sendRedirect("/main");
+}
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -410,6 +416,43 @@ a {
     right: -5px;
 }
 
+/* 모달창 비밀번호확인창 */
+#passwordModal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+#passwordModalContent {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
 
 
 </style>
@@ -531,17 +574,48 @@ a {
 										<input type="hidden" value="${place.place_seq}" class="place_seq">
 									</div>
 								</c:otherwise>
-							</c:choose>
-						
-						</c:if>
+							</c:choose>						
+						</c:if>						
 					</c:forEach>
 				</div>
-			
-				<div class="s_control">
-					<button class="s_prev">이전</button>
-					<button class="s_next">다음</button>
-					<button>호텔추가</button>
-				</div>
+				
+				<c:choose>
+					<c:when test="${empty placeList}">
+						<div class="s_control">
+							<h3>등록된 업장 정보가 없습니다.</h3>
+						</div>
+						<div class="s_control">
+							<button class="addH">업장추가</button>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<c:set var="userExists" value="false" />
+						<c:forEach items="${placeList}" var="place">
+							<c:if test="${place.user_seq eq sessionScope.user_seq}">
+								<c:set var="userExists" value="true" />
+							</c:if>
+						</c:forEach>
+						
+						<c:choose>
+							<c:when test="${not userExists}">
+								<div class="s_control">
+									<h3>등록된 업장 정보가 없습니다.</h3>
+								</div>
+								<div class="s_control">
+									<button class="addH">업장추가</button>
+								</div>
+							</c:when>
+							<c:otherwise>
+							<div class="s_control">
+								<button class="s_prev">이전</button>
+								<button class="s_next">다음</button>
+								<button class="addH">업장추가</button>
+							</div>
+							</c:otherwise>
+						</c:choose>
+					</c:otherwise>
+				</c:choose>
+				
 			</div>
 		</div><br>
 	</c:if>
@@ -554,6 +628,19 @@ a {
 	</div>
 
 </div>
+
+<div id="passwordModal">
+    <div id="passwordModalContent">
+        <span class="close">&times;</span>
+        <label for="passwordInput">비밀번호를 입력해주세요:</label>
+        <input type="password" id="passwordInput">
+        <button id="confirmButton">확인</button>
+    </div>
+</div>
+
+
+
+
 </section>
 
 <footer>
@@ -637,38 +724,49 @@ $(document).ready(function() {
 
 	  showSlides();
 	})
-	
-
 
 /* .on("click", "#myinfo", function() {
-var password = prompt("비밀번호를 입력해주세요.");
-
-	if (password === '123') {
-		window.location.href = '/MyYonolja_myinfo';
-	} else {
-		alert('비밀번호가 틀렸습니다.');
-	}
-}) */
-
-.on("click", "#myinfo", function() {
 	var password = prompt("비밀번호를 입력해주세요.");
 	var user_ps = $(".user_ps").val();
 
 		if (password === user_ps) {
 			window.location.href = '/MyYonolja_myinfo';
 		} else {
-			alert('비밀번호가 틀렸습니다.');
+			alert('비밀번호가 일치하지 않습니다.');
 		}
+}) */
+
+$(document)
+.on("click", "#myinfo", function() {
+    $("#passwordModal").show();
 })
+
+.on("click", ".close", function() {
+    $("#passwordModal").hide();
+    $("#passwordInput").val(''); // 추가된 부분: 비밀번호 입력 필드 초기화
+})
+
+.on("click", "#confirmButton", function() {
+    var password = $("#passwordInput").val();
+    var user_ps = $(".user_ps").val();
+
+    if (password === user_ps) {
+        window.location.href = '/MyYonolja_myinfo';
+    } else {
+        alert('비밀번호가 일치하지 않습니다.');
+    }
+    $("#passwordModal").hide();
+    $("#passwordInput").val(''); // 추가된 부분: 비밀번호 입력 필드 초기화
+})
+
+
+
 
 .on("click", ".place_img", function() {
     var place_seq = $(this).closest(".place_s").find(".place_seq").val();
     console.log("place_seq: " + place_seq);
     window.location.href = '/host_managePlace/' + place_seq;
 })
-
-
-
 
 .on("click", "#post", function() {
 	console.log("post click!");
@@ -677,6 +775,18 @@ var password = prompt("비밀번호를 입력해주세요.");
 
 .on("click", "#mypostlist", function() {
 	window.location.href ="/MyYonolja_mypost";
+})
+
+.on("click", ".addH", function() {
+	window.location.href = "/host_addPlace";
+})
+
+.on("click", "#mybooks", function() {
+	window.location.href = "/MyYonolja_mybooklist";
+})
+
+.on("click", "#myreviews", function() {
+	window.location.href = "/MyYonolja_myreview";
 })
 
 //
