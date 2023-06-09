@@ -11,22 +11,30 @@
 <div class="amdin_user">
 	<div class=admin_user_management>
 		
-		<h2>회원관리</h2>
+		<h2 id=user_management_title>회원관리</h2>
 		<a href='/admin'>관리자 페이지</a>
 		<table border="1px solid:black" id='admin_member_management_table'>
 			<tr>
-				<td>회원번호</td><td>이름</td><td>아이디</td><td>전화번호</td><td>성별</td><td>회원이메일</td>
-				<td>
-					<select id=post_user_type>
-						<option value=0>전체</option>	
-					</select>
-				</td>
+				<td>회원번호</td>
+				<td>이름</td>
+				<td>아이디</td>
+				<td>전화번호</td>
+				<td>성별</td>
+				<td>회원이메일</td>
+				<td>회원유형</td>
 			</tr>
 		</table>
-		<div>
+		<div id=pagenumber>
 			<c:forEach var="i" begin="${start}" end="${end}">
-				<li class="page-item "><a id="paging${i }" class="page-link" onclick='memberlist(${i })'>${i }</a></li>
+				<li class="page-item " id=main_paging_number><a id="paging${i }" class="page-link" onclick='memberlist(${i })'>${i }</a></li>
             </c:forEach>
+		</div>
+		<div>
+			<select id=admin_user_search_type>
+				<option value=통합검색>통합검색
+			</select>
+			<input type=text id=admin_user_search >
+			<input type=button id=admin_user_search_btn value=검색>
 		</div>
 	</div>
 </div>
@@ -64,32 +72,89 @@ $(document)
 	})
 })
 */
-//function memberList(){
-//	$.ajax({
-//		url:"/member_list",
-//		data:{},
-	//	dataType:'json',
-//		type:"post",
-//		success:function(data){
-//			;// 번호 이름 아이디 전화번호 성별 이메일 타입
-//			$('#admin_member_management_table tr:gt(0)').remove();
-//			for(i=0;i<data.length;i++){
-//				let str=''
-//				str+='<tr><td>'
-//				+data[i]['user_seq']+'</td><td>'
-//				+data[i]['user_name']+'</td><td>'
-/* 				+data[i]['user_id']+'</td><td>'
-				+data[i]['user_mobile']+'</td><td>'
-				+data[i]['user_gender']+'</td><td>'
-				+data[i]['user_email']+'</td><td>'
-				+data[i]['user_type']+'</td></tr>'
+
+.on('click','#user_management_title',function(){
+	document.location='/admin_user'
+})
+.on('click','#admin_user_search_btn',function(){
+	console.log($('#admin_user_search').val())
+	$.ajax({
+		url:'/admin_user_search_paging',
+		data:{search:$('#admin_user_search').val()},
+		dataType:'text',
+		type:'post',
+		success:function(data){
 				
-				$('#admin_member_management_table').append(str)
+			if(data!=0){
+				console.log(data)
+				str=""
+				for(i=1;i<=data;i++){
+					str+="<a id=admin_search_page"+i+" value="+i+">"+i+"</a>&nbsp"
+					
+					
+				}
+				console.log(str)
+				$('#pagenumber').empty()
+				$('#pagenumber').append(str)
+				
+			}else{
+				$('#pagenumber').empty()
 			}
 			
 		}
 	})
-}*/
+	
+	$.ajax({
+		url:'/admin_user_search',
+		data:{search:$('#admin_user_search').val()},
+		dataType:'json',
+		type:'post',
+		beforeSend:function(){
+			if($('#admin_user_search').val()==""){
+				alert('검색창에 입력해주세요')
+				return false;
+			}
+		},
+		success:function(data){
+			console.log(data)
+			console.log("data="+data.length)
+			if(data!=''){
+				console.log('test')
+				let str="";
+				$('#admin_member_management_table tr:gt(0)').remove();
+				for(var i=0;i<data.length;i++){
+					let str=''
+					str+='<tr><td>'
+					+data[i]['user_seq']+'</td><td>'
+					+data[i]['user_name']+'</td><td>'
+					+data[i]['user_id']+'</td><td>'
+					+data[i]['user_mobile']+'</td><td>'
+					+data[i]['user_gender']+'</td><td>'
+					+data[i]['user_email']+'</td><td>'
+					+data[i]['user_type']+'</td></tr>'
+					
+					$('#admin_member_management_table').append(str)
+				}	
+			
+			}else{
+				$('#admin_member_management_table tr:gt(0)').remove();
+				let val='<tr><td colspan=7>검색 된 내역이 없습니다</td></tr>'
+					$('#admin_member_management_table').append(val)
+				
+				
+			}
+			
+			
+		}
+	
+	})
+	// 페이징 번호
+	
+
+})
+
+
+
 function memberlist(page){
 	$('.page-item').removeClass("active");
 	$('#paging'+ page).parent().addClass("active");

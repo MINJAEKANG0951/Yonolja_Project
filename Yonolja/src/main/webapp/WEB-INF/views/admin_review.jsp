@@ -42,7 +42,7 @@
  			<td>번호</td><td>숙소이름</td><td>제목</td><td>날짜</td><td>평점</td>
  		</tr>
  	</table>
- 	<div class='paging'>
+ 	<div id="admin_page_controller" class='paging'>
  		
  	</div>
 </div>
@@ -51,17 +51,37 @@
 <script>
 $(document)
 .ready(function(){
+
+	
 	/*if($('#adminCheck').val()!='3'){	관리자 인지 확인
 	alert('잘못된 접근입니다')
-}*/
+}*/         
 	console.log("hi")
-	review_list()
+//	review_list()
+    paging()
+        .then(function() {
+            console.log($('#pagenum1').attr('value'));
+            review_list($('#pagenum1').attr('value'));	
+
+	
+        })
+        .catch(function(error) {
+            console.error(error);
+        });
+	console.log("hello")
+	
 })
 
-function review_list(){
+.on('click','#admin_page_controller>a',function(){
+	console.log($(this).text())
+	review_list($(this).text())
+})
+
+
+function review_list(a){
 	console.log('why?')
-	$.ajax({url:'/review_list',
-			data:{},
+	$.ajax({url:'/admin_review_list',
+			data:{number:a},
 			dataType:'json',
 			type:'post',
 			success:function(data){
@@ -78,12 +98,40 @@ function review_list(){
  					+data[i]['review_star']+"</td></tr>"
  					
 				}
+
 				$('#admin_review_management').append(str);	
 			}
 	})
 
 }
-
+function paging() {
+    return new Promise(function(resolve, reject) {
+        $.ajax({
+            url: '/admin_review_paging',
+            data: {},
+            dataType: 'text',
+            type: 'post',
+            success: function(data) {
+                if (data != "") {
+                    console.log(data);
+                    let str = "";
+                    for (let i = 1; i <= data; i++) {
+                        str += "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
+                    }
+                    $('#admin_page_controller').append(str);
+                    resolve(); // 프라미스를 성공(resolve) 상태로 변경
+                } else {
+                    console.warn("No data"); // 데이터가 없을 경우 경고 출력
+                    resolve(); // 프라미스를 성공(resolve) 상태로 변경
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error(error); // AJAX 요청이 실패할 경우 오류 출력
+                reject(error); // 프라미스를 거부(reject) 상태로 변경
+            }
+        });
+    });
+}
 
 </script>
 </html>

@@ -28,9 +28,7 @@ img {
 	<div class='admin_user'>
 		<a href="admin_user">회원관리</a>
 	</div>
-	<div class='admin_place_option'>
-		<a href="admin_place_option">호텔 옵션 관리</a>
-	</div>
+
 
 	<div id=admin_place_option_and_type>
 		<table>

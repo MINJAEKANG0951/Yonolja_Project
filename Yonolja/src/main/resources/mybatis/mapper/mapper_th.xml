@@ -21,6 +21,31 @@
 	<select id='member_count' resultType="int">
 		select count(user_id) from Yonolja_user where not user_id='admin'
 	</select>
+	
+	<!-- 회원 검색 -->
+	<select id="admin_user_search" resultType='com.human.springboot.DTO_TH'>
+		SELECT USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE, NUM
+		FROM (SELECT USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE, ROWNUM AS NUM
+		FROM ( select USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE 
+				from yonolja_user where not user_id='admin' and (USER_ID like '%' || #{param1} || '%'
+                  or  USER_NAME like '%' || #{param1} || '%' 
+                  or  USER_MOBILE like '%' || #{param1} || '%' 
+                  or USER_EMAIL like '%' || #{param1} || '%'
+                  or USER_gender like '%' || #{param1} || '%'
+                  or USER_TYPE like '%' || #{param1} || '%') ORDER BY user_seq ASC))
+		WHERE NUM BETWEEN 1 AND 10
+	</select>
+	<select id="admin_user_search_count" resultType='int'>
+		select count(*)
+				from yonolja_user where not user_id='admin' and (USER_ID like '%' || #{param1} || '%'
+                  or  USER_NAME like '%' || #{param1} || '%' 
+                  or  USER_MOBILE like '%' || #{param1} || '%' 
+                  or USER_EMAIL like '%' || #{param1} || '%'
+                  or USER_gender like '%' || #{param1} || '%'
+                  or USER_TYPE like '%' || #{param1} || '%')
+	
+	</select>
+	
 	<!-- 나중에 타입별 보여주기
 	 
 	<select id='admin_user_type' resultType='com.human.springboot.DTO_TH'>
@@ -149,11 +174,16 @@
 	<delete id="yonolja_place_option_delete">
 		delete from yonolja_place_option where place_option_seq=#{param1}
 	</delete>
-	
+	<!-- 리뷰 관리  차후 변경 필요 -->
 	<select id="yonolja_review_list" resultType='com.human.springboot.DTO_TH'>
-		select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,num from
-    	(select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,rownum as num from review)
-    	where num between 1 and 10 order by num desc
+    select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,num from(
+    select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,rownum as num from
+    (select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ from review order by review_seq_test desc))
+    where num between #{param1} and #{param2}
 	</select>
+	<!--  리뷰관리 페이지 -->
+	<select id="yonolja_review_page" resultType="int">
+		select count(*) from review
+	</select> 
 </mapper>
 

@@ -118,6 +118,51 @@ public class Controller_TH {
 		
 	}
 	
+	@PostMapping("/admin_user_search")
+	@ResponseBody
+	public String admin_user_search(HttpServletRequest req) {
+		String searchVal=req.getParameter("search");
+		System.out.println(searchVal);
+		ArrayList<DTO_TH> list=tdao.admin_user_search(searchVal);
+		System.out.println("list"+list);
+		JSONArray ja=new JSONArray();
+		
+		for(int i=0;i<list.size();i++) {
+			JSONObject jo=new JSONObject();
+			jo.put("user_seq",list.get(i).getUSER_SEQ());
+			System.out.println(jo);
+			jo.put("user_id",list.get(i).getUSER_ID());
+			jo.put("user_email",list.get(i).getUSER_EMAIL());
+			jo.put("user_gender",list.get(i).getUSER_GENDER());
+			jo.put("user_mobile",list.get(i).getUSER_MOBILE());
+			jo.put("user_name",list.get(i).getUSER_NAME());
+			jo.put("user_type",list.get(i).getUSER_TYPE());
+			ja.put(jo);
+		}
+		System.out.println(list.size());
+
+		System.out.println("ja.toString="+ja.toString());
+		System.out.println("test"+ja);
+		return ja.toString();
+	}
+	
+	@PostMapping("/admin_user_search_paging")
+	@ResponseBody
+	public int admin_user_search_paging(HttpServletRequest req) {
+		String search=req.getParameter("search");
+		int number=tdao.admin_user_search_count(search);
+		System.out.println(number);
+		int page;
+		if(number%10==0) {
+			page=number/10;
+			
+		}else {
+			page=(number/10)+1;
+		}
+		
+		return page;
+	}
+	
 	
 	@GetMapping("/admin_post")
 	public String admin_post(HttpServletRequest req, Model model) {
@@ -447,15 +492,7 @@ public class Controller_TH {
 		
 	}
 	
-	@GetMapping("/admin_place_option")
-	public String admin_place_option(HttpServletRequest req) {
-		HttpSession session=req.getSession();
-		session.getAttribute("login");
-		
-		
-		return "admin_place_option";
-	}
-	
+
 	@PostMapping("/yonolja_place_type_list")
 	@ResponseBody
 	public String yonolja_place_type_list(HttpServletRequest req) {
@@ -755,17 +792,24 @@ public class Controller_TH {
 	}
 	
 	
-	@PostMapping("/review_list")
+	@PostMapping("/admin_review_list")
 	@ResponseBody
 	public String review_list(HttpServletRequest req) {
-		ArrayList<DTO_TH> list=tdao.yonolja_review_list();
+		
+		int number=Integer.parseInt(req.getParameter("number"));
+		int end=number*10;
+		int start=end-9;
+		ArrayList<DTO_TH> list=tdao.yonolja_review_list(start,end);
 		ArrayList<DTO_TH> listtest = tdao.yonolja_place_option_list();
 		System.out.println(list);
 		System.out.println("test="+listtest);
 		JSONArray ja= new JSONArray();
 		
+
+
 		for(int i=0;i<list.size();i++) {
 			JSONObject jo= new JSONObject();
+			
 			jo.put("review_seq", list.get(i).getReview_seq_test());
 			jo.put("place_name", list.get(i).getBook_seq());
 			jo.put("review_content", list.get(i).getReview_content());
@@ -774,10 +818,26 @@ public class Controller_TH {
 			System.out.println(jo);
 			ja.put(jo);
 		}
+		
 		System.out.println("system test");
 		System.out.println(ja);
 		return ja.toString();
 	}
 	
 	
+
+	@PostMapping("/admin_review_paging")
+	@ResponseBody
+	public int admin_review_paging() {
+				int review=tdao.yonolja_review_page();
+		int page=0;
+		int pageend=0;
+		if(review%10==0) {
+			pageend=review/10;
+		}else if(review%10>0){
+			pageend=review/10+1;
+		}
+		
+		return pageend;
+	}
 }
