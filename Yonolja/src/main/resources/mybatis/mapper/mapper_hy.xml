@@ -23,24 +23,7 @@
 		)
 	</insert>
 	
-	<!-- host_managePlace ptype, poption select 관련  -->
-<!-- 		<select id="showmyPtype" resultType="com.human.springboot.DTO_HY_P"> -->
-<!--   			SELECT p.place_type_seq, t.place_type_name -->
-<!--   			FROM yonolja_place p -->
-<!--   			INNER JOIN yonolja_place_type t ON p.place_type_seq = t.place_type_seq -->
-<!--   			WHERE p.place_type_seq = #{place_Seq} -->
-<!-- 		</select> -->
 
-	 	
-<!-- 	 	<select id="showmyPopt" resultType="com.human.springboot.DTO_HY_P"> -->
-<!--     	select place_option_seq, place_option_name  -->
-<!--     	from yonolja_place_option  -->
-<!--     	order by place_option_seq asc -->
-<!-- 		</select> -->
-<!-- /////////////제이쿼리로 선택되거나 체크되게해서 표시하면 될듯  -->
-
-
-	<!-- 사업장정보 place_seq와 일치하는 정보 기본셋팅 -->
 	
 	<select id="getEnvironments"  resultType="com.human.springboot.DTO_HY_P">
 		select*from yonolja_place_environment
@@ -53,12 +36,65 @@
 	</select>
 	
 <!-- 	업장정보수정모달관련코드 -->
-	<update id="updateMyplace">
-		UPDATE yonolja_place SET place_name = #{param1} ,place_type_seq=#{param3}, place_checkin_time=#{param4}, 
-					  place_checkout_time=#{param5}, place_address=#{param6}, place_environment=#{param7}, 
-					  	  place_mobile=#{param8}, place_options=#{param9}, place_guide=#{param10}
-					WHERE place_seq = #{param2} 
+	<update id="changePlace">
+    UPDATE yonolja_place SET
+        place_name = #{param2},
+        user_seq = #{param3},
+        place_type_seq = #{param4},
+        place_checkin_time = #{param5},
+        place_checkout_time = #{param6},
+        place_address = #{param7},
+        place_mobile = #{param8},
+        place_options = #{param9},
+        place_guide = #{param10},
+        place_environment = #{param11}
+    WHERE place_seq = #{param1}
 	</update>
-		
+	
+<!-- 	객실타입추가코드 -->
+<!-- 	<insert id="addRoomType"> -->
+<!--     insert into yonolja_roomtype values( -->
+<!--         roomtype_seq.nextval, -->
+<!--         #{param1}, -->
+<!--         #{param2}, -->
+<!--         #{param3}, -->
+<!--         #{param4} -->
+  
+<!--     ) -->
+<!-- 	</insert> -->
+
+	<insert id="addRoomType">
+	    insert into yonolja_roomtype (
+	        ROOMTYPE_SEQ,
+	        ROOMTYPE_NAME,
+	        PLACE_SEQ,
+	        ROOMTYPE_IMGS, 
+	        ROOMTYPE_CAPACITY,
+	        ROOMTYPE_PRICE,
+	        ROOMTYPE_GUIDE
+	    )
+	 
+	     values(
+	        roomtype_seq.nextval,
+	        #{param1},
+	        #{param2},
+	     	#{param3},
+	        #{param4},
+	  		#{param5},
+	  		#{param6}
+	    )
+	</insert>
+
+
+
+    <select id="getRoomtype" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+        SELECT * FROM yonolja_roomtype
+        where place_seq = #{param1}
+    </select>
+
+
 </mapper>
+
+
+
 

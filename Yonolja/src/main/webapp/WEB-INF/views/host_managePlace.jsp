@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page session="true" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -8,14 +9,14 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <body>
-<input type=hidden id=place_seq value="${place_seq}" readonly>
+
   <!-- 업장정보 수정 버튼 -->
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modifyBusinessModal" id="updatePlace">
     업장정보 수정
   </button>
 
   <!-- 객실타입 버튼 -->
-  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#roomTypeModal">
+  <button type="button" id="btnRoomtype"class="btn btn-primary" data-toggle="modal" data-target="#roomTypeModal">
     객실타입
   </button>
 
@@ -36,8 +37,8 @@
         </div>
         <div class="modal-body">
           <h2>사업장 정보 입력</h2>
-          <form action="updateMyplace" method="POST" id="fmt" enctype="multipart/form-data">
-            
+        
+            <input type="text" id="place_seq" value="${place_seq}" readonly>
             <label for="pname">사업장 이름:</label><br>
             <input type="text" id="pname" name="pname"><br>
             
@@ -83,18 +84,13 @@
             </c:forEach>
 
             <input type="file" id="pimage" name="img" accept="image/*" multiple>
-            
-            
-            
-       
-         
-        
+ 
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
           <button type="submit" id="btnsubmit" class="btn btn-primary">저장</button>
         </div>
-          </form>
+         
       </div>
     </div>
   </div>
@@ -112,29 +108,30 @@
         <div class="modal-body">
           <h2>객실 정보 입력</h2>
           <form action="/insertRoomType" method="POST" id="roomTypeForm" enctype="multipart/form-data">
-            <label for="roomTypeId">객실타입 ID:</label><br>
-            <input type="text" id="roomTypeId" name="roomTypeId"><br>
+<!--             <label for="roomTypeId">객실타입 ID:</label><br> -->
+<!--             <input type="text" id="roomTypeId" name="roomTypeId"><br> -->
             
-            <label for="hotelId">호텔 ID:</label><br>
-            <input type="text" id="hotelId" name="hotelId"><br>
+<!--             <label for="hotelId">호텔 ID:</label><br> -->
+<!--             <input type="text" id="hotelId" name="hotelId"><br> -->
+			<input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
             
             <label for="roomName">객실 이름:</label><br>
-            <input type="text" id="roomName" name="roomName"><br>
-            
-            <label for="amenities">객실편의시설:</label><br>
-            <textarea id="amenities" name="amenities"></textarea><br>
-            
-            <label for="description">객실 설명:</label><br>
-            <textarea id="description" name="description"></textarea><br>
+            <input type="text" id="roomtype_name" name="roomtype_name"><br>
             
             <label for="roomImage">객실 사진:</label><br>
-            <input type="file" id="roomImage" name="roomImage" accept="image/*"><br>
+            <input type="file" id="roomtype_imgs" name="roomtype_imgs" accept="image/*" multiple><br>
             
             <label for="maxCapacity">객실 최대 숙박 인원:</label><br>
-            <input type="number" id="maxCapacity" name="maxCapacity"><br>
+            <input type="number" id="roomtype_capacity" name="roomtype_capacity"><br>
             
             <label for="nightRate">1박 금액:</label><br>
-            <input type="number" id="nightRate" name="nightRate"><br>
+            <input type="number" id="roomtype_price" name="roomtype_price"><br>
+            
+<!--             <label for="amenities">객실편의시설:</label><br> -->
+<!--             <textarea id="roomtype_options" name="roomtype_options"></textarea><br> -->
+            
+            <label for="roomGuide">객실 설명:</label><br>
+            <textarea id="roomtype_guide" name="roomtype_guide"></textarea><br>
             
             <input type="submit" value="제출">
           </form>
@@ -186,17 +183,23 @@
     <table class="table">
       <thead>
         <tr>
-          <th>객실타입 ID</th>
-          <th>호텔 ID</th>
-          <th>객실 이름</th>
+          <th>객실타입 이름</th>
+          <th>객실타입 사진</th>
+          <th>객실 최대인원 </th>
+          <th>객실 1박금액 </th>
+          <th>객실 타입옵션 </th>
+          <th>객실 안내문 </th>
         </tr>
       </thead>
       <tbody>
         <c:forEach items="${roomTypes}" var="roomType">
           <tr>
-            <td>${roomType.roomTypeId}</td>
-            <td>${roomType.hotelId}</td>
-            <td>${roomType.roomName}</td>
+            <td>${roomType.rtName}</td>
+            <td>${roomType.rtImg}</td>
+            <td>${roomType.rtCapacity}</td>
+            <td>${roomType.rtPrice}</td>
+<%--             <td>${roomType.rtOption}</td> --%>
+            <td>${roomType.rtGuide}</td>
           </tr>
         </c:forEach>
       </tbody>
@@ -369,7 +372,8 @@ $(document)
 	
 	
 	// 채우기
-	place_seq = $('#place_seq').val();
+	 place_seq = $('#place_seq').val();
+
 	
 	$.ajax({url:'/getPlaceInfo', type:'post', dataType:'json', 
 		
@@ -440,70 +444,93 @@ $(document)
 })
 
 
+	
+	
+  $(document).on('click', '#btnsubmit', function() {
+    var pzip_code = $('#pzip_code').val();
+    var paddress1 = $('#paddress1').val();
+    var paddress2 = $('#paddress2').val();
+    var paddress = pzip_code + ',' + paddress1 + ',' + paddress2;
 
-.on('click','#btnsubmit',function(){
-	
-	var pzip_code = $('#pzip_code').val();
-	var paddress1 = $('#paddress1').val();
-	var paddress2 = $('#paddress2').val();
-	var paddress = pzip_code +','+paddress1+','+paddress2;
-	
-	
-	 var checkEnv = []; // 주변환경 체크박스 인서트
-	  $("input[name='environments']:checked").each(function() {
-		  checkEnv.push($(this).val());
-	    });
-	 
-	  var checkOpt = [];
-	   $("input[name='pfeatures']:checked").each(function() {
-		   checkOpt.push($(this).val());
-	    });
-	  
-	
-	// 배열로 만들어서 값을  컨트롤러에서 values처리를 해서 넣어줌.  
-	
-	
-	$.ajax({
-		url:'/updateMyplace',
-		type:'post',
-		dataType:'json', 
-        data:{
-        	  place_seq:$('#place_seq').val(),
-        	  pname:$('#pname').val(),
-        	  ptype:$('#ptype').val(),
-        	  paddress:paddress,
-        	  pmobile:$('#pmobile').val(),
-        	  pcheckin:$('#pcheckin').val(),
-			  pcheckout:$('#pcheckout').val(),
-			  pguide:$('#pguide').val(),
-			  checkEnv:checkEnv,
-			  checkOpt:checkOpt
-			  // 사진 수정 기능 필요 
-			  },
-              
-              success:function(data){
-                  
-                  
-                  if(data=="ok") {
-                 	 
- 					  
-                  } else {	
-                 	 
- 		               alert(data);
-                  }
-                  
-                
-          }
-              
-	});
-	
-	
-})
-  
- document.getElementById('pcheckin').onclick = function(){
-	a= $(this).val();
-	console.log(a);
-}
+    var checkEnv = []; // 주변환경 체크박스 인서트
+    $("input[name='environments']:checked").each(function() {
+      checkEnv.push($(this).val());
+    });
+    console.log(checkEnv);
+
+    var checkOpt = [];
+    $("input[name='pfeatures']:checked").each(function() {
+      checkOpt.push($(this).val());
+    });
+
+    console.log(checkOpt);
+    console.log($('#pcheckin').val());
+    console.log($('#pcheckout').val());
+    console.log($('#pguide').val());
+
+    // 배열로 만들어서 값을  컨트롤러에서 values처리를 해서 넣어줌.  
+//     checkEvn = '';
+//     for (i = 0; i < $("input[name=environments]:checked").length; i++) {
+//       if (i == 0) {
+//         checkEvn += $("input[name=environments]:checked:eq(" + i + ")").val();
+//       } else {
+//         checkEvn += "," +
+//           $("input[name=environmets]:checked:eq(" + i + ")").val();
+//       }
+//     }
+
+var checkEnv = '';
+$("input[name='environments']:checked").each(function(index) {
+  if (index === 0) {
+    checkEnv += $(this).val();
+  } else {
+    checkEnv += "," + $(this).val();
+  }
+});
+
+
+    checkOpt = '';
+    for (i = 0; i < $("input[name=pfeatures]:checked").length; i++) {
+      if (i == 0) {
+        checkOpt += $("input[name=pfeatures]:checked:eq(" + i + ")").val();
+      } else {
+        checkOpt += "," +
+          $("input[name=pfeatures]:checked:eq(" + i + ")").val();
+      }
+    }
+
+    $.ajax({
+      url: '/modifyPlace',
+      type: 'post',
+      dataType: 'text',
+      data: {
+        place_seq: $('#place_seq').val(),
+        pname: $('#pname').val(),
+        ptype: $('#ptype').val(),
+        paddress: paddress,
+        pmobile: $('#pmobile').val(),
+        pcheckin: $('#pcheckin').val(),
+        pcheckout: $('#pcheckout').val(),
+        pguide: $('#pguide').val(),
+        checkEnv: checkEnv,
+        checkOpt: checkOpt
+        // 사진 수정 기능 필요 
+      },
+      success: function(data) {
+        if (data == "ok") {
+
+        } else {
+          alert(data);
+        }
+      }
+    });
+  });
+
+  document.getElementById('pcheckin').onclick = function() {
+    a = $(this).val();
+    console.log(a);
+  }
+
     
     
   </script>

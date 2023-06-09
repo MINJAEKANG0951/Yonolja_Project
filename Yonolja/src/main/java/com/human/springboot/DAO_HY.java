@@ -22,8 +22,16 @@ public interface DAO_HY {
 	
 	// host_managePlace 관련 정보수정 
 	
-	void updateMy(int place_seq, String place_name, int user_seq, int place_type_seq, String place_checkin_time,
+	void changePlace(int place_seq, String place_name, int user_seq, int place_type_seq, String place_checkin_time,
 			String place_checkout_time, String place_address,String place_mobile, String place_options,
 			String place_guide,String place_environment);
+	
+	// RoomType insert 
+	
+	void addRoomType(String rname,int place_seq, String img, int maxCapacity, int nightRate, String roomGuide);
+	
+	// RoomType select
+	
+	DTO_HY_roomtypeDTO getRoomtype(int place_seq);
 
 }

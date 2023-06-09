@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,6 +26,12 @@ public class Controller_HY {
 	// 경로 나중에 변환해야함 
 	String placeImgPath = 
 	"C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_img";
+	
+	// roomtype_option 경로 
+	
+	String roomtype_optionImgPath = 
+			"C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\roomtype_option";
+	
 	
 	// 업장추가페이지 
 	@Autowired
@@ -174,6 +179,9 @@ public class Controller_HY {
 	    //////////////////업장 정보수정창에서 해당 place 정보 기본셋팅//////////////
 	   
 	    model.addAttribute("place_seq", place_Seq);
+	    /////////////////객실타입 게시하는 코드시작/////////////
+	    ArrayList<DTO_HY_roomtypeDTO> rooms = hydao.getRoomtype(Integer.parseInt(req.getParameter("place_seq") ));
+        model.addAttribute("rooms", rooms);
 		
 		return "host_managePlace";
 		
@@ -206,14 +214,16 @@ public class Controller_HY {
 	
 	
 	
-	@PostMapping("/updateMyplace")
+	@PostMapping("/modifyPlace")
 	@ResponseBody
-	public String updateMyplace(HttpServletRequest req) {
+	public String modifyPlace(HttpServletRequest req) {
 		
 
 		HttpSession session = req.getSession();
 		
-	  	int place_seq=  Integer.parseInt(req.getParameter("place_seq"));
+//	  	int place_seq=  Integer.parseInt(req.getParameter("place_seq"));
+		String placeSeq = (String)req.getParameter("place_seq");
+	    int place_seq = Integer.parseInt(placeSeq);
     	String place_name= req.getParameter("pname");
     	int user_seq = (int) session.getAttribute("user_seq");
     	int place_type_seq=Integer.parseInt(req.getParameter("ptype"));
@@ -226,17 +236,62 @@ public class Controller_HY {
     	String place_environment = req.getParameter("checkEnv");
     	
     	
-    	hydao.updateMy(place_seq,place_name,user_seq,place_type_seq,place_checkin_time,
-    			place_checkout_time,place_address,place_mobile,place_options,place_guide
-    			place_environment);
-    	
-    	
-		
+    	hydao.changePlace(place_seq, place_name, user_seq, place_type_seq, place_checkin_time,
+    		    place_checkout_time, place_address, place_mobile, place_options, place_guide,
+    		    place_environment);
 		
     	
 		return "ok";
 	}
 	
+	
+// 객실타입 추가 관련
+	@PostMapping("/insertRoomType")
+	public String insertRoomType(HttpServletRequest req, Model model,
+			
+			@RequestParam(value="place_seq") String place_Seq,
+			@RequestParam(value="roomtype_name") String rname,
+			@RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
+			@RequestParam(value="roomtype_capacity") String rcap,
+			@RequestParam(value="roomtype_price") String nightrate,
+//			@RequestParam(value="roomtype_options") String amenities,
+			@RequestParam(value="roomtype_guide") String roomGuide
+			) {
+		
+			int place_seq = Integer.parseInt(place_Seq);
+			System.out.println(place_seq);
+			int maxCapacity = Integer.parseInt(rcap);
+			System.out.println(maxCapacity);
+			int nightRate = Integer.parseInt(nightrate);
+			System.out.println(nightRate);
+			System.out.println(rname);
+			System.out.println(roomGuide);
+
+
+		//////////////////////////////////////////////////////////////////////////
+///////////////////////////사진파트
+		String DBpath = "";
+		for(int i=0;i<imgs.length;i++) {
+			MultipartFile img = imgs[i];
+			
+			String realName = img.getOriginalFilename();
+			UUID randomStr = UUID.randomUUID();
+			String rstr = (""+randomStr).substring(0,8);
+			
+			String saveName = rstr + "-" + realName;
+			
+			File file = new File(roomtype_optionImgPath,saveName);
+			try { img.transferTo(file); }
+			catch(Exception e) { System.out.println("fail"); }
+			
+			DBpath += "," + "/img/roomtype_option/" + saveName;
+		}
+		DBpath = DBpath.replaceFirst(",", "");
+	//사진파트 끝 	
+		hydao.addRoomType(rname, place_seq, DBpath, maxCapacity, nightRate, roomGuide);
+		
+		return "main";
+	}
 	
 	
 	
