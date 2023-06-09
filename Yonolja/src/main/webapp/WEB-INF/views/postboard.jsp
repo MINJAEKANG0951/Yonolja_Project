@@ -177,6 +177,20 @@ section {
 
 .post_line{cursor:pointer;}
 
+.pagination .write-post-btn {
+    background-color: #0d6efd;
+     color: white; 
+    border: 1px solid #0d6efd;
+    margin-left: 10px;
+/*     display:flex; */
+/*     justify-content:right; */
+/*     align-items:right; */
+}
+.pagination .write-post-btn:hover {
+/*     background-color: #ddd; */
+/*     color: black; */
+}
+
 </style>
 <body>
 <div class="center">
@@ -344,5 +358,35 @@ function highlightActivePage() {
 }
 
 renderTable();
+
+
+
+function renderPagination(totalPages) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+
+    for (let i = 0; i < totalPages; i++) {
+        const pageNumber = i + 1;
+        const link = document.createElement('a');
+        link.href = '#';
+        link.textContent = pageNumber;
+
+        if (i === currentPage) {
+            link.className = 'active';
+        }
+
+        link.addEventListener('click', () => changePage(i));
+        paginationDiv.appendChild(link);
+    }
+
+    // Add write post button
+    const writePostButton = document.createElement('a');
+    writePostButton.textContent = '글쓰기';
+    writePostButton.className = 'write-post-btn';
+    writePostButton.href = 'http://localhost:8081/postwrite';
+    paginationDiv.appendChild(writePostButton);
+}
+
+
 </script>
 </html>

@@ -220,6 +220,14 @@ label {
 /* width:500px; */
 /* } */
 
+ .button5 { 
+    display: flex; 
+    justify-content: space-between; 
+    
+ } 
+ 
+ 
+ 
 </style>
 <body>
 <div class="center">
@@ -247,75 +255,64 @@ label {
 </header>
 
 <section>
-<div class="write">
-<div  class=Postwrite1>
-    <h3 class="mt-3 mb-3" >𝐏𝐨𝐬𝐭 𝐖𝐫𝐢𝐭𝐞</h3>
-    <br>
-</div>
+  <div class="write">
+    <div class="Postwrite1">
+      <h3 class="mt-3 mb-3">𝐏𝐨𝐬𝐭 𝐖𝐫𝐢𝐭𝐞</h3>
+      <br>
+    </div>
     <form action="postview" method="post">
     
-			<table>
-        <tr>
-          <td>
-            <div class="post-info">
-              𝑇𝑖𝑡𝑙𝑒 &nbsp;&nbsp;
-              <input  class="form-control" type="text" value="${post_title}" id="post_title" name="post_title" readonly >
-           </div>
-         </td>
-         <td>
-           <div class="post-info">    
-              𝑊𝑟𝑖𝑡𝑒𝑟
-             <input class=form-control type=text id="user_id" name="user_id" value="${post_writer}" style='width:45%' readonly>
-           </div>
-         </td>
-       </tr>
-       
-       <tr>
-     
-       	<td><label for="Bcontent">𝑐𝑜𝑛𝑡𝑒𝑛𝑡</label></td>
-		<td class="form-control" cols="90" rows="20" id="post_content" name="post_content" readonly>
+    <div class="form-group">
+      <div class="post-info">
+        𝑇𝑖𝑡𝑙𝑒 &nbsp;&nbsp;
+        <input class="form-control" type="text" value="${post_title}" id="post_title" name="post_title" readonly>
+      </div>
+      <div class="post-info">    
+        𝑊𝑟𝑖𝑡𝑒𝑟
+        <input class="form-control" type="text" id="user_id" name="user_id" value="${post_writer}" style="width:45%" readonly>
+      </div>
+    </div>
 
-		  <div class="content-container">
-		    <img src="${post_img}" alt="im1a123ge">
-		    <div class="text-content">
-		      ${post_content}
-		    </div>
-		  </div>
-		</td>
-  </tr>
-       <tr>
-         <td><label for="B_Create_date">𝐷𝑎𝑡𝑒 𝐶𝑟𝑒𝑎𝑡𝑒𝑑</label></td>
-         <td><input class=form-control type=text id="post_date" name="post_date" value="${post_date}" style='width:90%' readonly></td>
-       </tr>
-       <tr>
-         <td><label for="revision_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛 𝑑𝑎𝑡𝑒</label></td>
-         <td><input class=form-control type=text id=B_Update_date name=B_Update_date value="${b_update_date}" style='width:90%' readonly></td>
-       </tr>
-
-		</table>
-		<table align=center>
-		<tr><td><input type=hidden id="board_num" value="${board_num}" name=board_num></td></tr>
-<%-- 			<tr>${button}</tr>		 --%>
-		
-<%-- 			 <c:if test="${id == b_writer}"> --%>
-		<td colspan=2>
-					<input class="btn btn-danger" type="button" value="삭제" id=btnDelete data-post_seq="${post_seq}" >
-		</td>
-		<td>
-			<input class="btn btn-success" type="button" value="수정" id=btnModify >
-			</td>
-<%-- 			</c:if> --%>
-			<td>
-				<input class="btn btn-primary" type="button" value="목록보기" id=btnShow>
-			</td>
-			</table>
-			</form>
-  </div>
+  <div class="form-group" style="display: flex; align-items: center;">
+    <label for="Bcontent" style="margin-right: 10px;">𝑐𝑜𝑛𝑡𝑒𝑛𝑡</label>
+    <div class="form-control" id="post_content" name="post_content" readonly>
+        <div class="content-container">
+            <div class="text-content" >
+                ${post_content}
+                <img src="${post_img}" alt="im1a123ge" style="max-height: 100%; max-width: 100%;">
+            </div>
+            
+        </div>
+    </div>
 </div>
 
 
+    <div class="form-group">
+      <label for="B_Create_date">𝐷𝑎𝑡𝑒&nbsp;𝐶𝑟𝑒𝑎𝑡𝑒𝑑</label>
+      <input class="form-control" type="text" id="post_date" name="post_date" value="${post_date}" style="width:90%" readonly>
+    </div>
 
+    <div class="form-group">
+      <label for="revision_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛&nbsp;𝑑𝑎𝑡𝑒</label>
+      <input class="form-control" type="text" id="B_Update_date" name="B_Update_date" value="${b_update_date}" style="width:90%" readonly>
+    </div>
+
+    <input type="hidden" id="board_num" value="${board_num}" name="board_num">
+
+    <br>
+
+    <div class="button5">
+      <div style="margin-left: auto; margin-right: auto;">
+        <input class="btn btn-danger" type="button" value="삭제" id="btnDelete" data-post_seq="${post_seq}">
+        <input class="btn btn-success" type="button" value="수정" id="btnModify">
+        <input class="btn btn-primary" type="button" value="목록" id="btnShow">
+      </div>
+    </div>
+    </form>
+  </div>
 </section>
+
+
 
 <footer>
 <div class=footer_container>
