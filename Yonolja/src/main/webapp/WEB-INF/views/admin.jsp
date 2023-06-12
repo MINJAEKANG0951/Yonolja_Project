@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <title>admin</title>
 </head>
+<%@ include file ="./structure/header.jsp" %>
 <style>
 img {
     width: 50px;

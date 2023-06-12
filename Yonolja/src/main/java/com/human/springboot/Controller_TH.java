@@ -117,32 +117,90 @@ public class Controller_TH {
 		return ja.toString();
 		
 	}
+	@PostMapping("/member_list_paging")
+	@ResponseBody
+	public int member_list_paging(HttpServletRequest req) {
+		int page=tdao.member_count();
+		int paging;
+		if(page%10==0) {
+			paging=page/10;
+		}else {
+			paging=page/10+1;
+		}
+		
+		return paging;
+	}
 	
 	@PostMapping("/admin_user_search")
 	@ResponseBody
 	public String admin_user_search(HttpServletRequest req) {
-		String searchVal=req.getParameter("search");
+		String search=req.getParameter("search");
+		int page=Integer.parseInt(req.getParameter("number"));
+		int searchVal=Integer.parseInt(req.getParameter("searchVal"));
+		int end=page*10;
+		int start=end-9;
 		System.out.println(searchVal);
-		ArrayList<DTO_TH> list=tdao.admin_user_search(searchVal);
-		System.out.println("list"+list);
+		ArrayList<DTO_TH> list=null;
 		JSONArray ja=new JSONArray();
+		if(searchVal==0) {
+			list=tdao.admin_user_search(search,start,end);
+			System.out.println("list"+list);
 		
-		for(int i=0;i<list.size();i++) {
-			JSONObject jo=new JSONObject();
-			jo.put("user_seq",list.get(i).getUSER_SEQ());
-			System.out.println(jo);
-			jo.put("user_id",list.get(i).getUSER_ID());
-			jo.put("user_email",list.get(i).getUSER_EMAIL());
-			jo.put("user_gender",list.get(i).getUSER_GENDER());
-			jo.put("user_mobile",list.get(i).getUSER_MOBILE());
-			jo.put("user_name",list.get(i).getUSER_NAME());
-			jo.put("user_type",list.get(i).getUSER_TYPE());
-			ja.put(jo);
+		
+			for(int i=0;i<list.size();i++) {
+				JSONObject jo=new JSONObject();
+				jo.put("user_seq",list.get(i).getUSER_SEQ());
+				System.out.println(jo);
+				jo.put("user_id",list.get(i).getUSER_ID());
+				jo.put("user_email",list.get(i).getUSER_EMAIL());
+				jo.put("user_gender",list.get(i).getUSER_GENDER());
+				jo.put("user_mobile",list.get(i).getUSER_MOBILE());
+				jo.put("user_name",list.get(i).getUSER_NAME());
+				jo.put("user_type",list.get(i).getUSER_TYPE());
+				ja.put(jo);
+			}
+		}else if(searchVal==1) {
+			list=tdao.admin_user_search_name(search,start,end);
+			System.out.println("list"+list);
+		
+		
+			for(int i=0;i<list.size();i++) {
+				JSONObject jo=new JSONObject();
+				jo.put("user_seq",list.get(i).getUSER_SEQ());
+				System.out.println(jo);
+				jo.put("user_id",list.get(i).getUSER_ID());
+				jo.put("user_email",list.get(i).getUSER_EMAIL());
+				jo.put("user_gender",list.get(i).getUSER_GENDER());
+				jo.put("user_mobile",list.get(i).getUSER_MOBILE());
+				jo.put("user_name",list.get(i).getUSER_NAME());
+				jo.put("user_type",list.get(i).getUSER_TYPE());
+				ja.put(jo);
+			}
+		}else if(searchVal==2) {
+			list=tdao.admin_user_search_id(search,start,end);
+			System.out.println("list"+list);
+		
+		
+			for(int i=0;i<list.size();i++) {
+				JSONObject jo=new JSONObject();
+				jo.put("user_seq",list.get(i).getUSER_SEQ());
+				System.out.println(jo);
+				jo.put("user_id",list.get(i).getUSER_ID());
+				jo.put("user_email",list.get(i).getUSER_EMAIL());
+				jo.put("user_gender",list.get(i).getUSER_GENDER());
+				jo.put("user_mobile",list.get(i).getUSER_MOBILE());
+				jo.put("user_name",list.get(i).getUSER_NAME());
+				jo.put("user_type",list.get(i).getUSER_TYPE());
+				ja.put(jo);
+			}
 		}
-		System.out.println(list.size());
 
-		System.out.println("ja.toString="+ja.toString());
-		System.out.println("test"+ja);
+		
+		
+		
+		
+		
+		
 		return ja.toString();
 	}
 	
@@ -150,7 +208,17 @@ public class Controller_TH {
 	@ResponseBody
 	public int admin_user_search_paging(HttpServletRequest req) {
 		String search=req.getParameter("search");
-		int number=tdao.admin_user_search_count(search);
+		int number=0;
+		
+		int searchVal=Integer.parseInt(req.getParameter("searchVal"));
+		
+		if(searchVal==0) {
+			number=tdao.admin_user_search_count(search);
+		}else if(searchVal==1) {
+			number=tdao.admin_user_search_name_count(search);
+		}else if(searchVal==1) {
+			number=tdao.admin_user_search_id_count(search);
+		}
 		System.out.println(number);
 		int page;
 		if(number%10==0) {
@@ -170,77 +238,7 @@ public class Controller_TH {
 		   HttpSession logIn=req.getSession();
 		   logIn.getAttribute("logid");
 		   model.addAttribute("logId",logIn.getAttribute("logid"));
-		   
-		   int pageend=tdao.post_count();
-		   int pageval=pageend%10;
-		   
-		   if( logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="0") {
-			   model.addAttribute("search",logIn.getAttribute("search"));
-			   pageend=tdao.post_list_search_count((String)logIn.getAttribute("search"));
-			   
-			   if(pageval==0) {
-				   
-				   pageend=pageend/10;
-			   } else {
-				   pageend=(pageend/10)+1;
-			   } 
-			   model.addAttribute("search_page_start",1);  
-			   model.addAttribute("search_page_end",pageend);
 
-		   }else if(logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="1"){
-			   model.addAttribute("search",logIn.getAttribute("search"));
-			   model.addAttribute("select",logIn.getAttribute("select"));
-			   pageend=tdao.post_list_search_title_count((String)logIn.getAttribute("search"));
-			   
-			   if(pageval==0) {
-				   
-				   pageend=pageend/10;
-			   } else {
-				   pageend=(pageend/10)+1;
-			   } 
-			   model.addAttribute("search_page_start",1);  
-			   model.addAttribute("search_page_end",pageend);
-		   }else if(logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="2"){
-			   model.addAttribute("search",logIn.getAttribute("search"));
-			   pageend=tdao.post_list_search_id_count((String)logIn.getAttribute("search"));
-			   
-			   if(pageval==0) {
-				   
-				   pageend=pageend/10;
-			   } else {
-				   pageend=(pageend/10)+1;
-			   } 
-			   model.addAttribute("search_page_start",1);  
-			   model.addAttribute("search_page_end",pageend);
-		   }else if(logIn.getAttribute("search")!=null && logIn.getAttribute("select")=="3"){
-			   model.addAttribute("search",logIn.getAttribute("search"));
-			   pageend=tdao.post_list_search_content_count((String)logIn.getAttribute("search"));
-			   
-			   if(pageval==0) {
-				   
-				   pageend=pageend/10;
-			   } else {
-				   pageend=(pageend/10)+1;
-			   } 
-			   model.addAttribute("search_page_start",1);  
-			   model.addAttribute("search_page_end",pageend);
-		   }else {
-			   if(pageval==0) {
-				   
-				   pageend=pageend/10;
-			   } else {
-				   pageend=(pageend/10)+1;
-			   } 
-			   logIn.getAttribute("search");
-			   model.addAttribute("start",1);
-			   model.addAttribute("end",pageend);
-			   model.addAttribute("cur",1);
-		   }
-		   
-		   System.out.println(logIn.getAttribute("search"));
-		   
-		    
-		   
 		   
 
 		   return "admin_post";
@@ -251,8 +249,7 @@ public class Controller_TH {
 	@PostMapping("/post_list")
 	@ResponseBody
 	public String post_list(HttpServletRequest req) {
-		   HttpSession logIn=req.getSession();
-		   logIn.getAttribute("logid");   
+ 
 		   String page=req.getParameter("page");
 
 		   int curpage=Integer.parseInt(page);
@@ -267,6 +264,8 @@ public class Controller_TH {
 
 		String str="";
 
+		int category;
+		String postCate="";
 
 		int count =tdao.post_count();
 		System.out.println(count);
@@ -274,15 +273,21 @@ public class Controller_TH {
 			
 			JSONObject jo=new JSONObject();
 			str=list.get(i).getPost_comment();
+			category=list.get(i).getPost_category();
 			System.out.println("a");
 			if(str=="" || str==null) {
 				str="답변대기";
 			} else {
 				str="답변완료";
 			}
+			if(category==1) {
+				postCate="공지";
+			}else {
+				postCate="일반게시글";
+			}
 			jo.put("post_seq",list.get(i).getPost_seq());
 			jo.put("user_id",list.get(i).getUSER_ID());
-			jo.put("post_category",list.get(i).getPost_category());
+			jo.put("post_category",postCate);
 			jo.put("post_title",list.get(i).getPost_title());
 			jo.put("post_date",list.get(i).getPost_date());
 			jo.put("post_comment",str);
@@ -311,18 +316,25 @@ public class Controller_TH {
 		
 
 		String str="";
-
+		int category;
+		String postCate="";
 			JSONObject jo=new JSONObject();
 			str=list.getPost_comment();
+			category=list.getPost_category();
 			System.out.println("a");
 			if(str=="" || str==null) {
 				str="답변대기";
 			} else {
 				str="답변완료";
 			}
+			if(category==1) {
+				postCate="공지";
+			}else {
+				postCate="일반게시글";
+			}
 			jo.put("post_seq",list.getPost_seq());
 			jo.put("user_id",list.getUSER_ID());
-			jo.put("post_category",list.getPost_category());
+			jo.put("post_category",postCate);
 			jo.put("post_title",list.getPost_title());
 			jo.put("post_date",list.getPost_date());
 			jo.put("post_comment",str);
@@ -367,14 +379,13 @@ public class Controller_TH {
 	public String post_search(HttpServletRequest req) {
 		
 		String search=req.getParameter("admin_post_searchBar");
-		HttpSession search_session=req.getSession();
+		
 		ArrayList<DTO_TH> list=null;
 		
 
 		String select=req.getParameter("admin_post_search_select");
 		System.out.println("select test"+select);
-		search_session.setAttribute("search", search);
-		search_session.setAttribute("select", select);
+		
 		
 		String page=req.getParameter("page");
 		JSONArray ja= new JSONArray();
@@ -444,20 +455,28 @@ public class Controller_TH {
 
 		
 		String str="";
-
+		int category;
+		String postCate="";
 		for(int i=0;i<list.size();i++) {
 			
 			JSONObject jo=new JSONObject();
 			str=list.get(i).getPost_comment();
-			System.out.println("a");
+			category=list.get(i).getPost_category();
+			System.out.println(category);
 			if(str=="" || str==null) {
 				str="답변대기";
 			} else {
 				str="답변완료";
 			}
+			 
+			if(category==1) {
+				postCate="공지";
+			}else {
+				postCate="일반게시글";
+			}
 			jo.put("post_seq",list.get(i).getPost_seq());
 			jo.put("user_id",list.get(i).getUSER_ID());
-			jo.put("post_category",list.get(i).getPost_category());
+			jo.put("post_category",postCate);
 			jo.put("post_title",list.get(i).getPost_title());
 			jo.put("post_date",list.get(i).getPost_date());
 			jo.put("post_comment",str);
@@ -472,25 +491,56 @@ public class Controller_TH {
 		return ja.toString();
 				
 	}
-	@PostMapping("/admin_post_reset")
+	
+	@PostMapping("/admin_post_paging")
 	@ResponseBody
-	public String admin_post_reset(HttpServletRequest req) {
-		String reVal="ok";
-
-		
-		try {
-			
-			HttpSession reset_session=req.getSession();
-			reset_session.setAttribute("search",null);
-			System.out.println(reset_session.getAttribute("search"));
-		} catch (Exception e) {
-			reVal="fail";
+	public int admin_post_paging(HttpServletRequest req) {
+		int page=(int)tdao.post_count();
+		int paging;
+		if(page%10==0) {
+			paging=page/10;
+		}else {
+			paging=page/10+1;
 		}
 		
 		
-		return reVal;
 		
+		return paging;
 	}
+	
+	@PostMapping("/admin_post_search_paging")
+	@ResponseBody
+	public int admin_post_search_paging(HttpServletRequest req) {
+		
+		String search = req.getParameter("search");
+		int searchVal=Integer.parseInt(req.getParameter("searchVal"));
+		
+		
+		int page=0;
+		int paging;
+		if(searchVal==0) {
+			page=tdao.post_list_search_count(search);
+		}else if(searchVal==1) {
+			page=tdao.post_list_search_title_count(search);
+		}else if(searchVal==2) {
+			page=tdao.post_list_search_id_count(search);
+		}else if(searchVal==3) {
+			page=tdao.post_list_search_content_count(search);
+		}
+			
+		System.out.println("admin_post_search_paging="+page);
+		
+		if(page%10==0) {
+			paging=page/10;
+		}else {
+			paging=page/10+1;
+		}
+		
+
+		return paging;
+	}
+	
+
 	
 
 	@PostMapping("/yonolja_place_type_list")
@@ -840,4 +890,55 @@ public class Controller_TH {
 		
 		return pageend;
 	}
+	
+	@PostMapping("/admin_review_search")
+	@ResponseBody
+	public String admin_review_search(HttpServletRequest req) {
+		
+		String search=req.getParameter("search");
+		int number=Integer.parseInt(req.getParameter("number"));
+		int end=number*10;
+		int start=end-9;
+		
+		ArrayList<DTO_TH>list=tdao.yonolja_review_search(search,start,end);
+		JSONArray ja= new JSONArray();
+		
+		
+		for(int i=0;i<list.size();i++) {
+			JSONObject jo= new JSONObject();
+			
+			jo.put("review_seq", list.get(i).getReview_seq_test());
+			jo.put("place_name", list.get(i).getBook_seq());
+			jo.put("review_content", list.get(i).getReview_content());
+			jo.put("review_date", list.get(i).getReview_date());
+			jo.put("review_star", list.get(i).getReview_star());
+			System.out.println(jo);
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+		
+	}
+	
+	@PostMapping("/admin_review_search_paging")
+	@ResponseBody
+	public int admin_review_search_paging(HttpServletRequest req) {
+		String search=req.getParameter("search");
+		int page=(int)tdao.yonolja_review_search_page(search);
+		int pageend;
+		if(page%10==0) {
+			pageend=page/10;
+			System.out.println(pageend);
+		}else {
+			pageend=page/10+1;
+			System.out.println(pageend);
+		}
+		
+		
+		
+		
+		return pageend;
+		
+	}
+	
 }

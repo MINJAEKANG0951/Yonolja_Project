@@ -32,8 +32,8 @@
                   or  USER_MOBILE like '%' || #{param1} || '%' 
                   or USER_EMAIL like '%' || #{param1} || '%'
                   or USER_gender like '%' || #{param1} || '%'
-                  or USER_TYPE like '%' || #{param1} || '%') ORDER BY user_seq ASC))
-		WHERE NUM BETWEEN 1 AND 10
+                  or USER_TYPE like '%' || #{param1} || '%') ORDER BY user_seq desc))
+		WHERE NUM BETWEEN #{param2} AND #{param3} 
 	</select>
 	<select id="admin_user_search_count" resultType='int'>
 		select count(*)
@@ -45,7 +45,34 @@
                   or USER_TYPE like '%' || #{param1} || '%')
 	
 	</select>
+	<select id="admin_user_search_name" resultType='com.human.springboot.DTO_TH'>
+		SELECT USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE, NUM
+		FROM (SELECT USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE, ROWNUM AS NUM
+		FROM ( select USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE 
+				from yonolja_user where not user_id='admin' and ( USER_NAME like '%' || #{param1} || '%' ) 
+				ORDER BY user_seq desc))
+		WHERE NUM BETWEEN #{param2} AND #{param3} 
+	</select>
 	
+	<select id="admin_user_search_name_count" resultType='int'>
+		select count(*)
+				from yonolja_user where not user_id='admin' and ( USER_NAME like '%' || #{param1} || '%' )
+	
+	</select>
+	<select id="admin_user_search_id" resultType='com.human.springboot.DTO_TH'>
+		SELECT USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE, NUM
+		FROM (SELECT USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE, ROWNUM AS NUM
+		FROM ( select USER_SEQ, USER_ID, USER_PASSWORD, USER_NAME, USER_MOBILE, USER_EMAIL,USER_GENDER,USER_TYPE,USER_SIGNINTYPE 
+				from yonolja_user where not user_id='admin' and ( USER_ID like '%' || #{param1} || '%' ) 
+				ORDER BY user_seq desc))
+		WHERE NUM BETWEEN #{param2} AND #{param3} 
+	</select>
+	
+	<select id="admin_user_search_id_count" resultType='int'>
+		select count(*)
+				from yonolja_user where not user_id='admin' and ( USER_ID like '%' || #{param1} || '%' )
+	
+	</select>
 	<!-- 나중에 타입별 보여주기
 	 
 	<select id='admin_user_type' resultType='com.human.springboot.DTO_TH'>
@@ -84,9 +111,9 @@
 	
 	<!--  검색된 게시글 숫자 -->
 	<select id='post_list_search_count' resultType="int">
-		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (a.post_title like '%' || #{parma1} || '%'
-                  or  a.post_content like '%' || #{parma1} || '%' 
-                  or  b.user_id like '%' || #{parma1} || '%')
+		select count(a.post_seq) from yonolja_post a, yonolja_user b where a.user_seq= b.user_seq and not b.user_id='admin' and (a.post_title like '%' || #{param1} || '%'
+                  or  a.post_content like '%' || #{param1} || '%' 
+                  or  b.user_id like '%' || #{param1} || '%')
 	</select>
 	<!-- 아이디 검색 -->
 	<select id='post_list_search_id' resultType="com.human.springboot.DTO_TH">
@@ -181,9 +208,26 @@
     (select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ from review order by review_seq_test desc))
     where num between #{param1} and #{param2}
 	</select>
-	<!--  리뷰관리 페이지 -->
+	<!--  리뷰관리 페이징 -->
 	<select id="yonolja_review_page" resultType="int">
 		select count(*) from review
 	</select> 
+	<!-- 나중에 변경해야됨 변경 내역은 테이블 명, 및 컬럼 명, bookseq는 다른 테이블과 조인이 필요 -->
+	<select id="yonolja_review_search" resultType='com.human.springboot.DTO_TH'>
+		SELECT REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ, NUM
+	    FROM (SELECT REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,rownum as num
+	    FROM ( select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ
+	            from review where ( REVIEW_CONTENT like '%' || #{param1} || '%' 
+	              <!-- 날짜는 나중에 다시 확인  or  REVIEW_DATE like '%' || #{param1} || '%' --> 
+	              or BOOK_SEQ like '%' || #{param1} || '%' ) ORDER BY REVIEW_SEQ_test desc))
+	    WHERE NUM BETWEEN #{param2} AND #{param3}
+	</select>
+	<select id="yonolja_review_search_page" resultType="int">
+		select count(*)
+            from review where ( REVIEW_CONTENT like '%' || #{param1} || '%' 
+               <!-- 날짜는 나중에 다시 확인  or  REVIEW_DATE like '%' || #{param1} || '%' --> 
+              or BOOK_SEQ like '%' || #{param1} || '%' )
+	</select>
+	
 </mapper>
 

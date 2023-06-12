@@ -9,8 +9,17 @@ public interface DAO_TH {
 	//회원리스트
 	ArrayList<DTO_TH> member_list(int start,int end);
 	int member_count();
-	ArrayList<DTO_TH> admin_user_search(String search);
+	
+	// 통합검색
+	ArrayList<DTO_TH> admin_user_search(String search,int start,int end);
 	int admin_user_search_count(String search);
+	// 이름 검색
+	ArrayList<DTO_TH>admin_user_search_name(String search,int start,int end);
+	int admin_user_search_name_count(String search);
+	
+	// 아이디 검색
+	ArrayList<DTO_TH>admin_user_search_id(String search,int start,int end);
+	int admin_user_search_id_count(String search);
 	
 	// 문의관리 게시판
 	ArrayList<DTO_TH> post_list(int start,int end);
@@ -57,4 +66,8 @@ public interface DAO_TH {
 	// 관리자 리뷰 관리
 	ArrayList<DTO_TH> yonolja_review_list(int start,int end);
 	int yonolja_review_page();
+	
+	// 관리자 리뷰 관리 검색
+	ArrayList<DTO_TH> yonolja_review_search(String search, int start, int end);
+	int yonolja_review_search_page(String search);
 }

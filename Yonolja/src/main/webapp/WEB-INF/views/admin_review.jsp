@@ -6,6 +6,7 @@
 <meta charset="UTF-8">
 <title>Insert title here</title>
 </head>
+<%@ include file ="./structure/header.jsp" %>
 <style>
 
 .admin_review_grid{
@@ -20,20 +21,7 @@
 		<input type='hidden' id='adminCheck' value="${adcheck}">
 		
 	</div>
-	<!--
-		// 스타일 grid 
-		.admin_review_grid{
-			display:grid;
-		
-		}
-	 
-	<div class=admin_review_grid> 공부해서 해볼것 우선 테이블로 만들기
-		<div class="item">번호</div>
-		<div class="item">제목</div>
-		<div class="item">날짜</div>
-		<div class="item">숙소이름</div>
-	</div>
- 	-->
+
  	<div>
  		<h2>리뷰 관리 게시판</h2><a href='/admin'>관리자 페이지</a>
  	</div>
@@ -44,6 +32,18 @@
  	</table>
  	<div id="admin_page_controller" class='paging'>
  		
+ 	</div>
+ 	<div id="admin_page_search_controller" class='paging'>
+ 		
+ 	</div>
+ 	<div id="admin_review_search_div">
+ 		<select id=admin_review_select>
+ 			<option value=0>통합검색</option>
+ 			<option value=1>숙소이름</option>
+ 			<option value=2>제목</option>
+ 		</select>
+ 		<input type=text id=admin_review_search>
+ 		<input type=button id=admin_review_btn value="검색">
  	</div>
 </div>
 </body>
@@ -75,7 +75,51 @@ $(document)
 .on('click','#admin_page_controller>a',function(){
 	console.log($(this).text())
 	review_list($(this).text())
+	 $(this).css('font-weight', 'bold');
+
+    // 나머지 a 태그의 글자 굵기 초기화
+    $('#admin_page_controller>a').not(this).css('font-weight', 'normal');
 })
+.on('click','#admin_page_search_controller>a',function(){
+	console.log($(this).text())
+	search_list($(this).text())
+	 $(this).css('font-weight', 'bold');
+
+    // 나머지 a 태그의 글자 굵기 초기화
+    $('#admin_page_search_controller>a').not(this).css('font-weight', 'normal');
+})
+.on('click','#admin_review_btn',function(){
+	$.ajax({
+		url:'/admin_review_search_paging',
+		data:{search:$('#admin_review_search').val()},
+		dataType:'text',
+		type:'post',
+		beforeSend:function(){
+			if($('#admin_review_search').val()==""){
+				alert("검색할 내용을 적어주세요")
+				return false;
+			}
+		},
+		success:function(data){
+			console.log(data)
+			$('#admin_page_controller').empty();
+			$('#admin_page_search_controller').empty();
+			  if (data != "") {
+                    
+                    let str = "";
+                    for (let i = 1; i <= data; i++) {
+                        str += "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
+                    }
+                    $('#admin_page_search_controller').append(str);
+                    $('#pagenum1').css('font-weight', 'bold');
+                    search_list(1)
+			}
+		}
+	})
+		
+	
+})
+
 
 
 function review_list(a){
@@ -119,6 +163,7 @@ function paging() {
                         str += "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
                     }
                     $('#admin_page_controller').append(str);
+                    $('#pagenum1').css('font-weight', 'bold');
                     resolve(); // 프라미스를 성공(resolve) 상태로 변경
                 } else {
                     console.warn("No data"); // 데이터가 없을 경우 경고 출력
@@ -133,5 +178,31 @@ function paging() {
     });
 }
 
+function search_list(num){
+	$.ajax({
+		url:'/admin_review_search',
+		data:{search:$('#admin_review_search').val(),number:num},
+		dataType:'json',
+		type:'post',
+		success:function(data){
+			$('#admin_review_management tr:gt(0)').remove();
+			console.log("test")
+			let str='';
+			console.log(data.length)
+			for(i=0;i<data.length;i++){
+				str+='<tr><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
+				+data[i]['place_name']+"</td><td>"//book_seq 를 활용하여 place_name 을 가져온다
+					+data[i]['review_content']+"</td><td>"
+					+data[i]['review_date']+"</td><td>"
+					+data[i]['review_star']+"</td></tr>"
+					
+			}
+
+			$('#admin_review_management').append(str);	
+		}
+		
+	})
+	
+}
 </script>
 </html>

@@ -9,6 +9,8 @@
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <title>Insert title here</title>
 </head>
+<%@ include file ="./structure/header.jsp" %>
+
 <body>
 <div id="admin_post_page">
 	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><a href='/admin'>관리자 페이지</a><input type=hidden id=admin_post_reset value=0>
@@ -17,30 +19,18 @@
 			<td>문의번호</td><td>문의분류</td><td>문의제목</td><td>아이디</td><td>문의일</td><td>문의상태</td><td>답변작성</td>
 		</tr>
 	</table>
-	<div>
-	
-		<% if(session.getAttribute("search")==null){ %>
-		<c:forEach var="i" begin="${start}" end="${end}">
-			<li class="page-item " ><a id="paging${i }" class="page-link" onclick='post_list(${i })'>${i }</a></li>
-			<li class="page-item " style="display:none"><a id="paging${i }" class="page-link" onclick='search_list(${i })'>${i }</a></li>
-		</c:forEach> 
-		<%} else{ %>
-		<c:forEach var="i" begin="${search_page_start}" end="${search_page_end}">
-			<li class="page-item " style="display:none"><a id="paging${i }" class="page-link" onclick='post_list(${i })'>${i }</a></li>
-			<li class="page-item " ><a id="paging${i }" class="page-link" onclick='search_list(${i })'>${i }</a></li>
-		</c:forEach> 
-		<%} %>
-        
+	<div id=admin_post_controller>
+
 	</div>
 	<div>
 		<select id=admin_post_search_select>
-			<option value=0>통합검색
-			<option value=1>제목
-			<option value=2>아이디
-			<option value=3>내용
+			<option value=0>통합검색</option>
+			<option value=1>제목</option>
+			<option value=2>아이디</option>
+			<option value=3>내용</option>
 		</select>
-		<input type=hidden id=admin_post_select_hidden value="${select }">
-		<input type=text id=admin_post_searchBar value="${search}">
+		
+		<input type=text id=admin_post_searchBar value="">
 		<input type=button id=admin_post_search_btn value=검색>
 	</div>
 </div>
@@ -104,16 +94,10 @@ $(document)
 	/*if($('#adminCheck').val()!='admin'){	관리자 인지 확인
 		alert('잘못된 접근입니다')
 	}*/
-	if($('#admin_post_searchBar').val()==""){
 		
+		post_paging()
 		post_list(1)
-	} else{
-		$('#admin_post_search_select').val($('#admin_post_select_hidden').val())
-		console.log($('#admin_post_search_select').val())
-		search_list(1,$('#admin_post_search_select').val())
-		
-	}
-	
+
 	
 })
 
@@ -200,11 +184,40 @@ $(document)
 	}
 })
 
+.on('click','#admin_post_controller>a',function(){
+	post_list($(this).text())
+    $(this).css('font-weight', 'bold');
+    // 나머지 a 태그의 글자 굵기 초기화
+    $('#admin_post_controller>a').not(this).css('font-weight', 'normal');
+})
+	
+
 .on('click','#admin_post_search_btn',function(){
-	console.log($('#admin_post_searchBar').val())
-	console.log($('#admin_post_search_select').val())
-	search_list(1,$('#admin_post_search_select').val())
-	window.location.href = "http://localhost:8081/admin_post"
+console.log($('#admin_post_searchBar').val())
+	$.ajax({
+		url:"/admin_post_search_paging",
+		data:{search:$('#admin_post_searchBar').val(),searchVal:$("#admin_post_search_select").val()},
+		dataType:'text',
+		type:'post',
+		success:function(data){
+			console.log("pagetest="+data)
+			if(data!=0){
+				str="";
+				$('#admin_post_controller').empty()
+				for(let i=1;i<=data;i++){
+					str+= "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
+				}
+				  $('#admin_post_controller').append(str);
+				  $('#pagenum1').css('font-weight', 'bold'); 
+				  search_list(1,$('#admin_post_search_select').val())
+			}else{
+				alert('검색결과가 없습니다')
+				return false;
+			}
+		}
+	})
+	
+	
 	
 })
 
@@ -213,9 +226,7 @@ $(document)
 })
 
 function post_list(page){
-	$('.page-item').removeClass("active");
-	$('#paging_search'+ page).parent().addClass("active");
-	
+
 	$.ajax({url:'/post_list',
 		data:{page:page},
 		dataType:"json",
@@ -246,10 +257,32 @@ function post_list(page){
 		}
 	})
 }
+function post_paging(){
+	$.ajax({
+		url:"/admin_post_paging",
+		data:{},
+		dataType:'text',
+		type:'post',
+		success:function(data){
+			console.log("data="+data)
+			if(data!=0){
+				str="";
+				$('#admin_post_controller').empty()
+			
+				for(let i=1;i<=data;i++){
+					str+= "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
+				}
+				$('#admin_post_controller').append(str);
+				$('#pagenum1').css('font-weight', 'bold');  
+			}
+			
+		}
+	})
+	
+}
 
 function search_list(page,select_val){
-	$('.page-item').removeClass("active");
-	$('#paging_search'+ page).parent().addClass("active");
+
 	console.log($('#admin_post_search_select').val())
 	$.ajax({
 		url:'/post_search',
@@ -292,16 +325,8 @@ function search_list(page,select_val){
 	})
 }
 function reset(){
-	console.log('test reset')
-	
-	$.ajax({url:'/admin_post_reset',
-		data:{},
-		dataType:"text",
-		type:"post",
-		success:function(data){
 			window.location.href = "http://localhost:8081/admin_post"
-		}
-	})
+	
 }
 
 
