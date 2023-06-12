@@ -15,6 +15,10 @@ public class DTO_HY_roomtypeDTO {
 	String roomtype_guide; 
 	
 	
+	//room table 관련 
+	int room_seq;
+	int room_number;
+	
 	
 
 }

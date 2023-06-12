@@ -135,7 +135,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-         
+          <button type="button" class="btn btn-danger" id="btnDelete">삭제</button> <!-- 삭제 버튼 추가 -->
         </div>
       </div>
     </div>
@@ -146,19 +146,23 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="roomManagementModalLabel">객실관리</h5>
+          <h5 class="modal-title" id="manageRoom">객실관리</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <div class="modal-body">
           <h2>객실 정보 입력</h2>
-          <form action="/insertRoom" method="POST" id="roomForm">
-            <label for="roomId">객실 ID:</label><br>
-            <input type="text" id="roomId" name="roomId"><br>
-            
-            <label for="roomTypeId">객실타입 ID:</label><br>
-            <input type="text" id="roomTypeId" name="roomTypeId"><br>
+          <form action="/addRoom" method="POST" id="roomForm">
+         
+            <input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
+            <label for="roomTypeId">객실타입 이름:</label><br>
+          <select id="roomTypeId" name="roomTypeId">
+            <c:forEach items="${roomTypes}" var="roomType" >
+            <option value="${roomType.roomtype_seq}">"${roomType.roomtype_name}"</option>
+           </c:forEach>
+          </select><br>
+
             
             <label for="roomNumber">객실 번호:</label><br>
             <input type="text" id="roomNumber" name="roomNumber"><br>
@@ -168,7 +172,7 @@
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
-          <button type="button" class="btn btn-primary">저장</button>
+    
         </div>
       </div>
     </div>
@@ -212,26 +216,33 @@
   <!-- 객실 조회 -->
   <div>
     <h2>객실 조회</h2>
-    <label for="roomTypeSelect">객실타입 선택:</label>
-<!--     <select id="roomTypeSelect"> -->
-<%--       <c:forEach items="${roomTypes}" var="roomType"> --%>
-<%--         <option value="${roomType.roomTypeId}">${roomType.roomName}</option> --%>
-<%--       </c:forEach> --%>
-<!--     </select> -->
-    <button type="button" onclick="getRooms()">조회</button>
+     <form id="roomForm">
+    	<label for="roomTypeSelect">객실타입 선택:</label>
+    	<input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
+   			 <select id="showRoomtype" name="roomTypeNum">
+           		 <c:forEach items="${roomTypes}" var="roomType" >
+            	 <option value="${roomType.roomtype_seq}">"${roomType.roomtype_name}"</option>
+          		 </c:forEach>
+          	 </select><br>
+        <input type="button" id="fetchRoomsButton" value="조회">
+   	 </form>
 
-    <table class="table" id="roomTable" style="display: none;">
+    <table class="table" id="roomTable" style="display: block;">
+    
       <thead>
         <tr>
-          <th>객실 ID</th>
-          <th>객실타입 ID</th>
+          <th></th> <!-- 체크박스를 위한 새로운 열 -->
+          <th>객실타입 이름</th>
           <th>객실 번호</th>
         </tr>
       </thead>
       <tbody id="roomTableBody">
       </tbody>
     </table>
+    <input type="button" id="btnDeleteRoom" value="선택한 객실 삭제">
+    
   </div>
+  
   
   
   <!-- 삭제 모달 -->
@@ -256,7 +267,7 @@
   </div>
   
 
-  <button type="button" class="btn btn-danger delete-button">
+  <button type="button" id="btnDeletePlace" class="btn btn-danger delete-button">
   업장 삭제
 </button>
   
@@ -272,86 +283,8 @@
  <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
  <script>
   
-  $(document).ready(function() {
-      $(".delete-button").click(function() {
-        $("#deletePlaceModal").modal("show");
-      });
-    });
-  function getRooms() {
-      var roomTypeId = document.getElementById("roomTypeSelect").value;
-      // AJAX 요청을 통해 서버에 해당 객실타입에 속하는 객실들을 조회하는 로직 작성
-      // 결과를 받아와서 아래 코드로 객실 목록을 표시
-      var rooms = []; // 받아온 객실 데이터 배열 예시
-      // 예시 데이터로 객실 목록 표시
-      var roomTableBody = document.getElementById("roomTableBody");
-      roomTableBody.innerHTML = "";
-      for (var i = 0; i < rooms.length; i++) {
-        var room = rooms[i];
-        var row = document.createElement("tr");
-        row.innerHTML = "<td>" + room.roomId + "</td><td>" + room.roomTypeId + "</td><td>" + room.roomNumber + "</td>";
-        roomTableBody.appendChild(row);
-      }
-      document.getElementById("roomTable").style.display = "table";
-    }
-    function sample6_execDaumPostcode() {
-      new daum.Postcode({
-        oncomplete: function(data) {
-          var addr = ''; // 주소 변수
-          var extraAddr = ''; // 참고항목 변수
-
-          if (data.userSelectedType === 'R') {
-            addr = data.roadAddress;
-          } else {
-            addr = data.jibunAddress;
-          }
-
-          if (data.userSelectedType === 'R') {
-            if (data.bname !== '' && /[동|로|가]$/g.test(data.bname)) {
-              extraAddr += data.bname;
-            }
-            if (data.buildingName !== '' && data.apartment === 'Y') {
-              extraAddr += (extraAddr !== '' ? ', ' + data.buildingName : data.buildingName);
-            }
-            if (extraAddr !== '') {
-              extraAddr = ' (' + extraAddr + ')';
-            }
-            document.getElementById("paddress2").value = extraAddr;
-          } else {
-            document.getElementById("paddress2").value = '';
-          }
-
-          document.getElementById('pzip_code').value = data.zonecode;
-          document.getElementById("paddress1").value = addr;
-          document.getElementById("paddress2").focus();
-        }
-      }).open();
-      return false;
+ 
       
-      // 새로운 객실타입 추가 함수
-      function addRoomType() {
-    	  var formData = new FormData($("#roomTypeForm")[0]);
-
-        $.ajax({
-          url: "/insertRoomType",
-          type: "POST",
-          data: formData,
-          processData: false,
-          contentType: false,
-          success: function(response) {
-            var roomType = response.roomType;
-            var roomTypeSelect = document.getElementById("roomTypeSelect");
-            var option = document.createElement("option");
-            option.value = roomType.roomTypeId;
-            option.text = roomType.roomName;
-            roomTypeSelect.appendChild(option);
-          },
-          error: function(error) {
-            console.log("Error:", error);
-          }
-        });
-      }
-    }
-    
     
 $(document)
 .on('click','#updatePlace',function(){
@@ -447,7 +380,7 @@ $(document)
 })
 
 
-	
+	///////////////////////place info 수정 part/////////////////
 	
   $(document).on('click', '#btnsubmit', function() {
     var pzip_code = $('#pzip_code').val();
@@ -471,16 +404,7 @@ $(document)
     console.log($('#pcheckout').val());
     console.log($('#pguide').val());
 
-    // 배열로 만들어서 값을  컨트롤러에서 values처리를 해서 넣어줌.  
-//     checkEvn = '';
-//     for (i = 0; i < $("input[name=environments]:checked").length; i++) {
-//       if (i == 0) {
-//         checkEvn += $("input[name=environments]:checked:eq(" + i + ")").val();
-//       } else {
-//         checkEvn += "," +
-//           $("input[name=environmets]:checked:eq(" + i + ")").val();
-//       }
-//     }
+
 
 var checkEnv = '';
 $("input[name='environments']:checked").each(function(index) {
@@ -521,7 +445,7 @@ $("input[name='environments']:checked").each(function(index) {
       },
       success: function(data) {
         if (data == "ok") {
-
+        	 window.location.href = "/mypage"; // 성공했을 때 mypage.jsp로 이동
         } else {
           alert(data);
         }
@@ -529,10 +453,8 @@ $("input[name='environments']:checked").each(function(index) {
     });
   });
 
-  document.getElementById('pcheckin').onclick = function() {
-    a = $(this).val();
-    console.log(a);
-  }
+
+
 /////////////// 기존 객실타입 수정 /////////////////
 
 
@@ -579,6 +501,198 @@ $(document)
       $("#roomTypeModal").modal("show");  // 모달을 엽니다
     });
   });
+  
+  
+  /////////////////// 객실타입 개별 삭제 part//////////////
+  $(document).ready(function() {
+  $("#btnDelete").click(function() {
+    
+	  var roomtype_seq = $("#roomtype_seq").val(); // 삭제할 객실 타입의 번호
+	  var place_seq = $("#place_seq").val(); // 업장 번호
+	  
+    if (confirm("정말로 삭제하시겠습니까?")) {
+      $.ajax({
+        url: "/deleteRoomtype",
+        type: "POST",
+        data: { roomtype_seq: roomtype_seq,
+        	  place_seq: place_seq},
+        success: function(result) {
+          // 삭제 성공 시 필요한 처리를 수행합니다.
+          // 예를 들어, 삭제 후에 모달을 닫거나 다른 동작을 수행할 수 있습니다.
+          $("#roomTypeModal").modal("hide");
+          location.reload(); // 페이지 새로고침
+          // 추가적인 처리가 필요한 경우에는 이 부분을 수정해주세요.
+        },
+        error: function(xhr, status, error) {
+          // 삭제 실패 시 필요한 처리를 수행합니다.
+          // 예를 들어, 오류 메시지를 표시하거나 알림을 띄울 수 있습니다.
+          alert("객실 타입 삭제 실패: " + error);
+        }
+      });
+    }
+  });
+});
+
+  // 객실타입당 해당하는 Room 조회 
+$(document).ready(function() {
+    $("#fetchRoomsButton").click(function(e) {
+        var roomTypeNum = $("#showRoomtype").val(); // Get the selected room type number
+
+        $("#roomTableBody").empty(); // Clear the table body
+
+        $.ajax({
+            url: "/showRooms",
+            type: "POST",
+            data: {
+                roomTypeNum: roomTypeNum
+            },
+            success: function(data) {
+                var rooms = JSON.parse(data);
+                for(var i = 0; i < rooms.length; i++) {
+                    var row = $("<tr>");
+                    row.append($("<td>").html('<input type="checkbox" class="room-checkbox" />')); // 체크박스 추가
+                    row.append($("<td>").text(rooms[i].roomtype_name));
+                    row.append($("<td>").text(rooms[i].room_number));
+                    $("#roomTableBody").append(row);
+                }
+            },
+            error: function(error) {
+                console.log(error);
+            }
+        });
+    });
+})
+
+///////////// 선택한 객실만 삭제 코드 ///////////
+
+
+  
+function fetchRooms() {
+    var roomTypeNum = $("#showRoomtype").val(); // 객실타입 선택값 가져오기
+
+    $.ajax({
+        url: '/fetchRooms',
+        type: 'GET',
+        data: {
+            roomTypeNum: roomTypeNum,
+            placeSeq: $("#place_seq").val()
+        },
+        success: function(rooms) {
+            // 받아온 rooms로 테이블 채우는 로직 (이전 테이블 내용은 삭제)
+            // 예를 들어, 이렇게 할 수 있습니다.
+            var tableBody = $("#roomTableBody");
+            tableBody.empty(); // 이전 내용 삭제
+            rooms.forEach(function(room) {
+                // 각 room을 테이블에 추가
+                var row = "<tr><td>" + room.roomNumber + "</td><td>" + room.roomTypeName + "</td></tr>";
+                tableBody.append(row);
+            });
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error('서버와의 통신 오류: ' + textStatus, errorThrown);
+        }
+    });
+}
+
+$(document).ready(function() {
+    $("#fetchRoomsButton").click(fetchRooms);
+
+    $("#btnDeleteRoom").click(function() {
+        var placeSeq = $("#place_seq").val(); // hidden input에서 place_seq 가져오기
+
+        $(".room-checkbox:checked").each(function() {
+            var row = $(this).closest("tr");
+            // 삭제할 객실 정보 가져오기
+
+            var roomNumber = row.find("td:eq(2)").text();
+            console.log(roomNumber);
+
+            // 서버에 AJAX 요청으로 객실 삭제하기
+            $.ajax({
+                url: '/deleteRoomNum', // 객실을 삭제하기 위한 엔드포인트
+                type: 'POST',
+                data: {
+                    roomNumber: roomNumber,
+                    placeSeq: placeSeq // place_seq를 서버에 보내기
+                },
+                success: function(response) {
+                    // 서버가 성공적으로 응답하면, 테이블에서 객실을 삭제하고 객실 목록을 다시 불러옵니다
+                    if(response.status == 'success') {
+                        row.remove();
+                        fetchRooms(); // 객실 삭제 후 객실 목록 다시 불러오기
+                    } else {
+                        // 서버에서 반환된 오류를 처리합니다
+                        console.error('객실 삭제 오류: ' + response.message);
+                    }
+                },
+                error: function(jqXHR, textStatus, errorThrown) {
+                    // 서버와의 통신 중 발생하는 오류를 처리합니다
+                    console.error('서버와의 통신 오류: ' + textStatus, errorThrown);
+                }
+            });
+        });
+    });
+});
+
+////////////////// 객실 insert시 동일한 객실번호 추가방지 /////////////
+$(document).ready(function() {
+    $('#roomForm').on('submit', function(event) {
+        event.preventDefault(); // 원래의 submit 동작을 막습니다.
+        var roomTypeId = $('#roomTypeId').val();
+        var roomNumber = $('#roomNumber').val();
+
+        // 서버에 AJAX 요청으로 객실 존재 확인하기
+        $.ajax({
+            url: '/checkRoomExists', 
+            type: 'GET',
+            data: {
+                roomTypeId: roomTypeId,
+                roomNumber: roomNumber
+            },
+            success: function(response) {
+                // 서버가 성공적으로 응답하면, 객실이 존재하는지 확인합니다
+                if(response.exists) {
+                    // 객실이 이미 존재하면 알림을 보여줍니다
+                    alert('같은 객실타입에 해당 객실번호가 이미 존재합니다.');
+                } else {
+                    // 객실이 존재하지 않으면 폼을 제출합니다
+                    $('#roomForm').off('submit').submit();
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                // 서버와의 통신 중 발생하는 오류를 처리합니다
+                console.error('서버와의 통신 오류: ' + textStatus, errorThrown);
+            }
+        });
+    });
+});
+////////////place Delete////////////////////////////////
+
+$(document).ready(function() {
+    $("#btnDeletePlace").click(function(){
+        var url = window.location.pathname;
+        var placeSeq = url.substring(url.lastIndexOf('/') + 1);
+
+        // 사용자에게 삭제를 진행할 것인지 확인합니다.
+        var isConfirm = confirm("정말로 삭제하시겠습니까?");
+
+        // 사용자가 '확인'을 눌렀을 때만 삭제 요청을 보냅니다.
+        if(isConfirm) {
+            $.ajax({
+                url: "/deletePlace/" + placeSeq,
+                type: 'DELETE',
+                success: function(result) {
+                    // 삭제가 성공적으로 처리된 후, 페이지를 /mypage로 리디렉트합니다.
+                    window.location.href = "/mypage";
+                }
+            });
+        }
+    });
+});
+
+
+	
+	
 
 
     

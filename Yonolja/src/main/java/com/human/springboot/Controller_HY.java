@@ -2,21 +2,31 @@ package com.human.springboot;
 
 
 
+//import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.view.RedirectView;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -76,6 +86,15 @@ public class Controller_HY {
 //	}
 //	
 //	
+	
+//	
+	
+//	@GetMapping("/mypage")
+//	public String showMypage() {
+//		return "mypage";
+//	}
+	
+	
 	@GetMapping("/host_addPlace")
 	public String showAddplace(Model model) {
 	    ArrayList<DTO_HY_P> ptypes = hydao.showPtype(); // DB에서 옵션 데이터 조회
@@ -184,6 +203,8 @@ public class Controller_HY {
 	   
 	    ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
         model.addAttribute("roomTypes", roomTypes);
+        
+        
 		
 		return "host_managePlace";
 		
@@ -227,7 +248,9 @@ public class Controller_HY {
 		String placeSeq = (String)req.getParameter("place_seq");
 	    int place_seq = Integer.parseInt(placeSeq);
     	String place_name= req.getParameter("pname");
+    	System.out.println(place_name);
     	int user_seq = (int) session.getAttribute("user_seq");
+    	System.out.println(user_seq);
     	int place_type_seq=Integer.parseInt(req.getParameter("ptype"));
     	String place_checkin_time = req.getParameter("pcheckin");
     	String place_checkout_time = req.getParameter("pcheckout");
@@ -243,7 +266,7 @@ public class Controller_HY {
     		    place_environment);
 		
     	
-		return "ok";
+    	   return "ok";// 수정한 부분
 	}
 	
 	
@@ -345,8 +368,124 @@ public class Controller_HY {
 
 	    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, DBpath, maxCapacity, nightRate, roomGuide);
 	    
-	    return "main";
+	    return "redirect:/mypage";
 	}
+////////////////////////////객실타입 삭제 코드/////////////////
+//	@PostMapping("/deleteRoomtype")
+//	@ResponseBody
+//	public String deleteRoomtype(@RequestParam("roomtype_seq") int roomtype_seq) {
+//	    // 객실 타입을 삭제하는 로직을 작성합니다.
+//	    hydao.deleteRoomtype(roomtype_seq);
+//	    return "redirect:/main";
+//	}
+	
+	@PostMapping("/deleteRoomtype")
+	public RedirectView deleteRoomtype(@RequestParam("roomtype_seq") int roomtype_seq, @RequestParam("place_seq") int place_seq) {
+	    hydao.deleteRoomtype(roomtype_seq);
+	    RedirectView redirectView = new RedirectView();
+	    redirectView.setUrl("/host_managePlace/" + place_seq);
+	    return redirectView;
+	}
+	
+	@PostMapping("/addRoom")
+	public RedirectView addRoom(
+			@RequestParam("roomTypeId") int roomTypeId,
+			@RequestParam("roomNumber") int roomNumber,
+			@RequestParam("place_seq") int place_seq) {
+		
+		hydao.addRoom(roomTypeId, roomNumber);
+		  RedirectView redirectView = new RedirectView();
+		  redirectView.setUrl("/host_managePlace/" + place_seq);
+
+		return redirectView;
+	}
+
+	/////////////////객실타입별 객실 게시 코드 //////////////
+//	@PostMapping("/showRooms")
+//	public RedirectView showRooms(
+//			  @RequestParam(value="roomTypeNum") int roomtype_seq,
+//			  @RequestParam("place_seq") int place_seq,
+//			  Model model) {
+//		
+//		System.out.println(roomtype_seq);
+//		System.out.println(place_seq);
+//		
+//		ArrayList<DTO_HY_roomtypeDTO> roomNums = hydao.showRooms(roomtype_seq);
+//        model.addAttribute("roomNums", roomNums);
+//        System.out.println(roomNums);
+//        
+//        RedirectView redirectView = new RedirectView();
+//		redirectView.setUrl("/host_managePlace/" + place_seq);
+//
+//		
+//    	return redirectView;
+//	}
+	
+	/// 객실타입 선택후 해당 객실만 select part////
+	@PostMapping("/showRooms")
+	@ResponseBody
+	public ResponseEntity<String> showRooms(@RequestParam("roomTypeNum") String roomTypeNum, Model model) {
+	    try {
+	        int roomTypeId = Integer.parseInt(roomTypeNum);
+	        List<DTO_HY_roomtypeDTO> rooms = hydao.showRooms(roomTypeId);
+
+	        JSONArray jsonArray = new JSONArray();
+	        for (DTO_HY_roomtypeDTO room : rooms) {
+	            JSONObject jo = new JSONObject();
+	            jo.put("roomtype_seq", room.getRoomtype_seq());
+	            jo.put("roomtype_name", room.getRoomtype_name());
+	            jo.put("room_number", room.getRoom_number());
+	            jsonArray.put(jo);
+	        }
+
+	        return ResponseEntity.ok(jsonArray.toString());
+	    } catch (NumberFormatException e) {
+	        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 방 유형 번호입니다.");
+	    }
+	}
+	
+	///// 객실 삭제 part //////
+
+	@PostMapping("/deleteRoomNum")
+	@ResponseBody
+	public ResponseEntity<?> deleteRoomNum(@RequestParam("roomNumber") int roomNumber, @RequestParam("placeSeq") int place_seq) {
+	    hydao.deleteRoomNum(roomNumber);
+	    Map<String, Object> response = new HashMap<>();
+	    response.put("status", "success");
+	    response.put("redirectUrl", "/host_managePlace/" + place_seq);
+	    return ResponseEntity.ok(response);
+	}
+	
+	
+	// 객실 insert시 동일객실번호 체크 part///
+	
+	@GetMapping("/checkRoomExists")
+	@ResponseBody
+	public Map<String, Boolean> checkRoomExists(
+	        @RequestParam("roomTypeId") int roomTypeId,
+	        @RequestParam("roomNumber") int roomNumber) {
+
+	    boolean exists = hydao.checkRoomExists(roomTypeId, roomNumber);
+
+	    Map<String, Boolean> response = new HashMap<>();
+	    response.put("exists", exists);
+
+	    return response;
+	}
+	
+	// Place Delete 삭제 part
+	
+	@DeleteMapping("/deletePlace/{placeSeq}")
+	public ResponseEntity<Void> deletePlace(@PathVariable("placeSeq") int placeSeq) {
+		hydao.deletePlace(placeSeq);
+	    return ResponseEntity.ok().build();  // 삭제가 성공적으로 이루어졌을 때 응답
+	}
+
+
+
+
+
+
 
 
 

@@ -3,6 +3,7 @@ package com.human.springboot;
 import java.util.ArrayList;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface DAO_HY {
@@ -38,4 +39,24 @@ public interface DAO_HY {
 	
 	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq, String roomtype_imgs, int roomtype_capacity, int roomtype_price, String roomtype_guide);
 
+	//Roomtype delete 
+	
+	void deleteRoomtype(int roomtype_seq);
+	
+	//Room insert
+	
+	void addRoom(int roomtype_seq, int room_number);
+	
+	//Room select 
+	ArrayList<DTO_HY_roomtypeDTO> showRooms(int roomtype_seq);
+	
+	//Room delete 
+	void deleteRoomNum(int room_number);
+
+	//room insert 시 동일객실존재하는지 체크 part 
+	boolean checkRoomExists(@Param("roomTypeId") int roomTypeId, @Param("roomNumber") int roomNumber);
+
+	// place Delete 
+	void deletePlace(int place_seq);	
+	
 }

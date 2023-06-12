@@ -105,6 +105,60 @@
 	        roomtype_guide = #{param7}
    		 WHERE roomtype_seq= #{param1}
 	</update>
+	
+<!-- 	 Roomtype delete PART -->
+		 <delete id="deleteRoomtype" >
+    		DELETE FROM yonolja_roomtype 
+    		WHERE roomtype_seq = #{param1}
+  		</delete>
+  		
+<!--   	 Room insert Part -->
+
+
+	<insert id="addRoom">
+		insert into yonolja_room values(
+			room_seq.nextval,
+			 #{param1},
+			 #{param2}
+		)
+	</insert>
+	
+	
+<!-- 	room select part -->
+
+	<select id="showRooms" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+    	select r.room_number, t.roomtype_name
+    	from yonolja_room r,
+    		 yonolja_roomtype t
+    	where t.roomtype_seq=#{param1}
+    	and r.roomtype_seq=t.roomtype_seq
+    	order by r.room_number asc
+	</select>
+	
+
+<!-- room num Delete part -->
+ 		<delete id="deleteRoomNum" >
+    		DELETE FROM yonolja_room 
+    		WHERE room_number = #{param1}
+  		</delete>
+  		
+  		
+<!--   		room insert 시 동일객실존재하는지 체크 part -->
+
+		<select id="checkRoomExists" resultType="java.lang.Boolean">
+		  	SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
+			FROM yonolja_room
+			WHERE roomtype_seq = #{roomTypeId} AND room_number = #{roomNumber}
+		</select>
+		
+<!-- place Delete part -->
+ 		<delete id="deletePlace" >
+    		DELETE FROM yonolja_place
+    		WHERE place_seq = #{param1}
+  		</delete>
+		
+	
+
 
 
 
