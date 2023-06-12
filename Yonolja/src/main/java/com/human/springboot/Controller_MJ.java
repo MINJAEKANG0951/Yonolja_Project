@@ -48,6 +48,18 @@ public class Controller_MJ {
 	public String showModalTestPage2() {
 		return "/test/modal_byMyself";
 	}
+	@GetMapping("/test5")
+	public String showKakaoMapsAPI() {
+		return "/test/kakaoMapsAPI";
+	}
+	@GetMapping("/calendar")
+	public String showCalendar() {
+		return "/test/calendar";
+	}
+	@GetMapping("/calendarTest")
+	public String showCalendarTest() {
+		return "/test/calendarTest";
+	}
 	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
 	@GetMapping("/signin")
@@ -226,7 +238,7 @@ public class Controller_MJ {
 			places = mjdao.getPlaces(null);
 			
 		} else if( req.getParameter("keyword").equals("environment") ) {
-			
+			// 주변환경검색시
 			String environment_seq = req.getParameter("selected_environment");
 			String sql = "where place_environment like '" + environment_seq + ",%'";
 			sql += "or place_environment like'%," + environment_seq + ",%'";		 
@@ -234,15 +246,11 @@ public class Controller_MJ {
 			sql += "or place_environment like'" + environment_seq + "'";			 
 			places = mjdao.getPlaces(sql);
 			
-		} else if( req.getParameter("keyword").equals("address") ) {
-			
-		} else if( req.getParameter("keyword").equals("forHowLong") ) {
-			
-		} else if( req.getParameter("keyword").equals("amountOfPeople") ) {
-			
+		} else if( req.getParameter("keyword").equals("searchbar") ) {
+			// 서치바로 검색시
+		} else if( req.getParameter("keyword").equals("filter") ) {
+			// 필터로 검색시
 		}
-
-
 		JSONArray ja = new JSONArray();
 		
 		for(int i=0;i<places.size();i++) {
@@ -281,16 +289,20 @@ public class Controller_MJ {
 	
 	
 	
+	/*
 	
 	
+	if(imgs[0].isEmpty()) {
+			System.out.println("no img");
+			return "main";
+		}
+	
+
+	mutlipartFile array 에서 img 안받아두될때 쓰는 code.
+	참고로 requestparam 선언시에 parameter 에 required=false 넣어주어야함.
 	
 	
-	
-	
-	
-	
-	
-	
+	*/
 	
 	
 	
