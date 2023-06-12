@@ -61,6 +61,11 @@ public class Controller_MJ {
 		return "/test/calendarTest";
 	}
 	
+	@GetMapping("/showStructure")
+	public String showStructure() {
+		return "/structure/all";
+	}
+	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
 	@GetMapping("/signin")
 	public String showSignin() {

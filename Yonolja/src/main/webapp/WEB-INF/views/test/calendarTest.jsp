@@ -8,6 +8,7 @@
     <meta charset="UTF-8">
 <title>로그인페이지</title>
 </head>
+<%@ include file ="../structure/header.jsp" %>
 <style>
 table{
 	border-collapse:collapse;
@@ -31,11 +32,10 @@ td{
 
 calendar = calendarMaker();
 calendar.getTag();
-calendar.codes();
+
 $('body').append(calendar.getTag());
-
 $('body').append(calendar.getCode());
-
+calendar.codes();
 
 
 
@@ -109,15 +109,18 @@ function calendarMaker(){
         
         codes:function(){
             
+            FillCalendar();
+
             // calendar 를 채우는 function
             function FillCalendar(){
+            	
                 calendarTime = new Date(this.calendar_year + "-" + this.calendar_month + "-" + 1);
                 $('#' + this.calendarInputId_year).val(this.calendar_year);
                 $('#' + this.calendarInputId_month).val(this.calendar_month);
                 start = calendarTime.getDay();
-                    
+                console.log(start)
                 for(i=start;i<$('#'+ this.calendarTable_id + ' td').length;i++){
-    
+                	
                         calendarMonth_a = calendarTime.getMonth();
     
                         // 여기서 날짜 입력하면서, td에 class 넣어주면됨. unavailable일지 available일지 정해서.
@@ -127,7 +130,7 @@ function calendarMaker(){
     
     
                         calendarMonth_b = calendarTime.getMonth();
-    
+    					
                         if(calendarMonth_a!=calendarMonth_b){break;}
                 }
             }

@@ -8,7 +8,9 @@
     <meta charset="UTF-8">
 <title>로그인페이지</title>
 </head>
+
 <style>
+
 table{border-collapse:collapse;margin:0 auto;margin-top:15%;border:1px solid #ddd;}
 tr:nth-child(1){
 	border-bottom:1px solid #ddd;
