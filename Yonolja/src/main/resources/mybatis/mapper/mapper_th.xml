@@ -73,6 +73,7 @@
 				from yonolja_user where not user_id='admin' and ( USER_ID like '%' || #{param1} || '%' )
 	
 	</select>
+	
 	<!-- 나중에 타입별 보여주기
 	 
 	<select id='admin_user_type' resultType='com.human.springboot.DTO_TH'>
@@ -105,7 +106,7 @@
 				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and (a.post_title like '%' || #{param1} || '%'
                   or  a.post_content like '%' || #{param1} || '%' 
                   or  b.user_id like '%' || #{param1} || '%' 
-                  or a.post_comment like '%' || #{param1} || '%') ORDER BY a.post_seq ASC))
+                  or a.post_comment like '%' || #{param1} || '%') ORDER BY a.post_seq desc))
 		WHERE NUM BETWEEN #{param2} AND #{param3}
 	</select>
 	
@@ -122,7 +123,7 @@
 		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
 				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and 
 				(b.user_id like '%' || #{param1} || '%' 
-                 ) ORDER BY a.post_seq ASC))
+                 ) ORDER BY a.post_seq desc))
 		WHERE NUM BETWEEN #{param2} AND #{param3}
 	</select>
 		<!-- 검색한 아이디 게시글 숫자-->
@@ -137,7 +138,7 @@
 		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
 				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and 
 				(a.post_title like '%' || #{param1} || '%' 
-                 ) ORDER BY a.post_seq ASC))
+                 ) ORDER BY a.post_seq desc))
 		WHERE NUM BETWEEN #{param2} AND #{param3}
 	</select>
 		<!-- 검색한 제목 게시글 숫자-->
@@ -152,7 +153,7 @@
 		FROM ( select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment 
 				from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and not b.user_id='admin'and 
 				(a.post_content like '%' || #{param1} || '%' 
-                 ) ORDER BY a.post_seq ASC))
+                 ) ORDER BY a.post_seq desc))
 		WHERE NUM BETWEEN #{param2} AND #{param3}
 	</select>
 		<!-- 검색한 내용 게시글 숫자-->
@@ -165,6 +166,14 @@
 		update yonolja_post set post_comment = #{param1} where post_seq=#{param2}
 	</update>
 	
+	<select id="post_list_diolog" resultType="com.human.springboot.DTO_TH">
+		select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment,a.post_content 
+		from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and a.post_seq=#{param1}
+	</select>
+	
+	<delete id="post_delete_list">
+		delete from yonolja_post where post_seq=#{param1}
+	</delete>
 	<!-- 호텔 옵션타입관리 -->
 	<select id='yonolja_place_type_list' resultType='com.human.springboot.DTO_TH'>
 		select * from yonolja_place_type
@@ -228,6 +237,8 @@
                <!-- 날짜는 나중에 다시 확인  or  REVIEW_DATE like '%' || #{param1} || '%' --> 
               or BOOK_SEQ like '%' || #{param1} || '%' )
 	</select>
-	
+	<delete id="review_delete_list">
+		delete from review where review_seq_test=#{param1}
+	</delete>
 </mapper>
 

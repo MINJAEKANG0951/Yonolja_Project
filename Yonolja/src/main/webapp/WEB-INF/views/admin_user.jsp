@@ -198,6 +198,7 @@ function memberlist(page){
 
 function search_list(num,searchVal){
 	console.log($('#admin_user_search_type').val())
+	console.log($('#admin_user_search').val())
 	$.ajax({
 		url:'/admin_user_search',
 		data:{search:$('#admin_user_search').val(),number:num,searchVal:$('#admin_user_search_type').val()},

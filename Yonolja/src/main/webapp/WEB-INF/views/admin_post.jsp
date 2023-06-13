@@ -14,9 +14,13 @@
 <body>
 <div id="admin_post_page">
 	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><a href='/admin'>관리자 페이지</a><input type=hidden id=admin_post_reset value=0>
+	<div id=post_delete_div>
+		<input type=button id=post_delete value=삭제>
+	</div>
+	
 	<table border=1px id=admin_post_page_table>
 		<tr>
-			<td>문의번호</td><td>문의분류</td><td>문의제목</td><td>아이디</td><td>문의일</td><td>문의상태</td><td>답변작성</td>
+			<td><input type="checkbox" id=checkList></td><td>문의번호</td><td>문의분류</td><td>문의제목</td><td>아이디</td><td>문의일</td><td>문의상태</td><td>답변작성</td>
 		</tr>
 	</table>
 	<div id=admin_post_controller>
@@ -85,6 +89,53 @@
     </table>
 </div>
 
+<div id=admin_post_list_diolog_text style="display:none">
+	   <table border="1px solid black">
+	    <tr>
+	        <td>
+	        	<a>Title</a><input type=hidden id=dialog_post_seq_hidden_view value=''>
+	    	</td>	    	
+		    <td colspan=3>		      
+		    	<input type='text' id=dialog__post_title_view readonly>
+		    </td>   
+		</tr>
+		<tr>
+			<td>
+	        	<a>Hits</a>
+	    	</td>	    
+		    <td>
+	        	<input type=text id=dialog__post_view_count_view readonly>
+	    	</td>
+	        <td>
+	        	<a>Writer</a>
+	    	</td>	    	
+		    <td>		      
+		    	<input type='text' id=dialog__post_id_view readonly>
+		    </td>			
+		</tr>
+		<tr>
+	        <td colspan=4>
+	        	<a>content</a>
+	    	</td>
+	    </tr>
+	    <tr> 	
+		    <td colspan=4>		      
+		    	<textarea rows="20" cols="65" id=dialog_post_contents_view maxlength="500" readonly></textarea>
+		    </td>   
+		</tr>
+		<tr>
+			<td colspan=4>
+				<a>관리자 답변</a>
+			</td>
+		</tr>
+		<tr>
+			<td colspan=4>
+				<textarea rows="10" cols="65" maxlength="500" id=post_admin_comment_view></textarea>
+			</td>
+		</tr>
+
+    </table>
+</div>
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -103,7 +154,7 @@ $(document)
 
 .on('click','.asbtn',function(){
 	
-	post_seq=$(this).parent().parent().find('td:eq(0)').text()
+	post_seq=$(this).parent().parent().find('td:eq(1)').text()
 	//alert(post_seq)
 	$.ajax({url:'/admin_post_comment',
 		data:{post_date:post_seq},
@@ -128,6 +179,9 @@ $(document)
 						$('#dialog_post_seq_hidden').val(data[0]['post_seq'])
 						
 						
+		        	},
+		        	close: function(){
+		        		$('#post_admin_comment').val("")
 		        	}
 				/*,beforeClose:function(){  다이얼로그 종료시 작동할 동장 필요시 사용
         		if($('#post_admin_comment').text()==null || $('#post_admin_comment').text()=="" ){
@@ -143,10 +197,7 @@ $(document)
 })
 
 .on('click','#post_admin_comment_btn',function(){
-	console.log($('#post_admin_comment').text()+"text")
-	console.log($('#post_admin_comment').val()+"val")
-	console.log($('#dialog_post_seq_hidden').val()+"seq")
-	console.log($('#post_admin_comment').val()+"val")
+
 	var str_commit=$('#post_admin_comment').val();
 	if($('#post_admin_comment').val()!=null && $('#post_admin_comment').val()!="" ){
 		$.ajax({url:'/admin_comment_registration',
@@ -183,6 +234,92 @@ $(document)
 		})
 	}
 })
+
+.on('click','.admin_post_diolog',function(){
+	console.log($(this).text())
+	post_seq=$(this).parent().find('td:eq(1)').text()
+	$.ajax({url:'/admin_post_list_diolog',
+		data:{seq:post_seq},
+		dataType:'json',
+		type:'post',
+		success:function(data){
+
+			if(data!=null || data!=''){
+				$('#admin_post_list_diolog_text').dialog({
+		            title: '고객문의관리',
+		            modal: true,
+		            width:625,
+		            focus:function(){
+		            	
+		              	$('#dialog__post_title_view').val(data['post_title'])
+		            	$('#dialog__post_id_view').val(data['user_id'])
+
+						$('#dialog_post_contents_view').text(data['post_content'])
+						$('#dialog_post_seq_hidden_view').val(data['post_seq'])
+						$('#post_admin_comment_view').val(data['post_comment'])
+						
+		        	},
+		        	/*close: function(){
+		        		$('#post_admin_comment').val("")
+		        	}*/
+				/*,beforeClose:function(){  다이얼로그 종료시 작동할 동장 필요시 사용
+        		if($('#post_admin_comment').text()==null || $('#post_admin_comment').text()=="" ){
+        			alert("값이 있습니다")
+        		}
+        	}*/
+		        })
+			}
+			
+		}
+	})
+})
+
+.on('click','#checkList',function(){
+		var checked = $('#checkList').is(':checked');
+		
+		
+		
+		if(checked){
+			$('input:checkbox').prop('checked',true);
+		} else {
+			$('input:checkbox').prop('checked',false);
+		}
+			
+})
+.on('click','#post_delete',function(){
+	var checkedValues = [];
+	$('.check_service:checked').each(function() {
+	  checkedValues.push($(this).parent().parent().find('td:eq(0)').text());
+	});
+
+	console.log(checkedValues.join(','));
+	$.ajax({
+		url:"/post_delete_service",
+		data:{seq:checkedValues.join(',')},
+		dataType:'text',
+		type:'post',
+		beforeSend:function(){
+			if(confirm('정말로 삭제하시겠습니까?')){
+				
+				
+			} else{
+				alert("정지하였습니다")
+				return false;
+			}
+		},
+		success:function(data){
+			console.log(data)
+			if(data=="ok"){
+				alert("삭제되었습니다")
+				document.location="/admin_post"
+			}else{
+				alert("실패하였습니다")
+			}
+		}
+			
+	})
+})
+
 
 .on('click','#admin_post_controller>a',function(){
 	post_list($(this).text())
@@ -241,9 +378,9 @@ function post_list(page){
 					if(data[i]['post_comment']=="답변완료"){
 						test="";
 					}
-				str +='<tr><td>'
+				str +='<tr><td><input class=check_service type=checkbox id=checkboxid'+i+'></td><td>'
 						+data[i]['post_seq']+'</td><td>'
-						+data[i]['post_category']+'</td><td>' //추후에 물어보고 할것
+						+data[i]['post_category']+'</td><td class=admin_post_diolog>' //추후에 물어보고 할것
 						+data[i]['post_title']+'</td><td>'		// user_seq 사용
 						+data[i]['user_id']+'</td><td>'
 						+data[i]['post_date']+'</td><td>'
@@ -309,9 +446,9 @@ function search_list(page,select_val){
 					if(data[i]['post_comment']=="답변완료"){
 						test="";
 					}
-					str +='<tr><td>'
+					str +='<tr><td><input class=check_service type=checkbox id=checkboxid'+i+'></td><td>'
 						+data[i]['post_seq']+'</td><td>'
-						+data[i]['post_category']+'</td><td>' //추후에 물어보고 할것
+						+data[i]['post_category']+'</td><td class=admin_post_diolog>' //추후에 물어보고 할것
 						+data[i]['post_title']+'</td><td>'		// user_seq 사용
 						+data[i]['user_id']+'</td><td>'
 						+data[i]['post_date']+'</td><td>'

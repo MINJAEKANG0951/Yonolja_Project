@@ -40,6 +40,10 @@ public interface DAO_TH {
 	// 내용 검색
 	ArrayList<DTO_TH>post_list_search_content(String search,int start, int end);
 	int post_list_search_content_count(String search);
+	// 개별 내용 보기
+	DTO_TH post_list_diolog(int seq);
+	//post_delete
+	void post_delete_list(String seq);
 	
 	// 호텔 타입 관리
 	ArrayList<DTO_TH> yonolja_place_type_list();
@@ -67,6 +71,8 @@ public interface DAO_TH {
 	ArrayList<DTO_TH> yonolja_review_list(int start,int end);
 	int yonolja_review_page();
 	
+	//review delete
+	void review_delete_list(String seq);
 	// 관리자 리뷰 관리 검색
 	ArrayList<DTO_TH> yonolja_review_search(String search, int start, int end);
 	int yonolja_review_search_page(String search);

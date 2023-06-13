@@ -23,11 +23,12 @@
 	</div>
 
  	<div>
- 		<h2>리뷰 관리 게시판</h2><a href='/admin'>관리자 페이지</a>
+ 		<h2>리뷰 관리 게시판</h2><a href='/admin'>관리자 페이지</a><br>
+ 		<input type=button id=admin_review_delete value=삭제>
  	</div>
  	<table border="1px solid:black" id='admin_review_management'>
  		<tr>
- 			<td>번호</td><td>숙소이름</td><td>제목</td><td>날짜</td><td>평점</td>
+ 			<td><input type=checkbox id=checkbox_list></td><td>번호</td><td>숙소이름</td><td>제목</td><td>날짜</td><td>평점</td>
  		</tr>
  	</table>
  	<div id="admin_page_controller" class='paging'>
@@ -88,6 +89,51 @@ $(document)
     // 나머지 a 태그의 글자 굵기 초기화
     $('#admin_page_search_controller>a').not(this).css('font-weight', 'normal');
 })
+
+.on('click','#admin_review_delete',function(){
+	var checkedValues = [];
+	$('.check_service:checked').each(function() {
+	  checkedValues.push($(this).parent().parent().find('td:eq(1)').text());
+	});
+	console.log(checkedValues.join(','));
+	$.ajax({
+		url:"/review_delete_service",
+		data:{seq:checkedValues.join(',')},
+		dataType:'text',
+		type:'post',
+		beforeSend:function(){
+			if(confirm('정말로 삭제하시겠습니까?')){
+				
+				
+			} else{
+				alert("정지하였습니다")
+				return false;
+			}
+		},
+		success:function(data){
+			console.log(data)
+			if(data=="ok"){
+				alert("삭제되었습니다")
+				document.location="/admin_review"
+			}else{
+				alert("실패하였습니다")
+			}
+		}
+			
+	})
+})
+
+.on('click','#checkbox_list',function(){
+	var checked = $('#checkbox_list').is(':checked');
+	
+	if(checked){
+		$('input:checkbox').prop('checked',true);
+	} else {
+		$('input:checkbox').prop('checked',false);
+	}
+			
+})
+
 .on('click','#admin_review_btn',function(){
 	$.ajax({
 		url:'/admin_review_search_paging',
@@ -135,7 +181,7 @@ function review_list(a){
 				let str='';
 				console.log(data.length)
 				for(i=0;i<data.length;i++){
-					str+='<tr><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
+					str+='<tr><td><input class=check_service type=checkbox id=checkboxid'+i+'></td><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
 					+data[i]['place_name']+"</td><td>"//book_seq 를 활용하여 place_name 을 가져온다
  					+data[i]['review_content']+"</td><td>"
  					+data[i]['review_date']+"</td><td>"

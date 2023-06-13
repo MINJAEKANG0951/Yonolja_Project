@@ -162,8 +162,9 @@ public class Controller_TH {
 		}else if(searchVal==1) {
 			list=tdao.admin_user_search_name(search,start,end);
 			System.out.println("list"+list);
-		
-		
+			System.out.println(searchVal+"1 ???");
+			
+			
 			for(int i=0;i<list.size();i++) {
 				JSONObject jo=new JSONObject();
 				jo.put("user_seq",list.get(i).getUSER_SEQ());
@@ -179,7 +180,7 @@ public class Controller_TH {
 		}else if(searchVal==2) {
 			list=tdao.admin_user_search_id(search,start,end);
 			System.out.println("list"+list);
-		
+			System.out.println(searchVal+"2 ???");
 		
 			for(int i=0;i<list.size();i++) {
 				JSONObject jo=new JSONObject();
@@ -216,7 +217,7 @@ public class Controller_TH {
 			number=tdao.admin_user_search_count(search);
 		}else if(searchVal==1) {
 			number=tdao.admin_user_search_name_count(search);
-		}else if(searchVal==1) {
+		}else if(searchVal==2) {
 			number=tdao.admin_user_search_id_count(search);
 		}
 		System.out.println(number);
@@ -374,6 +375,28 @@ public class Controller_TH {
 		return reVal;
 	}
 	
+	@PostMapping("/admin_post_list_diolog")
+	@ResponseBody
+	public String admin_post_list_diolog(HttpServletRequest req) {
+		int seq=Integer.parseInt(req.getParameter("seq"));
+		
+		DTO_TH list=tdao.post_list_diolog(seq);
+		System.out.println(list);
+		JSONArray ja=new JSONArray();
+		JSONObject jo=new JSONObject();
+		jo.put("post_title", list.getPost_title());
+		jo.put("user_id", list.getUSER_ID());
+		jo.put("post_seq", list.getPost_seq());
+		jo.put("post_content", list.getPost_content());
+		jo.put("post_comment", list.getPost_comment());
+		ja.put(jo);
+		System.out.println("check pls"+ja);
+		return jo.toString();
+				
+	}
+	
+	
+	
 	@PostMapping("/post_search")
 	@ResponseBody
 	public String post_search(HttpServletRequest req) {
@@ -507,6 +530,29 @@ public class Controller_TH {
 		
 		return paging;
 	}
+	
+	@PostMapping("/post_delete_service")
+	@ResponseBody
+	public String post_delete_service(HttpServletRequest req){
+			String[] seq;
+			String number=req.getParameter("seq");
+			seq=number.split(",");
+			String returnVal="ok";
+			try {
+				for(int i=0;i<seq.length;i++) {
+					tdao.post_delete_list(seq[i]);
+				}				
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				returnVal="fail";
+			}
+
+			System.out.println(returnVal);
+		
+		return returnVal;
+	}
+	
+	
 	
 	@PostMapping("/admin_post_search_paging")
 	@ResponseBody
@@ -939,6 +985,26 @@ public class Controller_TH {
 		
 		return pageend;
 		
+	}
+	@PostMapping("/review_delete_service")
+	@ResponseBody
+	public String reivew_delete_service(HttpServletRequest req){
+			String[] seq;
+			String number=req.getParameter("seq");
+			seq=number.split(",");
+			String returnVal="ok";
+			try {
+				for(int i=0;i<seq.length;i++) {
+					tdao.review_delete_list(seq[i]);
+				}				
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				returnVal="fail";
+			}
+
+			System.out.println(returnVal);
+		
+		return returnVal;
 	}
 	
 }
