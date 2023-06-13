@@ -289,7 +289,7 @@ $(document)
 .on('click','#post_delete',function(){
 	var checkedValues = [];
 	$('.check_service:checked').each(function() {
-	  checkedValues.push($(this).parent().parent().find('td:eq(0)').text());
+	  checkedValues.push($(this).parent().parent().find('td:eq(1)').text());
 	});
 
 	console.log(checkedValues.join(','));
