@@ -31,4 +31,10 @@ public interface DAO_HS {
 	
 	// 나의후기에서 등록한 리뷰 내역 가져오기
 	List<DTO_HS_reviewDTO> myReviewlist(int user_seq);
+	
+	// 나의후기에서 리뷰 수정(업데이트) 하기
+	void myreview_update(int review_seq, String review_content, int review_star);
+	
+	// 나의후기에서 리뷰 삭제 하기
+	void myReview_delete(int review_seq);
 }

@@ -16,6 +16,7 @@ if (session.getAttribute("user_id") == null) {
 <meta charset="UTF-8">
 <title>MyReviews</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 
 <style>
@@ -310,7 +311,7 @@ section {
   text-align: center;
   
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.1fr 0.5fr;
   align-items: center;
   padding: 15px;
   border-bottom: 1px solid black;
@@ -322,7 +323,7 @@ section {
   text-align: center;
   
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.1fr 0.5fr;
   align-items: center;
   padding: 15px; 
   border-bottom: 1px solid black;
@@ -337,25 +338,25 @@ section {
 
 /* 모달창 띄우기 */
 #review_modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
 }
 
 /* Modal Content/Box */
 #review {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 30%; /* Could be more or less, depending on screen size */
+    width: 30%; 
 }
 
 /* The Close Button */
@@ -443,6 +444,7 @@ section {
 
 <div>
 	<h1 class="h1_review"><span>나의후기</span></h1>
+	<!-- <span class="r">호텔페이지로 이동하고 싶으면 해당하는 리뷰를 클릭하세요.</span> -->
 	<div class="div_review">
 		<span>호텔명</span>
 		<span>숙박일</span>
@@ -457,13 +459,22 @@ section {
 	
    	<c:forEach items="${myreview}" var="review" varStatus="status">
 		<div class="div_review2">
-			<span class="review_link" onclick="redirectToReviewView(${review.review_seq})">${review.place_name}</span>
-			<span class="review_link" onclick="redirectToReviewView(${review.review_seq})">${review.checkin_date}</span>
-			<span class="review_link" onclick="redirectToReviewView(${review.review_seq})">${review.review_content}</span>
-			<span class="review_link" onclick="redirectToReviewView(${review.review_seq})">${review.review_date}</span>
+		
+			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.place_name}</span>
+			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.checkin_date}</span>
+			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.review_content}</span>
+			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.review_date}</span>
+			
+			<!-- onclick="redirectToReviewView(${review.review_seq})" -->
+			
+			<button id="btnUp" class="btn">수정</button>
+			&nbsp;
+			<button id="btnD" class="btn" data-review-seq="${review.review_seq}">삭제</button>
 
-			<input type="text" value="${review.review_seq}" id="seq_${review.review_seq}"><br>
-			<input type="text" value="${review.review_content}" id="seq_${review.review_seq}_content">
+			<input type="hidden" value="${review.review_seq}" id="seq_${review.review_seq}">
+			<input type="hidden" value="${review.review_star}" id="seq_${review.review_seq}_star">
+			<input type="hidden" value="${review.review_content}" id="seq_${review.review_seq}_content">
+			<input type="hidden" value="${review.place_seq}" id="seq_${review.place_seq}">
 
 		</div>
 	</c:forEach>   
@@ -483,7 +494,7 @@ section {
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
         </div>
-        <button id="review_ok">확인</button>
+        <button id="review_up">수정</button>
         <button id="review_c">취소</button>       
     </div>
 </div>
@@ -571,16 +582,52 @@ function fillPlaceOptions(){
 
 //
 $(document)
-/* .on("click", "#myinfo", function() {
-    $("#review_modal").show();
-})*/
 
+// 수정 버튼 눌렀을 때 모달창 띄우기
+.on("click", "#btnUp", function() {
+    var reviewSeq = $(this).parent().find('input').first().val();
+    redirectToReviewView(reviewSeq);
+})
+
+// 삭제 버튼 눌렀을 때
+
+.on("click", "#btnD", function() {
+    console.log("삭제");
+    if(!confirm("해당 리뷰를 삭제하시겠습니까?")) return false;
+    
+    // data-review-seq 속성에서 review_seq 값을 가져옴
+    var review_seq = $(this).data("review-seq");
+    
+    console.log(review_seq);
+
+    $.ajax({
+        url: '/myReview_Bye',
+        type: 'post',
+        data: {review_seq: review_seq
+              },
+        success: function(data) {
+
+            if(data=="ok") {
+                $('#review_c').trigger('click');
+                alert("삭제되었습니다.");
+                location.reload();
+            } else {
+                
+            }
+            
+        }
+    })
+})
+
+
+// 모달창 닫기 버튼(X버튼)
 .on("click", ".close", function() {
     $("#review_modal").hide();
-    $("#book_seq").val(''); // 추가된 부분: 비밀번호 입력 필드 초기화
+    $("#book_seq").val('');
 
 })
 
+// 모달창 취소 버튼
 .on("click", "#review_c", function() {
     var book_seq = $("#book_seq").val();
     var content = $("#content").val();
@@ -598,38 +645,55 @@ $(document)
     
 })
 
-.on("click", "#review_ok", function() {
-    var book_seq = $("#book_seq").val();
+// 모달창 수정 버튼
+.on("click", "#review_up", function() {
+    var review_seq = $("#review_seq").val();
     var content = $("#review_content").val();
-	
-    console.log("book_seq: ", book_seq, "별점: ",starRating, "content: ", content);
+    
+    console.log("review_seq: ", review_seq, "별점: ",starRating, "content: ", content);
     
     if(content=="") {
-    	console.log("내용을 입력해주세요.");
-    	//alert("내용을 입력해주세요.");
-    	return false;
+        console.log("내용을 입력해주세요.");
+        //alert("내용을 입력해주세요.");
+        return false;
     }
     
     if(starRating==0) {
-    	console.log("1개 이상의 별점을 선택해주세요.");
-    	//alert("1개 이상의 별점을 선택해주세요.");
-    	return false;
+        console.log("1개 이상의 별점을 선택해주세요.");
+        //alert("1개 이상의 별점을 선택해주세요.");
+        return false;
     }
 
-/*
-    // 모든 별의 'checked' 클래스 제거하고 별점 초기화
-     document.querySelectorAll('.fa-star').forEach(item => {
-        item.classList.remove('checked');
-    });
-    starRating = 0;    
-    
-    $("#book_seq").val("");
-    $("#content").val("");
+    // 입력한 내용과 별점이 원래의 내용과 별점과 동일한지 체크
+    if(starRating == originalStarRating && content == originalContent) {
+        var isClose = confirm("변경된 사항이 없습니다. 창을 닫겠습니까?");
+        if(isClose) {
+            // 사용자가 Yes를 선택하면 창을 닫음
+            $("#review_modal").hide();
+        }
+        return false;
+    }
 
-	$("#review_modal").hide(); 
-	*/ 
-    
-    
+ 	$.ajax({
+		url: '/myReview_update',
+		type: 'post',
+		data: {review_seq: review_seq,
+			   review_content: content,
+			   review_star: starRating
+			  },
+		success: function(data) {
+			console.log("content: ", content,  "별점: ",starRating, "review_seq: ", review_seq);
+
+			if(data=="ok") {
+				$('#review_c').trigger('click');
+				alert("수정되었습니다.");
+				location.reload();
+			} else {
+				
+			}
+			
+		}
+	})      
 })
 
 let starRating = 0;
@@ -652,39 +716,83 @@ document.querySelectorAll('.fa-star').forEach((item, index) => {
   })
 })
 
-// 별점을 AJAX 요청에 포함시키려면 다음과 같이 사용할 수 있습니다.
-/*
-$.ajax({
-  url: '/some-url',
-  type: 'post',
-  data: {
-    rating: starRating,
-    // other data...
-  },
-  success: function(response) {
-    // handle success...
-  }
-});
-*/
+function goToPlacePage(placeSeq) {
+    var placeSeqValue = document.getElementById("seq_" + placeSeq).value;
+    
+    var confirmResult = confirm("호텔 페이지로 이동하시겠습니까?");
 
+    if(confirmResult){
+        window.location.href = 'place/' + placeSeqValue;
+    }
+}
 
-  
+var originalStarRating;
+var originalContent;
+
 function redirectToReviewView(reviewSeq) {
-    // ID 값으로 각 book_seq에 해당하는 input 태그를 찾아서, 그 값을 읽어옵니다.
     var reviewSeqValue = document.getElementById("seq_" + reviewSeq).value;
-    
-    // Here, instead of just review_content, you should use the id of the element with the content.
-    // seq_${review.review_content} --> "seq_" + reviewSeq + "_content"
+
+    // review_star 값 받아오기
+    var reviewStar = document.getElementById("seq_" + reviewSeq + "_star").value;
+
+    // review_content ID 값을 가진 요소에서 value를 가져옴
     var reviewContent = document.getElementById("seq_" + reviewSeq + "_content").value;
-    
-    // review_modal에서의 input 필드에 해당 값을 설정합니다.
+
+    // 원래의 별점과 내용을 저장
+    originalStarRating = parseInt(reviewStar);
+    originalContent = reviewContent;
+
+    // review_modal에서의 input 필드에 해당 값을 설정
     document.getElementById("review_seq").value = reviewSeqValue;
-    
     document.getElementById("review_content").value = reviewContent;
-    
-    // 그 다음에 모달을 보여줍니다.
+
+    // 별점 설정
+    document.querySelectorAll('.fa-star').forEach((item, index) => {
+        // DB에 저장된 review_star 값만큼 별 표시
+        if(index < reviewStar) {
+            item.classList.add('checked');
+        } else {
+            item.classList.remove('checked');
+        }
+    });
+
+    // starRating 값 설정
+    starRating = parseInt(reviewStar);
+
+    // 모달창 생성
     $("#review_modal").show();
 }
+
+
+/* function redirectToReviewView(reviewSeq) {
+    var reviewSeqValue = document.getElementById("seq_" + reviewSeq).value;
+
+    // review_star 값 받아오기
+    var reviewStar = document.getElementById("seq_" + reviewSeq + "_star").value;
+
+    // review_content ID 값을 가진 요소에서 value를 가져옴
+    var reviewContent = document.getElementById("seq_" + reviewSeq + "_content").value;
+
+    // review_modal에서의 input 필드에 해당 값을 설정
+    document.getElementById("review_seq").value = reviewSeqValue;
+    document.getElementById("review_content").value = reviewContent;
+
+    // 별점 설정
+    document.querySelectorAll('.fa-star').forEach((item, index) => {
+        // DB에 저장된 review_star 값만큼 별 표시
+        if(index < reviewStar) {
+            item.classList.add('checked');
+        } else {
+            item.classList.remove('checked');
+        }
+    });
+
+    // starRating 값 설정
+    starRating = parseInt(reviewStar);
+
+    // 모달창 생성
+    $("#review_modal").show();
+} */
 
 
 </script>

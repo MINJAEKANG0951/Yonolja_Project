@@ -340,25 +340,25 @@ section {
 
 /* 모달창 띄우기 */
 #review_modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
 }
 
 /* Modal Content/Box */
 #review {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 30%; /* Could be more or less, depending on screen size */
+    width: 30%; 
 }
 
 /* The Close Button */
@@ -476,7 +476,7 @@ section {
 <div id="review_modal">
     <div id="review">
         <span class="close">&times;</span>
-        <label>리뷰를 입력해주세요.</label>
+        <label>리뷰를 입력해주세요.</label><br>
         <input type="text" id="content"><br>
         <input type="text" id="book_seq"><br>
         <div id="stars">
@@ -643,8 +643,7 @@ $(document)
 			  },
 		success: function(data) {
 			console.log("content: ", content,  "별점: ",starRating, "book_seq: ", book_seq);
-			
-			/* $('#review_c').trigger('click'); */
+
 			if(data=="ok") {
 				$('#review_c').trigger('click');
 				alert("등록되었습니다.");

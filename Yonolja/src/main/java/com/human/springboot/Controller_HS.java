@@ -171,7 +171,42 @@ public class Controller_HS {
     	return "MyYonolja_myreview";
     }
     
+	// 리뷰수정(업데이트)
+    @PostMapping("/myReview_update")
+    @ResponseBody
+    public String myReview_update(HttpServletRequest req) {
+    	String retval = "ok";
+    	int review_seq = Integer.parseInt(req.getParameter("review_seq"));
+    	String review_content = req.getParameter("review_content");
+    	int review_star = Integer.parseInt(req.getParameter("review_star"));
+    	
+    	
+    	try {
+    		hsdao.myreview_update(review_seq, review_content, review_star);
+    	} catch(Exception e) {
+    		retval = "fail";
+    		printExceptionMsg("myReview_update", e.getMessage());
+    	}
+    	
+    	return retval;
+    }
     
+    // 리뷰삭제
+    @PostMapping("/myReview_Bye")
+    @ResponseBody
+    public String myReview_Bye(HttpServletRequest req) {
+    	String retval="ok";
+    	int review_seq = Integer.parseInt(req.getParameter("review_seq"));
+    	
+    	try {
+    		hsdao.myReview_delete(review_seq);
+    	} catch(Exception e) {
+    		retval = "fail";
+    		printExceptionMsg("YonoljaBye", e.getMessage());
+    	}
+    	
+    	return retval;
+    }
     
     
     

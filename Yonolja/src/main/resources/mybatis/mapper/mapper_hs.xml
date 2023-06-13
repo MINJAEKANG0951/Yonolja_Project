@@ -43,6 +43,7 @@
 		and b.roomtype_seq = c.roomtype_seq
 		and c.place_seq = d.place_seq
 		and a.user_seq = #{param1}
+   order by a.checkin_date DESC
 	</select>
 	
 	<!-- 예약내역에서 리뷰 등록하기 -->
@@ -52,14 +53,27 @@
 	
 	<!-- 나의후기에서 리뷰 조회(출력)하기 -->
 	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
-		select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date
+		select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date, e.place_seq, a.review_star
 		  from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e
 		 where a.book_seq=  b.book_seq
 		   and b.room_seq = c.room_seq
 		   and c.roomtype_seq = d.roomtype_seq
 		   and d.place_seq = e.place_seq
 		   and b.user_seq = #{param1}
+	  order by b.checkin_date DESC
 	</select>
+	
+	<!-- 나의후기에서 리뷰 수정(업데이트)하기 -->
+	<update id="myreview_update">
+		update yonolja_review set review_content = #{param2}, review_star = #{param3}
+		where review_seq = #{param1}
+	</update>
+	
+	<!-- 나의후기에서 리뷰 삭제하기 -->
+	<delete id="myReview_delete">
+		delete from yonolja_review where review_seq = #{param1}
+	</delete>
+	
 	
 </mapper>
 

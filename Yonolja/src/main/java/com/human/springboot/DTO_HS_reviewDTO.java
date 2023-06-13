@@ -13,5 +13,5 @@ public class DTO_HS_reviewDTO {
 	int user_seq;
 	String place_name;
 	String checkin_date;
-	
+	int place_seq;
 }
