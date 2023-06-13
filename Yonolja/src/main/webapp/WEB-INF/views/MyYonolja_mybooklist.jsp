@@ -16,6 +16,7 @@ if (session.getAttribute("user_id") == null) {
 <meta charset="UTF-8">
 <title>MyBookList</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 
 <style>
@@ -288,6 +289,104 @@ header, footer {
 }
 
 /* 위까지 헤더, footer 설정 */
+
+ .h1_book {
+  border-radius: 15px;
+  width: 800px;
+  margin: auto; 
+  padding: 20px; 
+  position: relative;
+  
+  text-align: center;
+}
+
+section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.div_book {
+  width: 800px;
+  margin: auto;
+  text-align: center;
+  
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid black;
+}
+
+.div_book2 {
+  width: 800px;
+  margin: auto;
+  text-align: center;
+  
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  align-items: center;
+  padding: 15px; 
+  border-bottom: 1px solid black;
+}
+
+
+.div_book > span {
+  padding: 4px;
+  display: grid;
+  align-items: center;
+} 
+
+
+/* 모달창 띄우기 */
+#review_modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+#review {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* 리뷰 별 표시 */
+.fa-star {
+  color: gray;
+}
+
+.fa-star.checked {
+  color: orange;
+}
+
+
+
 </style>
 <body>
 <header>
@@ -345,14 +444,53 @@ header, footer {
 </header>
 
 <section>
+<div>
+	<h1 class="h1_book"><span>예약내역</span></h1>
+	<div class="div_book">
+		<span>호텔명</span>
+		<span>객실타입</span>
+		<span>숙박일</span>
+		<span>이용상태</span>	
+		<span>리뷰</span>
+	</div>
+	<div>
 
-<div class="mybooks">
-	<h1 class="h1_book">예약내역</h1>
-	<span>호텔명</span>
-	<span>객실타입</span>
-	<span>숙박일</span>
-	<span>이용상태</span>	
+	<c:if test="${empty mybook}">
+	  <p>예약 내역이 없습니다</p>
+	</c:if> 
+	
+   	<c:forEach items="${mybook}" var="book" varStatus="status">
+		<div class="div_book2">
+			<%-- <span class="book_link" onclick="redirectToBookView(${book.book_seq})">${book.place_name}</span> --%>
+			<span class="book_sp" onclick="redirectToBookView(${book.book_seq})">${book.place_name}</span>
+			<span class="book_sp" onclick="redirectToBookView(${book.book_seq})">${book.roomtype_name}</span>
+			<span class="book_sp" onclick="redirectToBookView(${book.book_seq})">${book.checkin_date}</span>
+			<span class="book_sp" onclick="redirectToBookView(${book.book_seq})">이용전</span>
+			<span class="book_sp" onclick="redirectToBookView(${book.book_seq})">미등록</span>
+			<input type="text" value="${book.book_seq}" id="seq_${book.book_seq}">
+		</div>
+	</c:forEach>   
+	</div>
 </div>
+
+<div id="review_modal">
+    <div id="review">
+        <span class="close">&times;</span>
+        <label>리뷰를 입력해주세요.</label>
+        <input type="text" id="content"><br>
+        <input type="text" id="book_seq"><br>
+        <div id="stars">
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+            <span class="fa fa-star"></span>
+        </div>
+        <button id="review_ok">확인</button>
+        <button id="review_c">취소</button>       
+    </div>
+</div>
+
 
 </section>
 
@@ -437,6 +575,138 @@ function fillPlaceOptions(){
 
 //
 $(document)
+/* .on("click", "#myinfo", function() {
+    $("#review_modal").show();
+})*/
+
+.on("click", ".close", function() {
+    $("#review_modal").hide();
+    $("#book_seq").val(''); // 추가된 부분: 비밀번호 입력 필드 초기화
+
+})
+
+.on("click", "#review_c", function() {
+    var book_seq = $("#book_seq").val();
+    var content = $("#content").val();
+    
+    // 모든 별의 'checked' 클래스 제거하고 별점 초기화
+    document.querySelectorAll('.fa-star').forEach(item => {
+        item.classList.remove('checked');
+    });
+    starRating = 0;    
+    
+    $("#book_seq").val("");
+    $("#content").val("");
+    
+    $("#review_modal").hide();
+    
+})
+
+.on("click", "#review_ok", function() {
+    var book_seq = $("#book_seq").val();
+    var content = $("#content").val();
+	
+    console.log("book_seq: ", book_seq, "별점: ",starRating, "content: ", content);
+    
+    if(content=="") {
+    	console.log("내용을 입력해주세요.");
+    	alert("내용을 입력해주세요.");
+    	return false;
+    }
+    
+    if(starRating==0) {
+    	console.log("1개 이상의 별점을 선택해주세요.");
+    	alert("1개 이상의 별점을 선택해주세요.");
+    	return false;
+    }
+
+/*
+    // 모든 별의 'checked' 클래스 제거하고 별점 초기화
+     document.querySelectorAll('.fa-star').forEach(item => {
+        item.classList.remove('checked');
+    });
+    starRating = 0;    
+    
+    $("#book_seq").val("");
+    $("#content").val("");
+
+	$("#review_modal").hide(); 
+	*/
+     
+    // 리뷰 insert 리뷰등록
+ 	$.ajax({
+		url: '/book_review_insert',
+		type: 'post',
+		data: {review_content: content,
+			   review_star: starRating,
+			   book_seq: book_seq
+			  },
+		success: function(data) {
+			console.log("content: ", content,  "별점: ",starRating, "book_seq: ", book_seq);
+			
+			/* $('#review_c').trigger('click'); */
+			if(data=="ok") {
+				$('#review_c').trigger('click');
+				alert("등록되었습니다.");
+				location.reload();
+			} else {
+				
+			}
+			
+		}
+	})  
+    
+    
+})
+
+let starRating = 0;
+
+document.querySelectorAll('.fa-star').forEach((item, index) => {
+  item.addEventListener('click', event => {
+    // 별 모두 기본색으로 변경
+    document.querySelectorAll('.fa-star').forEach(item => {
+      item.classList.remove('checked');
+    });
+    // 클릭한 별까지 색 변경
+    event.target.classList.add('checked');
+    let target = event.target;
+    while (target.previousElementSibling != null) {
+      target = target.previousElementSibling;
+      target.classList.add('checked');
+    }
+    // 별점 저장 (index는 0부터 시작하므로 1을 더해줌)
+    starRating = index + 1;
+  })
+})
+
+// 별점을 AJAX 요청에 포함시키려면 다음과 같이 사용할 수 있습니다.
+/*
+$.ajax({
+  url: '/some-url',
+  type: 'post',
+  data: {
+    rating: starRating,
+    // other data...
+  },
+  success: function(response) {
+    // handle success...
+  }
+});
+*/
+
+
+  
+  function redirectToBookView(bookSeq) {
+	    // ID 값으로 각 book_seq에 해당하는 input 태그를 찾아서, 그 값을 읽어옵니다.
+	    var bookSeqValue = document.getElementById("seq_" + bookSeq).value;
+	    
+	    // review_modal에서의 input 필드에 해당 값을 설정합니다.
+	    document.getElementById("book_seq").value = bookSeqValue;
+	    
+	    // 그 다음에 모달을 보여줍니다.
+	    $("#review_modal").show();
+	}
+	
 
 </script>
 </html>

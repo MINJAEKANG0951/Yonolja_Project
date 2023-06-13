@@ -414,25 +414,16 @@ section {
 			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_seq}</span>
 			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_title}</span>
 			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_date}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">답변 안함</span>
+			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">
+				<c:choose>
+	                <c:when test="${post.post_comment == null}">답변 안함</c:when>
+	                <c:otherwise>답변 완료</c:otherwise>
+            	</c:choose>
+			</span>
 			<input type="hidden" value="${post.post_seq}" id="seq_${post.post_seq}">
 		</div>
 	</c:forEach>
 
-
-	
-<%-- 		<c:forEach items="${mypost}" var="post" varStatus="status">
-			<c:if test="${status.index > 0 && post.post_seq != mypost[status.index - 1].post_seq}">
-				<br>
-			</c:if>
-			<span class="post_link">${post.post_seq}</span>
-			<span class="post_link">${post.post_title}</span>
-			<span class="post_link">${post.post_date}</span>
-			<span class="post_link">답변 안함</span>
-			<input type=text value="${post.post_seq}" id="seq">
-			<input type="text" value="${post.post_seq}" id="seq_${post.post_seq}">
-			
-		</c:forEach> --%>	
 		
 	</div>
 </div>

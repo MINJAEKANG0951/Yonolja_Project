@@ -113,6 +113,8 @@ public class Controller_HS {
 
         List<DTO_HS_postDTO> mypost = hsdao.myPostlist(user_seq);
         model.addAttribute("mypost", mypost);
+        
+        System.out.println(mypost);
 
         return "MyYonolja_mypost";
     }
@@ -121,15 +123,56 @@ public class Controller_HS {
     @GetMapping("/MyYonolja_mybooklist")
     public String MyYonolja_mybooklist(Model model, HttpServletRequest req) {
     	
+        HttpSession session = req.getSession();
+        int user_seq = (int) session.getAttribute("user_seq");
+
+        List<DTO_HS_bookDTO> mybook = hsdao.myBooklist(user_seq);
+        model.addAttribute("mybook", mybook);
+        
+        System.out.println(mybook);
+        System.out.println(user_seq);
+        
+		/* printExceptionMsg("MyYonolja_mybooklist", e.getMessage()); */
+    	
     	return "MyYonolja_mybooklist";
     }
+    
+    // 예약내역조회 페이지에서 리뷰(review) 등록하기insert
+    @PostMapping("/book_review_insert")
+    @ResponseBody
+    public String Yonolja_book_review_insert(HttpServletRequest req) {
+    	String retval = "ok";
+    	
+    	String review_content = req.getParameter("review_content");
+    	int review_star = Integer.parseInt(req.getParameter("review_star"));
+    	int book_seq = Integer.parseInt(req.getParameter("book_seq"));
+    	
+    	try {
+    		hsdao.review_insert(review_content, review_star, book_seq);
+    	} catch(Exception e) {
+    		retval = "fail";
+    		printExceptionMsg("Yonolja_book_review_insert", e.getMessage());
+    	}
+    	
+    	return retval;
+    }
+    
     
     // 내후기보기 페이지
     @GetMapping("/MyYonolja_myreview")
     public String MyYonolja_myreview(Model model, HttpServletRequest req) {
     	
+        HttpSession session = req.getSession();
+        int user_seq = (int) session.getAttribute("user_seq");
+
+        List<DTO_HS_reviewDTO> myreview = hsdao.myReviewlist(user_seq);
+        model.addAttribute("myreview", myreview);
+        
     	return "MyYonolja_myreview";
     }
+    
+    
+    
     
     
 	// 에러 메시지 체크
