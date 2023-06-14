@@ -16,324 +16,61 @@ if (session.getAttribute("user_id") == null) {
 <meta charset="UTF-8">
 <title>MyReviews</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+
 </head>
 
+<%@ include file ="./structure/header.jsp" %>
+
 <style>
-header {
-  position: fixed;
-  top: 0; left: 0;
-  height: 150px;
-  width: 100%;
-  background-color: white;
-  border:1px solid #ddd;
-
-  display: grid;
-  grid-template-columns:1fr;
-  grid-template-rows:1fr 1fr;
-  place-items:center;
-}
-.header_container {
-	display:grid;
-	grid-template-columns:1fr  1fr  1fr;
-	grid-template-rows:1fr;
-    place-items: center;
-    width:95%;
-    position: relative;
-}
-#mypage_button{
-	border:2px solid #ddd;
-	background-color:white;
-	width:85px;
-	height:45px;
-	border-radius:45% 45% 45% 45%;
-	cursor:pointer;
-	overflow:hidden;
-}
-#mypage_button:hover{ 
-	box-shadow: 0px 0px 5px #444;transition:0.5s;
-}
-.header_item { width:100%;border:0px solid #ddd;}
-.header_item:nth-child(2){	text-align:center; }
-.header_item:nth-child(3){  text-align:right;  }
-#logo{height:50px;z-index:1;}
-#user_profile{width:100%}
-#searchbar{
-	width:350px;
-	height:50px;
-	border-radius:5% 5% 5% 5% / 50% 50% 50% 50%;
-	background-color:white;
-	border:2px solid #ddd;
-	cursor:pointer;
-	font-size:15px;
-	font-weight:bold;
-	display:grid;
-	grid-template-columns:4fr 4fr 4fr 1fr;
-	grid-template-rows:1fr;
-	place-items: center;
-}
-#searchbar:hover{ box-shadow: 0px 0px 5px #444;transition:0.5s;}
-.searchbar_item{width:100%}
-.searchbar_item:nth-child(1){border-right:1px solid #ddd;}
-.searchbar_item:nth-child(2){border-right:1px solid #ddd;}
-.searchbar_item:nth-child(3){
-	font-weight:lighter;
-	color:gray;
-}
-#search_img{width:30px;display:inline-block}
-
-.header_item:nth-child(3){
-	display:grid;
-	grid-template-columns:4fr 1fr 1fr;
-	grid-template-rows:1fr;
-	place-items:center;
-}
-.last_header_item_item{
-	
-}
-.last_header_item_item:nth-child(1){
-	text-align:right;font-weight:bold;font-size:14px;cursor:pointer;
-		border-radius:5% 5% 5% 5% / 50% 50% 50% 50%;
-		min-width:120px;
-}
-.last_header_item_item:nth-child(1):hover{background-color:#ddd;transition:0.5s;}
-.last_header_item_item:nth-child(2){
-	width:35px;
-	height:35px;
-	border-radius:50% 50% 50% 50%;
-	display:grid;
-	grid-template-columns:1fr;
-	grid-template-rows:1fr;
-	place-items:center;
-}
-.last_header_item_item:nth-child(2):hover{
-	background-color:#ddd;transition:1s;
-}
-.last_header_item_item:nth-child(3){
-
-}
-#world_img{width:24px;cursor:pointer;}
-
-footer {
-  position: fixed;
-  bottom: 0; left: 0;
-  height: 100px;
-  width: 100%;
-  background-color: white;
-  border:1px solid #ddd;
-  display:grid;
-}
-.footer_container{
-	display:grid;
-	grid-template-columns:1fr;
-	grid-template-rows:1fr 1fr;
-    place-items: center;
-    width:100%;
-    height:100%;
-}
-.footer_item {
-	width:95%;
-	height:100%;
-	display:grid;
-	grid-template-columns:1fr;
-	grid-template-rows:1fr;
-	place-items:center;
-}
-.footer_item:nth-child(1){
-	border-bottom:1px solid #ddd;
-	font-size:15px;
-	min-width:1056px;
-}
-.footer_item:nth-child(2){
-	font-size:5px;
-}
-section {
-  padding-top: 150px; padding-bottom: 150px;
-}
-
-.sub{
-	display:none;
-	position:absolute;
-	border-radius:10% 10% 10% 10%;
-	right:40px;
-	border:1px solid #ddd;
-	
-	grid-template-columns:1fr;
-	grid-template-rows:1fr 1fr 1fr;
-	background-color:white;
-	z-index:1000;
-}
-.sub_item{
-	cursor:pointer;
-	width:100%;
-	height:25px;
-	font-weight:bold;
-	font-size:17px;
-	text-indent:1em;
-	text-align:left;
-}
-.sub_item:hover{
-	background-color:#ddd;
-}
-.sub_item:nth-child(n+2){
-	border-top:1px solid #ddd;
-}
-
-
-.header_container2{
-	border-top:1px solid #ddd;
-	width:100%;
-	display:grid;
-	grid-template-columns:1fr;
-	grid-template-rows:1fr;
-	place-items:center;
-}
-.optionBox {
-	width:95%;
-	height:80px;
-	
-	
-	display:grid;
-	grid-template-columns:1fr 30fr 1fr 3fr;
-	grid-template-rows:1fr;
-	place_items:center;
-
-}
-
-.btnBox{
-	display:grid;
-	grid-template-columns:1fr;
-	grid-template-rows:1fr;
-	place-items:center;
-}
-
-#leftBtnBox{
-	text-align:right;
-	margin:auto 0;
-}
-#rightBtnBox{
-	text-align:left;
-	margin:auto 0;
-}
-
-#filter{
-	width:80px;
-	height:50px;
-	background-color:white;
-	border-radius:10% 10% 10% 10%;
-	font-size:15px;
-	font-weight:bold;
-	border:0.5px solid black;
-	cursor:pointer;
-}
-#filter:hover{
-	box-shadow: 0px 0px 5px #444;transition:0.5s;
-}
-
-.options{
-	white-space:nowrap;
-	overflow:hidden;
-	display:flex;
-	position:relative;
-	height:100%;
-	place-items:center;
-	box-sizing: border-box;
- 	border-style: solid;
-	border:0px solid #ddd;
-	border-left:1px solid #f1f1f1;
-	border-right:1px solid #f1f1f1;
-}
-.option{
-	
-	display:grid;
-	grid-template-columns:1fr;
-	grid-template-rows:1fr auto;
-	height:90%;
-	width:150px;
-	min-width:150px;
-	max-width:151px;
-	font-size:13px;
-	text-align:center;
-	cursor:pointer;
-	
-	transition:0.5s;
-
-}
-
-.option:hover{
-	background-color:#ddd;
-	font-size:bold;
-}
-
-.option img{
-	height:40px;
-}
-
-.option_left{
-	border-radius:50% 50% 50% 50%;
-	border:1px solid black;
-	cursor:pointer;
-	z-index:900;
-}
-.option_left:hover{border:2px solid black;font-weight:bold}
-.option_right{
-	border-radius:50% 50% 50% 50%;
-	border:1px solid black;
-	cursor:pointer;
-	z-index:900;
-}
-.option_right:hover{border:2px solid black;font-weight:bold}
-
-header, footer {
-  z-index: 9999;
-}
 
 /* 위까지 헤더, footer 설정 */
  .h1_review {
-  border-radius: 15px;
-  width: 800px;
-  margin: auto; 
-  padding: 20px; 
-  position: relative;
-  
-  text-align: center;
+	border-radius: 15px;
+	width: 800px;
+	margin: auto; 
+	padding: 20px; 
+	position: relative;
+	
+	text-align: center;
 }
 
 section {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+	display: flex;
+	justify-content: center;
+	align-items: center;
 }
 
 .div_review {
-  width: 800px;
-  margin: auto;
-  text-align: center;
-  
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.1fr 0.5fr;
-  align-items: center;
-  padding: 15px;
-  border-bottom: 1px solid black;
+	width: 800px;
+	margin: auto;
+	text-align: center;
+	
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.5fr 0.1fr 0.5fr;
+	align-items: center;
+	padding: 15px;
+	border-bottom: 1px solid black;
 }
 
 .div_review2 {
-  width: 800px;
-  margin: auto;
-  text-align: center;
-  
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr 1fr 0.5fr 0.1fr 0.5fr;
-  align-items: center;
-  padding: 15px; 
-  border-bottom: 1px solid black;
+	width: 800px;
+	margin: auto;
+	text-align: center;
+	
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr 1fr 1fr 0.5fr 0.1fr 0.5fr;
+	align-items: center;
+	padding: 15px; 
+	border-bottom: 1px solid black;
 }
 
 
 .div_review > span {
-  padding: 4px;
-  display: grid;
-  align-items: center;
+	padding: 4px;
+	display: grid;
+	align-items: center;
 } 
 
 /* 모달창 띄우기 */
@@ -356,7 +93,16 @@ section {
     margin: 15% auto; 
     padding: 20px;
     border: 1px solid #888;
-    width: 30%; 
+    width: 40%; 
+}
+
+#review_content {
+    width: 20em;
+    height: 13em;
+    border: 1px solid #ccc;
+    resize: none;
+    padding: 0;
+    text-align: start; /* 텍스트를 좌측 상단부터 시작 */
 }
 
 /* The Close Button */
@@ -376,69 +122,24 @@ section {
 
 /* 리뷰 별 표시 */
 .fa-star {
-  color: gray;
+	color: gray;
 }
 
 .fa-star.checked {
-  color: orange;
+	color: orange;
 }
+
+/* 리뷰 말 줄임표(content) */
+.div_review2 > span.review_link {
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+} 
+
 
 
 </style>
 <body>
-<header>
-<div class=header_container>
-		<div class=header_item>
-			<a href="/main"><img id=logo src="/img/website/header_logo.png"></a>
-		</div>
-		<div class=header_item>
-			<button id=searchbar>
-				<div class=searchbar_item>어디든지</div>
-				<div class=searchbar_item>언제든지</div>
-				<div class=searchbar_item>게스트추가</div>
-				<div class=searchbar_item><img id=search_img src="/img/website/search.png"></div>
-			</button>
-		</div>
-		<div class=header_item>
-			<div class=last_header_item_item title="향후개발예정"> 당신의 공간을 Yonolja하세요</div>
-			<div class=last_header_item_item title="향후개발예정"><img id=world_img src="/img/website/earth.png"></div>
-			<div class=last_header_item_item>
-				<button id=mypage_button><img id=user_profile src="/img/website/user-profile.png"></button>
-				<div class=sub>
-				<% if( session.getAttribute("user_type")==null ){ %>
-					<div class=sub_item onclick="location.href='/login'">로그인</div>
-					<div class=sub_item onclick="location.href='/signin'">회원가입</div>
-					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
-				<% } else if(session.getAttribute("user_type").equals("customer")){ %>
-					<div class=sub_item onclick="location.href='/mypage'">마이페이지</div>
-					<div class=sub_item onclick="location.href='/logout'">로그아웃</div>
-					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
-				<% } else if(session.getAttribute("user_type").equals("owner")){ %>
-					<div class=sub_item onclick="location.href='/mypage'">마이페이지</div>
-					<div class=sub_item onclick="location.href='/logout'">로그아웃</div>
-					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
-				<% } else if(session.getAttribute("user_type").equals("admin")){ %>
-					<div class=sub_item onclick="location.href='/admin'">관리자페이지</div>
-					<div class=sub_item onclick="location.href='/logout'">로그아웃</div>
-					<div class=sub_item onclick="location.href='/board'">고객문의 게시판</div>
-				<% } %>
-				</div>
-			</div>
-		</div>
-</div>
-<div class=header_container2>
-	<div class=optionBox>
-		<div id=leftBtnBox> <button class=option_left> < </button> </div>
-		<div class=options>
-	
-		</div>
-		<div id=rightBtnBox> <button class=option_right> > </button> </div>
-		<div class=btnBox>
-			<button id=filter>필터</button>
-		</div>
-	</div>
-</div>
-</header>
 
 <section>
 
@@ -447,6 +148,7 @@ section {
 	<!-- <span class="r">호텔페이지로 이동하고 싶으면 해당하는 리뷰를 클릭하세요.</span> -->
 	<div class="div_review">
 		<span>호텔명</span>
+		<span>객실타입</span>
 		<span>숙박일</span>
 		<span>내용</span>
 		<span>작성일</span>	
@@ -461,6 +163,7 @@ section {
 		<div class="div_review2">
 		
 			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.place_name}</span>
+			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.roomtype_name}</span>
 			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.checkin_date}</span>
 			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.review_content}</span>
 			<span class="review_link" onclick="goToPlacePage(${review.place_seq})">${review.review_date}</span>
@@ -475,6 +178,8 @@ section {
 			<input type="hidden" value="${review.review_star}" id="seq_${review.review_seq}_star">
 			<input type="hidden" value="${review.review_content}" id="seq_${review.review_seq}_content">
 			<input type="hidden" value="${review.place_seq}" id="seq_${review.place_seq}">
+			<input type="hidden" value="${review.place_name}" id="seq_${review.review_seq}_place_name">
+			<input type="hidden" value="${review.roomtype_name}" id="seq_${review.review_seq}_roomtype_name">
 
 		</div>
 	</c:forEach>   
@@ -484,9 +189,14 @@ section {
 <div id="review_modal">
     <div id="review">
         <span class="close">&times;</span>
-        <label>리뷰를 입력해주세요.</label><br>
-        <input type="text" id="review_content"><br>
-        <input type="text" id="review_seq"><br>
+        
+        <h2 id="modal-header"></h2>
+        <hr>
+        
+        <label>리뷰 내용을 입력해주세요.</label><br>
+        <!-- <input type="text" id="review_content"><br> -->
+        <textarea id="review_content"></textarea><br>
+        <input type="hidden" id="review_seq"><br>
         <div id="stars">
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
@@ -501,86 +211,11 @@ section {
 
 </section>
 
-<footer>
 
-<div class=footer_container>
-	<div class=footer_item>
-		<div>
-			© 2023 Waterbnb, Inc. · 개인정보 처리방침 · 이용약관 · 사이트맵 · 한국의 변경된 환불 정책 · 회사 세부정보
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			<b>언어 : 한국어(KR) 
-			통화 : \ won</b>
-		</div>
-	</div>
-	<div class=footer_item>
-		<div>
-			지원 및 참고 자료
-			웹사이트 제공자: Waterbnb continent KR, public limited company, 
-			boosung street 1 82, cheonan | ceo : YT,HS,HY,MJ,TH | VAT 번호: x**4$123$0vv15 | 
-			사업자 등록 번호: AB 5*****7 | 연락처: blueie2@naver.com, 웹사이트, 010-2952-0951 | 
-			호스팅 서비스 제공업체: 아마존 웹서비스 | 
-			워터비앤비는 통신판매 중개자로 워터비앤비 플랫폼을 통하여 게스트와 호스트 사이에 이루어지는 통신판매의 당사자가 아닙니다.
-			워터비앤비 플랫폼을 통하여 예약된 숙소, 체험, 호스트 서비스에 관한 의무와 책임은 해당 서비스를 제공하는 호스트에게 있습니다.
-		</div>
-	</div>
-</div>
-
-</footer>
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
-$(document)
-.ready(function(){
-	fillPlaceOptions();
-})
-.on('click','.option_left',function(){
-	$('.options').animate({scrollLeft:$('.options').scrollLeft()-350},250)
-})
-.on('click','.option_right',function(){
-	$('.options').animate({scrollLeft:$('.options').scrollLeft()+350},250)
-})
-.on('click','.option',function(){
-	seq = $(this).attr('id');
-	console.log(seq);
-
-})
-// 내정보버튼 drop down
-$('html').click(function(e){
-	clicked = $(e.target).attr('id');
-	if(clicked=='user_profile'||clicked=='mypage_button'){
-		if( $('.sub').css('display')=='none'  ){ $('.sub').css('display','block')} 
-		else { $('.sub').css('display','none')}
-	} else { $('.sub').css('display','none') }
-})
-function fillPlaceOptions(){
-	
-	$('#options').empty();
-	
-	$.ajax({url:'/getPlaceOptions', type:'post', dataType:'json', 
-		
-		success:function(data){
-			
-			for(i=0;i<data.length;i++){
-				seq = data[i].seq;
-				name = data[i].name;
-				img = data[i].img;
-				
-				
-				option_str = '<div class=option id='+ seq +'>';
-				option_str += '<div class=option_picture>'
-				option_str += "<img src='" + img + "'>"
-				option_str += '</div>'
-				option_str += '<div class=option_name>' + name + '</div>'
-				option_str += '</div>'
-				$('.options').append(option_str);
-			}
-			option_scroll_coor_max = (data.length*150);
-		}
-	})
-}
-
-//
 $(document)
 
 // 수정 버튼 눌렀을 때 모달창 띄우기
@@ -622,15 +257,15 @@ $(document)
 
 // 모달창 닫기 버튼(X버튼)
 .on("click", ".close", function() {
-    $("#review_modal").hide();
-    $("#book_seq").val('');
-
+    //$("#book_seq").val('');
+    $('#review_c').trigger('click');
+ 	$("#review_modal").hide();
 })
 
 // 모달창 취소 버튼
 .on("click", "#review_c", function() {
     var book_seq = $("#book_seq").val();
-    var content = $("#content").val();
+    var content = $("#review_content").val();
     
     // 모든 별의 'checked' 클래스 제거하고 별점 초기화
     document.querySelectorAll('.fa-star').forEach(item => {
@@ -654,13 +289,13 @@ $(document)
     
     if(content=="") {
         console.log("내용을 입력해주세요.");
-        //alert("내용을 입력해주세요.");
+        alert("내용을 입력해주세요.");
         return false;
     }
     
     if(starRating==0) {
         console.log("1개 이상의 별점을 선택해주세요.");
-        //alert("1개 이상의 별점을 선택해주세요.");
+        alert("1개 이상의 별점을 선택해주세요.");
         return false;
     }
 
@@ -730,6 +365,10 @@ var originalStarRating;
 var originalContent;
 
 function redirectToReviewView(reviewSeq) {
+	
+	var placeName = document.getElementById("seq_" + reviewSeq + "_place_name").value; // 호텔명을 가져오기 위한 코드
+    var roomtypeName = document.getElementById("seq_" + reviewSeq + "_roomtype_name").value; // 객실타입을 가져오기 위한 코드
+	
     var reviewSeqValue = document.getElementById("seq_" + reviewSeq).value;
 
     // review_star 값 받아오기
@@ -743,6 +382,7 @@ function redirectToReviewView(reviewSeq) {
     originalContent = reviewContent;
 
     // review_modal에서의 input 필드에 해당 값을 설정
+    document.getElementById("modal-header").innerHTML = "<b>" + placeName + " - " + roomtypeName + "</b>"; // 모달창의 헤더에 호텔명과 객실타입을 표시
     document.getElementById("review_seq").value = reviewSeqValue;
     document.getElementById("review_content").value = reviewContent;
 
@@ -762,38 +402,6 @@ function redirectToReviewView(reviewSeq) {
     // 모달창 생성
     $("#review_modal").show();
 }
-
-
-/* function redirectToReviewView(reviewSeq) {
-    var reviewSeqValue = document.getElementById("seq_" + reviewSeq).value;
-
-    // review_star 값 받아오기
-    var reviewStar = document.getElementById("seq_" + reviewSeq + "_star").value;
-
-    // review_content ID 값을 가진 요소에서 value를 가져옴
-    var reviewContent = document.getElementById("seq_" + reviewSeq + "_content").value;
-
-    // review_modal에서의 input 필드에 해당 값을 설정
-    document.getElementById("review_seq").value = reviewSeqValue;
-    document.getElementById("review_content").value = reviewContent;
-
-    // 별점 설정
-    document.querySelectorAll('.fa-star').forEach((item, index) => {
-        // DB에 저장된 review_star 값만큼 별 표시
-        if(index < reviewStar) {
-            item.classList.add('checked');
-        } else {
-            item.classList.remove('checked');
-        }
-    });
-
-    // starRating 값 설정
-    starRating = parseInt(reviewStar);
-
-    // 모달창 생성
-    $("#review_modal").show();
-} */
-
 
 </script>
 </html>

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+import java.time.LocalDate;
 
 @Controller
 public class Controller_HS {
@@ -127,6 +128,7 @@ public class Controller_HS {
         int user_seq = (int) session.getAttribute("user_seq");
 
         List<DTO_HS_bookDTO> mybook = hsdao.myBooklist(user_seq);
+        
         model.addAttribute("mybook", mybook);
         
         System.out.println(mybook);
@@ -135,7 +137,7 @@ public class Controller_HS {
 		/* printExceptionMsg("MyYonolja_mybooklist", e.getMessage()); */
     	
     	return "MyYonolja_mybooklist";
-    }
+    }    
     
     // 예약내역조회 페이지에서 리뷰(review) 등록하기insert
     @PostMapping("/book_review_insert")
@@ -156,6 +158,24 @@ public class Controller_HS {
     	
     	return retval;
     }
+    
+    // 예약취소(예약삭제)
+    @PostMapping("/myBook_Bye")
+    @ResponseBody
+    public String myBook_Bye(HttpServletRequest req) {
+    	String retval="ok";
+    	int book_seq = Integer.parseInt(req.getParameter("book_seq"));
+    	
+    	try {
+    		hsdao.myBook_delete(book_seq);
+    	} catch(Exception e) {
+    		retval = "fail";
+    		printExceptionMsg("myBook_Bye", e.getMessage());
+    	}
+    	
+    	return retval;
+    }
+    
     
     
     // 내후기보기 페이지
@@ -202,7 +222,7 @@ public class Controller_HS {
     		hsdao.myReview_delete(review_seq);
     	} catch(Exception e) {
     		retval = "fail";
-    		printExceptionMsg("YonoljaBye", e.getMessage());
+    		printExceptionMsg("myReview_Bye", e.getMessage());
     	}
     	
     	return retval;
