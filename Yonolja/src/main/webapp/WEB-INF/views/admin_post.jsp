@@ -7,21 +7,38 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <title>Insert title here</title>
 </head>
 <%@ include file ="./structure/header.jsp" %>
+<style>
+div {
+ text-align: center;
+}
+
+#post_delete{
+ margin-left:555px;
+}
+tr:first-child{
+background-color: #e2e2e2;
+border:none
+}
+</style>
 
 <body>
 <div id="admin_post_page">
 	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><a href='/admin'>관리자 페이지</a><input type=hidden id=admin_post_reset value=0>
 	<div id=post_delete_div>
 		<input type=button id=post_delete value=삭제>
+		
 	</div>
 	
-	<table border=1px id=admin_post_page_table>
+	<table border=1px class="table table-striped" id=admin_post_page_table>
+		
 		<tr>
 			<td><input type="checkbox" id=checkList></td><td>문의번호</td><td>문의분류</td><td>문의제목</td><td>아이디</td><td>문의일</td><td>문의상태</td><td>답변작성</td>
 		</tr>
+		
 	</table>
 	<div id=admin_post_controller>
 
@@ -41,6 +58,7 @@
 
 <div id="typeDlg" style="display:none" >
    <table border="1px solid black">
+   
 	    <tr>
 	        <td>
 	        	<a>Title</a><input type=hidden id=dialog_post_seq_hidden value=''>
@@ -49,6 +67,7 @@
 		    	<input type='text' id=dialog__post_title readonly>
 		    </td>   
 		</tr>
+
 		<tr>
 			<td>
 	        	<a>Hits</a>

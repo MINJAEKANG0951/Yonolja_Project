@@ -14,4 +14,5 @@ public class DTO_HS_reviewDTO {
 	String place_name;
 	String checkin_date;
 	int place_seq;
+	String roomtype_name;
 }

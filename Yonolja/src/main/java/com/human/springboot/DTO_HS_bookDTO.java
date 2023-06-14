@@ -15,4 +15,6 @@ public class DTO_HS_bookDTO {
 	String place_name;
 	int roomtype_seq;
 	int place_seq;
+	int review_seq;
+	String review_status;
 }

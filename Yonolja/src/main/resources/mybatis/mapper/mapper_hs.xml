@@ -35,32 +35,70 @@
 	    order by b.post_seq
 	</select>
 	
-	<!-- 예약내역 -->
-  	<select id="myBooklist" resultType="com.human.springboot.DTO_HS_bookDTO">
-		select a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, c.roomtype_name, d.place_name
-		from yonolja_book a, yonolja_room b, yonolja_roomtype c, yonolja_place d
-		where a.room_seq = b.room_seq 
-		and b.roomtype_seq = c.roomtype_seq
-		and c.place_seq = d.place_seq
-		and a.user_seq = #{param1}
-   order by a.checkin_date DESC
-	</select>
+	<!-- 예약내역, 리뷰 등록 여부 체크 -->
+	<select id="myBooklist" resultType="com.human.springboot.DTO_HS_bookDTO">
+	
+		<![CDATA[
+			SELECT a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, 
+			    c.roomtype_name, d.place_name,
+			    (case when e.book_seq is null then '미등록' else '등록' end) as review_status,
+			    (case 
+			        when a.checkin_date > SYSDATE then '이용전'
+			        when a.checkin_date <= SYSDATE AND a.checkout_date > SYSDATE then '이용가능'
+			        when a.checkout_date <= SYSDATE then '이용완료'
+			    end) as usage_status
+			FROM yonolja_book a 
+			LEFT JOIN yonolja_review e ON a.book_seq = e.book_seq
+			INNER JOIN yonolja_room b ON a.room_seq = b.room_seq 
+			INNER JOIN yonolja_roomtype c ON b.roomtype_seq = c.roomtype_seq
+			INNER JOIN yonolja_place d ON c.place_seq = d.place_seq
+			WHERE a.user_seq = #{param1} 
+			ORDER BY 
+			    CASE 
+			        WHEN usage_status = '이용가능' THEN 1
+			        WHEN usage_status = '이용완료' THEN 2
+			        ELSE 3
+			    END ASC,
+			    a.checkin_date DESC,
+			    a.checkout_date DESC	
+		]]>
+	
+	</select>	
+	
+<!-- 	<select id="myBooklist" resultType="com.human.springboot.DTO_HS_bookDTO">
+	    select a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, 
+	           c.roomtype_name, d.place_name,
+	           (case when e.book_seq is null then '미등록' else '등록' end) as review_status
+	    from yonolja_book a 
+	    left join yonolja_review e on a.book_seq = e.book_seq
+	    inner join yonolja_room b on a.room_seq = b.room_seq 
+	    inner join yonolja_roomtype c on b.roomtype_seq = c.roomtype_seq
+	    inner join yonolja_place d on c.place_seq = d.place_seq
+	    where a.user_seq = #{param1}
+	    order by a.checkin_date DESC
+	</select> -->
 	
 	<!-- 예약내역에서 리뷰 등록하기 -->
  	<insert id="review_insert">
 		insert into yonolja_review values(review_seq.nextval, #{param1}, sysdate, #{param2}, #{param3})
 	</insert> 
 	
+	<!-- 예약내역에서 예약취소(삭제)하기-->
+	<delete id="myBook_delete">
+		delete from yonolja_book where book_seq = #{param1}
+	</delete>
+	
 	<!-- 나의후기에서 리뷰 조회(출력)하기 -->
 	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
-		select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date, e.place_seq, a.review_star
+		select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date, e.place_seq, a.review_star, d.roomtype_name
 		  from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e
 		 where a.book_seq=  b.book_seq
 		   and b.room_seq = c.room_seq
 		   and c.roomtype_seq = d.roomtype_seq
 		   and d.place_seq = e.place_seq
 		   and b.user_seq = #{param1}
-	  order by b.checkin_date DESC
+	  order by b.checkin_date DESC,
+	  		   a.review_date DESC
 	</select>
 	
 	<!-- 나의후기에서 리뷰 수정(업데이트)하기 -->

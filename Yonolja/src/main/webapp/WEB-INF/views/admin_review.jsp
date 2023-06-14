@@ -4,6 +4,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <title>Insert title here</title>
 </head>
 <%@ include file ="./structure/header.jsp" %>
@@ -13,7 +14,9 @@
 	display:grid;
 
 }
-
+div{
+	text-align: center;
+}
 </style>
 <body>
 <div class='admin_review'>
@@ -26,7 +29,7 @@
  		<h2>리뷰 관리 게시판</h2><a href='/admin'>관리자 페이지</a><br>
  		<input type=button id=admin_review_delete value=삭제>
  	</div>
- 	<table border="1px solid:black" id='admin_review_management'>
+ 	<table border="1px solid:black" class="table table-striped" id='admin_review_management'>
  		<tr>
  			<td><input type=checkbox id=checkbox_list></td><td>번호</td><td>숙소이름</td><td>제목</td><td>날짜</td><td>평점</td>
  		</tr>

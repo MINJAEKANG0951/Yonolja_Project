@@ -29,6 +29,9 @@ public interface DAO_HS {
 	// 예약내역에서 예약한 내역을 클릭하면 리뷰 등록하기 review insert
 	void review_insert(String review_content, int review_star, int book_seq);
 	
+	// 예약내역에서 예약한 내역 취소(삭제)하기 book delete
+	void myBook_delete(int book_seq);
+	
 	// 나의후기에서 등록한 리뷰 내역 가져오기
 	List<DTO_HS_reviewDTO> myReviewlist(int user_seq);
 	

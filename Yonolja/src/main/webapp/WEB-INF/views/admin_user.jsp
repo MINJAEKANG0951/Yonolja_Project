@@ -5,16 +5,27 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <title>Insert title here</title>
 </head>
 <%@ include file ="./structure/header.jsp" %>
+<style>
+div{
+text-align: center;
+
+}
+ul{
+justify-content: center;
+
+}
+</style>
 <body>
 <div class="amdin_user">
 	<div class=admin_user_management>
 		
 		<h2 id=user_management_title>회원관리</h2>
 		<a href='/admin'>관리자 페이지</a>
-		<table border="1px solid:black" id='admin_member_management_table'>
+		<table border="1px solid:black" id='admin_member_management_table' class="table table-striped">
 			<tr>
 				<td>회원번호</td>
 				<td>이름</td>
@@ -26,12 +37,13 @@
 			</tr>
 		</table>
 		<div id=member_pagenumber>
-
+			<ul id=boot_pagination class=pagination>
+			</ul> 
 		</div>
 		<div id=pagenumber>
 
 		</div>
-		<div>
+		<div >
 			<select id=admin_user_search_type>
 				<option value=0>통합검색</option>
 				<option value=1>이름</option>
@@ -40,11 +52,22 @@
 			<input type=text id=admin_user_search >
 			<input type=button id=admin_user_search_btn value=검색>
 		</div>
+		<!-- <div>
+		  <ul class="pagination">
+		    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+		    <li class="page-item"><a class="page-link" href="#">1</a></li>
+		    <li class="page-item active"><a class="page-link" href="#">2</a></li>
+		    <li class="page-item"><a class="page-link" href="#">3</a></li>
+		    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+		  </ul>
+		</div> -->
 	</div>
 </div>
 
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
 $(document)
 .ready(function(){
@@ -90,14 +113,18 @@ $(document)
     // 나머지 a 태그의 글자 굵기 초기화
     $('#pagenumber>a').not(this).css('font-weight', 'normal');
 })
-.on('click','#member_pagenumber>a',function(){
+.on('click','#boot_pagination>li',function(){
 	console.log($(this).val())
-	console.log($(this).text())
-	memberlist($(this).text())
-    $(this).css('font-weight', 'bold');
+	console.log($(this).children('a').text())
+	memberlist($(this).children('a').text())
+    //$(this).css('font-weight', 'bold');
 
-    // 나머지 a 태그의 글자 굵기 초기화
-    $('#member_pagenumber>a').not(this).css('font-weight', 'normal');
+     //나머지 a 태그의 글자 굵기 초기화
+   // $('#member_pagenumber>a').not(this).css('font-weight', 'normal');
+  
+  	
+ 	$('#boot_pagination>li').addClass('active')
+ 	$('#boot_pagination>li').not(this).removeClass('active')  
 })
 
 .on('click','#admin_user_search_btn',function(){
@@ -149,18 +176,20 @@ function paging(){
 		type:'post',
 		success:function(data){
 			if(data!=0){
-				str=""
+				let str="";
 					for(i=1;i<=data;i++){
-						str+="<a id=admin_user_page"+i+" value="+i+">"+i+"</a>&nbsp"
-
+						//str+=" <a id=admin_user_page"+i+" value="+i+">"+i+"</a>"
+						str+=" <li class=page-item id=page_item"+i+" ><a class=page-link id=admin_user_page"+i+" value="+i+">"+i+"</a></li>"
 						
 					}
 				
 					console.log(str)
-					$('#member_pagenumber').empty()
-					
-					$('#member_pagenumber').append(str)
-					$('#admin_user_page1').css('font-weight', 'bold');
+					//$('#member_pagenumber').empty()
+					$('#boot_pagination').empty()
+					//$('#member_pagenumber').append(str)
+					$('#boot_pagination').append(str)
+					$('#page_item1').addClass('active')
+					//$('#admin_user_page1').css('font-weight', 'bold');
 					
 			}
 		}
@@ -175,7 +204,7 @@ function memberlist(page){
 			dataType:"json",
 			type:"post",
 			success:function(data){
-				let str="";
+				
 				$('#admin_member_management_table tr:gt(0)').remove();
 				for(var i=0;i<data.length;i++){
 					let str=''
@@ -191,6 +220,7 @@ function memberlist(page){
 					$('#admin_member_management_table').append(str)
 				}
 				
+			
 			}
 		})
 	
