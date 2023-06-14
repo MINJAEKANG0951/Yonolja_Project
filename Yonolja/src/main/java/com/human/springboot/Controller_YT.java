@@ -103,11 +103,11 @@ public class Controller_YT {
 	    dao_yt.insertPost(category, user_seq, title, content, DBpath);
 	    
 
-	    return "redirect:/postboard";
+	    return "redirect:/post_board";
 	}
 
 	 
-	@RequestMapping("/postboard")
+	@RequestMapping("/post_board")
 	public String dopostboard(Model model) {
 		ArrayList<DTO_YT> posts = dao_yt.selectPost();
 		model.addAttribute("posts", posts);
@@ -143,7 +143,7 @@ public class Controller_YT {
 	@PostMapping("/postview/{post_seq}")
 	public String deletePost(@PathVariable("post_seq") int post_seq) {
 		dao_yt.deletePost(post_seq);
-		return "redirect:/postboard";
+		return "redirect:/post_board";
 	}
 	
 
@@ -161,6 +161,15 @@ public class Controller_YT {
 
 	
 	
+    
+    
+    
+    
+    
+    
+    
+    
+    
 	
 	
 	 

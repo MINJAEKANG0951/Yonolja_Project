@@ -3,10 +3,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page session="true"%>
 <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
 <title>main</title>
+
+ <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 </head>
@@ -212,13 +216,14 @@ label {
   align-items: center;
 }
 .text-content {
-  margin-left: 10px;
+/*   background-color:red; */
+  margin-left: 10px; 
+  overflow: auto;
+/*   width:500px; */
+/*   height:500px; */
 }
 
-/* .text-content{ */
-/* height:500px; */
-/* width:500px; */
-/* } */
+
 
  .button5 { 
     display: flex; 
@@ -255,7 +260,7 @@ label {
 </header>
 
 <section>
-  <div class="write">
+ <div class="write">
     <div class="Postwrite1">
       <h3 class="mt-3 mb-3">𝐏𝐨𝐬𝐭 𝐖𝐫𝐢𝐭𝐞</h3>
       <br>
@@ -273,28 +278,26 @@ label {
       </div>
     </div>
 
-  <div class="form-group" style="display: flex; align-items: center;">
-    <label for="Bcontent" style="margin-right: 10px;">𝑐𝑜𝑛𝑡𝑒𝑛𝑡</label>
-    <div class="form-control" id="post_content" name="post_content" readonly>
-        <div class="content-container">
-            <div class="text-content" >
-                ${post_content}
-                <img src="${post_img}" alt="im1a123ge" style="max-height: 100%; max-width: 100%;">
-            </div>
-            
+ <div class="form-group" style="display: flex; flex-direction: column;">
+   <label for="Bcontent" style="margin-bottom: 10px; font-size: 20px;">𝐶𝑜𝑛𝑡𝑒𝑛𝑡</label>
+    <div class="form-control" id="post_content" name="post_content" style="height: 500px; width:700px; overflow: auto;" contenteditable="false">
+        <div class="text-content">
+            ${post_content}
         </div>
+        <img src="${post_img}" alt="" style="max-height: 100%; max-width: 100%;">
     </div>
 </div>
 
 
+
     <div class="form-group">
       <label for="B_Create_date">𝐷𝑎𝑡𝑒&nbsp;𝐶𝑟𝑒𝑎𝑡𝑒𝑑</label>
-      <input class="form-control" type="text" id="post_date" name="post_date" value="${post_date}" style="width:90%" readonly>
+      <input class="form-control" type="text" id="post_date" name="post_date" value="${post_date}" style="width:100%" readonly>
     </div>
 
     <div class="form-group">
       <label for="revision_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛&nbsp;𝑑𝑎𝑡𝑒</label>
-      <input class="form-control" type="text" id="B_Update_date" name="B_Update_date" value="${b_update_date}" style="width:90%" readonly>
+      <input class="form-control" type="text" id="B_Update_date" name="B_Update_date" value="${b_update_date}" style="width:100%" readonly>
     </div>
 
     <input type="hidden" id="board_num" value="${board_num}" name="board_num">
@@ -304,12 +307,40 @@ label {
     <div class="button5">
       <div style="margin-left: auto; margin-right: auto;">
         <input class="btn btn-danger" type="button" value="삭제" id="btnDelete" data-post_seq="${post_seq}">
-        <input class="btn btn-success" type="button" value="수정" id="btnModify">
+        <input class="btn btn-success" data-toggle="modal" data-target="#modifyModal" type="button" value="수정" id="btnModify">
         <input class="btn btn-primary" type="button" value="목록" id="btnShow">
       </div>
     </div>
+    
+    
+    
+    
+    
     </form>
   </div>
+  
+  
+  <div class="modal fade" id="modifyModal" tabindex="-1" role="dialog" aria-labelledby="modifyModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modifyModalLabel">수정 확인</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        수정 가능 상태로 변경되었습니다. 수정이 완료되면 '수정 완료' 버튼을 눌러주세요.
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="modifyClose" data-dismiss="modal">확인</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+  
+  
 </section>
 
 
@@ -354,7 +385,7 @@ $(document)
 })
 //목록보기
 document.getElementById("btnShow").addEventListener("click", function() {
-    window.location.href = "http://localhost:8081/postboard";
+    window.location.href = "http://localhost:8081/post_board";
 });
 
 // var dropzone = document.getElementById('dropzone');
@@ -397,71 +428,105 @@ document.getElementById("btnShow").addEventListener("click", function() {
 
 //  게시판 delete
 $('#btnDelete').click(function() {
-    var post_seq = $(this).data('post_seq');  
-    $.ajax({
-        url: '/postview/' + post_seq, 
-        type: 'post', 
-        success: function(result) {
-        	
-        	
-        	alert("삭제되었습니다.");
-            window.location.href="/postboard";
-        }
-    });
+    var post_seq = $(this).data('post_seq'); 
+    Swal.fire({
+      title: '삭제하시겠습니까??',
+      showCancelButton: true,
+      confirmButtonText: `삭제`,
+    }).then((result) => {
+      if (result.isConfirmed) {
+        $.ajax({
+            url: '/postview/' + post_seq, 
+            type: 'post', 
+            success: function(result) {
+                Swal.fire(
+                  '완료!',
+                  '삭제가 완료되었습니다.',
+                  'success'
+                ).then(() => {
+                  window.location.href="/post_board";
+                });
+            }
+        });
+      }
+    })
 });
 
-// 게시판 update
-// 수정 가능 상태로 변경 버튼 클릭 이벤트
+
+//게시판 update
+//수정 가능 상태로 변경 버튼 클릭 이벤트
 $('#btnModify').click(function() {
-    // 모든 input 필드의 readonly 상태를 해제
-    $('input').removeAttr('readonly');
+ // 모든 input 필드의 readonly 상태를 해제
+ $('input').removeAttr('readonly');
 
-    // 혹은 특정 input 필드만 선택하여 readonly 상태를 해제
-    $('#post_title').removeAttr('readonly');
-    $('#post_content').removeAttr('readonly');
-    // 기타 필요한 필드들도 추가
-
-    // 사용자에게 알림
-    alert("수정 가능 상태로 변경되었습니다. 수정이 완료되면 '수정 완료' 버튼을 눌러주세요.");
-    
-    $('#btnModify').removeAttr('id', 'btnModify');
-    
-    $('.btn-success').attr('id','btnSave');
+ // 혹은 특정 input 필드만 선택하여 readonly 상태를 해제
+ $('#post_title').removeAttr('readonly');
+ 
+ // div 요소의 contenteditable 상태를 true로 설정
+ $('#post_content').attr('contenteditable', 'true');
+ 
+ $('#btnModify').removeAttr('id', 'btnModify');
+ 
+ $('.btn-success').attr('id','btnSave');
 });
 
 function update(){
 		
-		var post_seq = $('#btnDelete').data('post_seq');
-		console.log(post_seq)
-	    var updated_title = $('#post_title').val();
-	    var updated_content = $('.text-content').text();
-// 	    console.log("수정될 내용: "+updated_content)
+	var post_seq = $('#btnDelete').data('post_seq');
+ var updated_title = $('#post_title').val();
+ var updated_content = $('#post_content').text();
 
-	  $.ajax({
-	        url: '/postview/' + post_seq,
-	        type: 'put', 
-	        data: {
-	            post_title: updated_title,
-	            post_content: updated_content
-	        },
-	        beforeSend:function(){
-	        	console.log("수정될 제목:" + updated_title+"수정될 내용: "+updated_content)
-	        },
-	        success: function(result) {
-	            // input 필드를 다시 readonly 상태로 변경
-	            $('input').attr('readonly', 'readonly');
+ $.ajax({
+     url: '/postview/' + post_seq,
+     type: 'put', 
+     data: {
+         post_title: updated_title,
+         post_content: updated_content
+     },
+     beforeSend:function(){
+     	console.log("수정될 제목:" + updated_title+"수정될 내용: "+updated_content)
+     },
+     success: function(result) {
+         // input 필드를 다시 readonly 상태로 변경
+         $('input').attr('readonly', 'readonly');
 
-	            $('#post_title').val(result.updatedTitle); 
-	            $('#post_content').val(result.updatedContent); 
-	            alert("수정되었습니다.");
-	        }
-	    });
+         // div 요소의 contenteditable 상태를 false로 설정
+         $('#post_content').attr('contenteditable', 'false');
+
+         $('#post_title').val(result.updatedTitle); 
+         $('#post_content').text(result.updatedContent); 
+         alert("수정되었습니다.");
+     }
+ });
 }
 
 
+const modifyBtn = $("#btnModify")[0];
+const modifyModal = $("#modifyModal")[0];
+const modifyCloseBtn1 = $("#modifyClose")[0];
+const modifyCloseBtn2 = $(".close")[0];
 
+function modifyCloseBtn(e){
+    e.addEventListener("click", ()=>{
+        modifyModal.classList.remove("show");
+        setTimeout(()=>{
+            modifyModal.style.display = "none";
+        },200)
+    });
+}
+modifyCloseBtn(modifyCloseBtn1);
+modifyCloseBtn(modifyCloseBtn2);
+
+modifyBtn.addEventListener("click", ()=>{
+    modifyModal.style.display = "block";
+    setTimeout(()=>{
+        modifyModal.classList.add("show");
+    },200)
+});
 
 
 </script>
 </html>
+
+
 

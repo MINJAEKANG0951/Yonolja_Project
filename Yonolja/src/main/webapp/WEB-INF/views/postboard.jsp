@@ -149,11 +149,11 @@ section {
 /*       border: 2px solid #0d6efd;  */
     }
 
-.pagination {
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
+/* .pagination { */
+/*     display: flex; */
+/*     justify-content: center; */
+/*     margin-top: 20px; */
+/* } */
 
 .pagination a {
     color: black;
@@ -177,19 +177,43 @@ section {
 
 .post_line{cursor:pointer;}
 
-.pagination .write-post-btn {
-    background-color: #0d6efd;
-     color: white; 
-    border: 1px solid #0d6efd;
-    margin-left: 10px;
+/* .pagination .write-post-btn { */
+/*     background-color: #0d6efd; */
+/*      color: white;  */
+/*     border: 1px solid #0d6efd; */
+/*     margin-left: 10px; */
 /*     display:flex; */
 /*     justify-content:right; */
-/*     align-items:right; */
-}
+/*      align-items:right;  */
+/* } */
+
 .pagination .write-post-btn:hover {
 /*     background-color: #ddd; */
 /*     color: black; */
 }
+
+
+.pagination a {
+/*   margin: 0 5px; */
+}
+
+.pagination {
+  display: flex;
+   justify-content: center; 
+   align-items: center; 
+  margin-bottom: 10px;
+}
+.pagination .write-post-btn {
+/* 	float:right; */
+/* 	margin-left:300px; */
+/* 	padding:1000px; */
+/* 	text-align:right; */
+   	background-color:red; 
+    
+  }
+
+
+
 
 </style>
 <body>
@@ -250,8 +274,15 @@ section {
         
         
         
-        <div class="pagination" id="pagination"></div>
+        <div class="pagination" id="pagination" style=background-color:green;>
         
+       
+        
+        </div>
+        
+        
+
+</div>
         
         
       </div>
@@ -384,8 +415,18 @@ function renderPagination(totalPages) {
     writePostButton.textContent = '글쓰기';
     writePostButton.className = 'write-post-btn';
     writePostButton.href = 'http://localhost:8081/postwrite';
+    
     paginationDiv.appendChild(writePostButton);
+    
+    // Align write-post-btn button to the right
+    writePostButton.style.float = 'right';
+    
+//     writePostButton.style.marginRight = '10px';
+    
 }
+
+
+
 
 
 </script>
