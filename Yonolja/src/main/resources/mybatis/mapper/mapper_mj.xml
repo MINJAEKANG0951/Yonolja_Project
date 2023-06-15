@@ -19,11 +19,24 @@
 	<select id="getPlaceOptions" resultType="com.human.springboot.DTO_MJ_placeOptionDTO">
 		select*from yonolja_place_option
 	</select>
+	
+	<select id="getPlaceTypes" resultType="com.human.springboot.DTO_MJ_placeTypeDTO">
+		select*from yonolja_place_type
+	</select>
+	
 	<select id="getPlaceEnvironments" resultType="com.human.springboot.DTO_MJ_placeEnvironmentDTO">
 		select*from yonolja_place_environment 
 	</select>
-	<select id="getPlaces" resultType="com.human.springboot.DTO_MJ_placeDTO">
-		select*from yonolja_place ${param1}
+	 
+	<select id="getPlaces" resultType="com.human.springboot.DTO_MJ_placeDTO_forMain">
+		select place_seq, place_name, place_address, place_imgs , min(roomtype_price) as roomtype_price
+		from
+			    (select p.place_seq, p.place_name, p.place_address ,p.place_imgs, p.place_environment, rt.roomtype_name, rt.roomtype_price, rt.roomtype_capacity, rt.roomtype_options
+			    from yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+			    where rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq
+			    ${param1}  
+			    )
+		group by  place_seq, place_name, place_address, place_imgs, place_environment
 	</select>
 	
 	<select id="getReviewRate" resultType="float">
@@ -32,6 +45,12 @@
 		where 
 	    review.book_seq = book.book_seq and book.room_seq = room.room_seq and room.roomtype_seq = type.roomtype_seq and 
 	    type.place_seq = place.place_seq and place.place_seq=#{param1}
+	</select>
+	
+	
+	
+	<select id="getPlace" resultType="com.human.springboot.DTO_MJ_placeDTO">
+		select*from yonolja_place where place_seq = #{param1}
 	</select>
 	
 	

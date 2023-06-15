@@ -71,7 +71,13 @@ header {
 }
 #searchbar:hover{ box-shadow: 0px 0px 5px #444;transition:0.5s;}
 .searchbar_item{display:flex;width:100%;height:100%;align-items:center; justify-content:center;}
-.searchbar_item:nth-child(1){border-right:1px solid #ddd;}
+.searchbar_item:nth-child(1){
+	border-right:1px solid #ddd;
+	/* 여기에 text-overflow 처리  */
+	overflow:hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
 .searchbar_item:nth-child(2){border-right:1px solid #ddd;}
 .searchbar_item:nth-child(3){
 	font-weight:lighter;
@@ -213,19 +219,6 @@ footer {
 	margin:auto 0;
 }
 
-#filter{
-	width:80px;
-	height:50px;
-	background-color:white;
-	border-radius:10% 10% 10% 10%;
-	font-size:15px;
-	font-weight:bold;
-	border:0.5px solid black;
-	cursor:pointer;
-}
-#filter:hover{
-	box-shadow: 0px 0px 5px #444;transition:0.5s;
-}
 
 .environments{
 	white-space:nowrap;
@@ -298,26 +291,13 @@ section{
 	
 }
 section.forList{
-	padding-top: 150px; padding-bottom: 150px;
-	margin-left:30px;
-	margin-top:30px;
+	padding-top: 155px; padding-bottom: 150px;
+	margin-left:20px;
+	margin-top:20px;
 	display: grid;
-    gap: 15px;
-    grid-template-columns: repeat(auto-fill, 300px); /* 200px짜리 영역을 갯수만큼 만듬 */
+    gap: 5px;
+    grid-template-columns: repeat(auto-fill, 280px); /* 200px짜리 영역을 갯수만큼 만듬 */
     grid-auto-rows: 400px; /* 줄바꿈 될때마다 자동으로 200px 로우 생성 */
-    &__card { /* 카드의 크기는 각 grid 영역으로 잡음 */
-      width: 100%;
-      height: 100%;
-      background-color: #fff;
-      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.07);
-      border-radius: 8px;
-      padding:20px;
-      font-size:1.4rem;
-      display:flex;
-      flex-direction: column;
-      justify-content: space-between;
-	}  
-
 }
 section.forMap{
 	display:grid;
@@ -327,14 +307,11 @@ section.forMap{
 }
 
 div[class*=portrait]{
-	margin:10px;
+
 }
 div[class*=portrait]:hover{
 	border-bottom:4px solid #ddd;
 }
-
-
-
 
 /*				modal css 부분 				*/
 
@@ -429,9 +406,13 @@ div[class*=portrait]:hover{
 .modal_cell.checked{
 	background-color:white;
 }
-.modal_cell.checked input{
-	/*outline: none;*/
+.modal_cell:nth-child(3).checked{
+	background-color:white;
 }
+.modal_cell:nth-child(3).checked ~ .modal_cell{
+	background-color:white;
+}
+
 #searchbar.hide{
 	display:none;
 }
@@ -442,8 +423,12 @@ div[class*=portrait]:hover{
 	display:block;
 }
 
-#search_img2{
+#search{
 	width:50px;
+}
+#search:hover{
+	transition:0.1s;
+	width:53px;
 }
 #modal_content2{
 	position:fixed;
@@ -453,6 +438,7 @@ div[class*=portrait]:hover{
 	height:500px;
 	border:1px solid #ddd;
 	border-radius:7% 7% 7% 7%;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
 	overflow:hidden;
 }
 
@@ -678,23 +664,155 @@ div[class*=portrait]:hover{
 }
 
 
-
-
-
 #calendar{
-	
 	border-collapse:collapse;
 	border:1px solid black;
+}
 
+
+#filter{
+	position:relative;
+	width:80px;
+	height:50px;
+	background-color:white;
+	border-radius:10% 10% 10% 10%;
+	font-size:15px;
+	font-weight:bold;
+	border:1.5px solid #ddd;
+	cursor:pointer;
+	text-align:right;
+}
+#filter:hover{
+	box-shadow: 0px 0px 5px #444;transition:0.3s;
+	width:83px;
+	height:53px;
+}
+#filter img{
+	position:absolute;
+	height:40%;
+	left:10px;
 }
 
 
 
+/*     여기부터는 filter modal css    */
+#filterModal{
+	position:absolute;
+	left:50%;
+	top:50%;
+	transform:translate(-50%,-50%);
+	border:1px solid black;
+	border-radius:10px 10px 10px 10px;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
+	background-color:white;
+	
+	/* 크기는 나중에 없앨거, 안에있는 애들 크기에 맞게 알아서 커지게*/
+	width:600px;
+	height:90%;
+	
+	overflow:auto;
+	scrollbar-width: thin;
+	scrollbar-color: #999999 #f0f0f0;
+	
+	display:grid;
+	/* place type 검색, place options 검색, 가격검색 가능해야함 그리므로 row 가 3개정도. 제목까지해서 4개 */
+	grid-template-rows:35px 150px auto auto 100px;
+	place-items:center;
+	z-index:5;
+	
+	-ms-overflow-style: none;
+}
+#filterModal::-webkit-scrollbar{
+  display:none;
+}
+#filterModal_background{
+	position:absolute;
+	left:0;
+	top:0;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:4;
+	display:none;
+}
+#filterModal div{
+	border-top:1px solid #ddd;
+	border-bottom:1px solid #ddd;
+	width:90%;
+	height:100%;
+}
+#filterModal div:nth-child(1){
+	text-align:center;
+	font-weight:bold;
+	font-size:25px;
+}
 
+#filterModal div:nth-child(2){
+	font-weight:bold;
+}
+#filterModal div:nth-child(2) input{
+	height:50px; width:180px; font-size:23px;
+	text-align:center;
+}
+#filterModal div:nth-child(2) input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#filterModal div:nth-child(2) label{
+	font-size:15px; font-weight:bold;
+	color:gray;
+}
+#filterModal div:nth-child(2) button{
+	border-radius:50% 50% 50% 50%;
+	background-color:white;
+	width:25px;
+	height:25px;
+	cursor:pointer;
+}
+#filterModal div:nth-child(2) button:hover{
+	width:27px;
+	height:27px;
+	background-color:#ddd;
+	transition:0.3s;
+}
+#filterModal div:nth-child(3){
+	font-size:20px; font-weight:bold;
+}
+#filterModal div:nth-child(3) input{
+	width:20px;
+	height:15px;
+}
 
-
-
-
+#filterModal div:nth-child(4){
+	font-size:20px; font-weight:bold;
+}
+#filterModal div:nth-child(4) input{
+	width:20px;
+	height:15px;
+}
+#filterModal div:nth-child(5) {
+	display:grid;
+	grid-template-columns:1fr 1fr;
+	grid-template-rows:1fr;
+	place-items:center;
+}
+#filterModal div:nth-child(5) button{
+	width:120px;
+	height:50px;
+	background-color:#222222;
+	color:white;
+	border:0px solid black;
+	border-radius:15% 15% 15% 15% / 50% 50% 50% 50%;
+	font-size:20px;
+	font-weight:bold;
+	cursor:pointer;
+}
+#filterModal div:nth-child(5) button:hover{
+	width:123px;
+	height:53px;
+	font-size:23px;
+	transition:0.2s;
+}
 </style>
 <div id=modal_background></div>
 <body>
@@ -758,8 +876,8 @@ div[class*=portrait]:hover{
 			<div class="modal_cell">
 				<div><b>날짜</b></div>
 				<div>
-					<input id=when_checkin type=text placeholder="체크인" style="width:60px;text-align:center;" readonly> - 
-					<input id=when_checkout type=text placeholder="체크아웃" style="width:60px;text-align:center;" readonly>
+					<input id=when_checkin type=text placeholder="체크인" style="width:70px;text-align:center;" readonly> - 
+					<input id=when_checkout type=text placeholder="체크아웃" style="width:70px;text-align:center;" readonly>
 				</div>
 			</div>
 			<div class="modal_cell">
@@ -767,7 +885,7 @@ div[class*=portrait]:hover{
 				<div><input id=howmanypeople type=text placeholder="인원수" style="width:60px;text-align:center" readonly></div>
 			</div>
 			<div class="modal_cell" id="category_search">
-				<div><img id=search_img2 src="/img/website/search2.png"></div>
+				<div><img id=search src="/img/website/search2.png"></div>
 			</div>
 		</div>
 		
@@ -805,34 +923,7 @@ div[class*=portrait]:hover{
 				
 				
 				<div class="modal_search" id="date_search">
-					<h3>체크인/체크아웃 날짜 정하기</h3>
 					
-						<table id=calendar>
-							<thead>
-								<tr> <th colspan=7><input id=year type=text>년 <input id=month type=text>월 </th>	</tr>
-								<tr> <th>일</th> <th>월</th> <th>화</th> <th>수</th> <th>목</th> <th>금</th> <th>토</th> </tr>
-							</thead>
-							<tbody>
-								<tr> 
-									<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> 
-								</tr>
-								<tr> 
-									<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> 
-								</tr>
-								<tr> 
-									<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> 
-								</tr>
-								<tr> 
-									<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> 
-								</tr>
-								<tr> 
-									<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> 
-								</tr>
-								<tr> 
-									<td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> 
-								</tr>
-							</tbody>
-						</table>
 					
 				</div>
 				
@@ -888,7 +979,7 @@ div[class*=portrait]:hover{
 		</div>
 		<div id=rightBtnBox> <button class=environment_right> > </button> </div>
 		<div class=btnBox>
-			<button id=filter>필터</button>
+			<button id=filter><img src="/img/website/filter_img.png"> 필터</button>
 		</div>
 	</div>
 </div>
@@ -903,6 +994,31 @@ div[class*=portrait]:hover{
 	
 </section>
 
+
+
+<!--  modal for filter  -->
+<div id=filterModal_background>
+	<div id=filterModal>
+		<div>필터</div>
+		<div>
+			<h3>가격범위</h3>
+			<button id=priceMinus>-</button> 
+			<input type=text id=highest placeholder="(가격입력)" min=10000 value=100,000 readonly>
+			<button id=pricePlus>+</button>
+			&nbsp;￦ 이하
+			<label> &nbsp; 의 방을 찾습니다.</label>
+		</div>
+		<div id=placetype_checkboxes>
+			<h3>건물유형</h3>
+		</div>
+		<div id=placeoptions_checkboxes>
+			<h3>편의시설</h3>
+		</div>
+		<div>
+			<button id=filterInfoSave> 저장하기 </button> <button id=filterCancel> 나가기 </button>
+		</div>
+	</div>
+</div>
 
 
 <footer>
@@ -932,6 +1048,8 @@ div[class*=portrait]:hover{
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script type="text/javascript" src="/js/calendarMaker.js"></script>
+<script type="text/javascript" src="/js/portraitMaker.js"></script>
 <script>
 ////////////////////////////////////  javascript /////////////////////////////////////////
 
@@ -969,6 +1087,8 @@ searchbar.addEventListener('click',function(event){
 	} 
 })
 
+
+// 이거 나중에 여유되면, jquery 로 해서 filter modal 처럼 애니메이션 줘보기. 가능할듯.
 document.addEventListener('click',function(event){
 	console.log(event.target.id);
 	if( event.target.id === 'modal_background' ){
@@ -978,7 +1098,16 @@ document.addEventListener('click',function(event){
 		searchbar.classList.remove('hide');
 		just_sentence.classList.remove('show');
 	}
+	
+	else if(event.target.id==='filterModal_background'){
+		$('#filterModal').fadeOut(200,function(){
+			$('#filterModal_background').css('display','none')
+			$('body').css('overflow','auto');
+		})
+	}
 })
+
+
 
 
 // 그냥 modal_cell jquery 대신 javascript 로 해봄.
@@ -1038,6 +1167,13 @@ $(document)
 .ready(function(){
 	getPlaceEnvironments();
 	getPlaces();
+	calendar = calendarMaker();
+	$('#date_search').append( calendar.getTag() );
+	$('body').append( calendar.getCss() );
+	calendar.fillCalendar();
+	calendar.setAim('when_checkin','when_checkout')
+	fill_placeType_checkBoxes();
+	fill_placeOption_checkBoxes();
 })
 .on('click','.environment_left',function(){
 	$('.environments').animate({scrollLeft:$('.environments').scrollLeft()-350},250)
@@ -1099,6 +1235,126 @@ $(document)
 	$(this).addClass('hide');
 	$('#mapButton').removeClass('hide');
 })
+// search
+.on('click','#search',function(){
+	
+	destination_decided = $('#where').val()
+	checkin_decided = $('#when_checkin').val();
+	checkout_decided = $('#when_checkout').val();
+	howmanypeople_decided = $('#howmanypeople').val();
+	
+	$('#modal_background').trigger('click');
+	getPlaces();
+	
+})
+
+
+
+// 필터버튼을 눌렀을 때, 작동하는 코드 
+.on('click','#filter',function(){
+	
+	// 만약에 저장된 정보가 있으면, 그대로 채워주고,
+	// 체크박스 눌러만놓고 나갔으면, 그냥 초기화
+	if(price_decided!=null){ $('#highest').val( parseInt(price_decided).toLocaleString() ) }
+	else{ $('#highest').val('10,000') }
+	
+	if(placeTypes_decided!=null){
+		checkedTypes = placeTypes_decided.split(",");
+		for(i=0;i<$('.placeType_checkbox').length;i++){
+			eachVal = $('.placeType_checkbox:eq('+i+')').val();
+			if(checkedTypes.includes(eachVal)){
+				$('.placeType_checkbox:eq('+i+')').prop('checked',true);
+			}
+		}
+	} else {
+		for(i=0;i<$('.placeType_checkbox').length;i++){
+			$('.placeType_checkbox:eq('+i+')').prop('checked',false);
+		}
+	}
+	
+	if(roomtypeOptions_decided!=null){
+		checkedOptions = roomtypeOptions_decided.split(",");
+		for(i=0;i<$('.placeOption_checkbox').length;i++){
+			eachVal = $('.placeOption_checkbox:eq('+i+')').val();
+			if(checkedOptions.includes(eachVal)){
+				$('.placeOption_checkbox:eq('+i+')').prop('checked',true);
+			}
+		}
+	} else {
+		for(i=0;i<$('.placeOption_checkbox').length;i++){
+			$('.placeOption_checkbox:eq('+i+')').prop('checked',false);
+		}
+	}
+	
+	$('body').css('overflow','hidden');
+	$('#filterModal').fadeOut(0)
+	$('#filterModal_background').css('display','block')
+	$('#filterModal').fadeIn(300);
+	
+	
+})
+/*
+ 
+위에 document click 하는거 있어서 거기서 했음
+.on('click','document',function(event){
+	console.log(event.target.id)
+	if(event.target.id=='filterModal_background'){
+		$('#filterModal').fadeOut(200,function(){
+			$('#filterModal_background').css('display','none')
+		})
+	}
+})
+*/
+
+// 어떤가격 이하 방 찾을때 버튼
+.on('click','#pricePlus',function(){
+	
+	currentPrice = parseInt( $('#highest').val().replace(",","") );
+	$('#highest').val( (currentPrice + 10000).toLocaleString() );
+	
+})
+.on('click','#priceMinus',function(){
+	currentPrice = parseInt( $('#highest').val().replace(",", "") );
+	if(currentPrice-10000 < 10000){ return false; }
+	$('#highest').val( (currentPrice - 10000).toLocaleString() );
+})
+
+
+.on('click','#filterInfoSave',function(){
+	
+	priceStr = $('#highest').val().replace(",","");
+	
+	placeTypeStr = '';
+	for(i=0;i<$('.placeType_checkbox:checked').length;i++){
+		if(i==0){
+			placeTypeStr += $('.placeType_checkbox:checked:eq('+i+')').val();
+		} else {
+			placeTypeStr += "," + $('.placeType_checkbox:checked:eq('+i+')').val();
+		}
+	}
+	
+	placeOptionStr = '';
+	for(i=0;i<$('.placeOption_checkbox:checked').length;i++){
+		if(i==0){
+			placeOptionStr += $('.placeOption_checkbox:checked:eq('+i+')').val();
+		} else {
+			placeOptionStr += "," + $('.placeOption_checkbox:checked:eq('+i+')').val();
+		}
+	}
+	
+	
+	price_decided = priceStr;
+	placeTypes_decided = placeTypeStr;
+	roomtypeOptions_decided = placeOptionStr;
+	
+	$('#filterModal_background').trigger('click');
+	getPlaces();
+	showPlaceList();
+	
+})
+.on('click','#filterCancel',function(){
+	$('#filterModal_background').trigger('click');
+})
 
 
 
@@ -1109,7 +1365,6 @@ window.addEventListener('resize',function(){
 		console.log('지도크기 조정')
 	}
 })
-
 
 // 내정보버튼 drop down
 $('html').click(function(e){
@@ -1138,16 +1393,31 @@ $('#where').keydown(function(key){
 
 
 
+
+
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 /////////////////////////////////// global variables ////////////////////////////////////
 let selected_environment = null;
+let destination_decided = null;
+let checkin_decided = null;
+let checkout_decided = null;
+let howmanypeople_decided = null;
+let price_decided = null;
+let placeTypes_decided = null;
+let roomtypeOptions_decided = null;
+
 let placesToShow = [];
 let coordinates = [];
 let MAP = null;
 /////////////////////////////////////////////////////////////////////////////////////////
+
+
 
 
 /////////////////////////////////////// functions ////////////////////////////////////// 
@@ -1177,17 +1447,42 @@ function getPlaceEnvironments(){
 		}
 	})
 }
+
 // 가져온 places 들을 places array 에 하나하나의 object element 로 담는 method
-function getPlaces(keyword){
+function getPlaces(){
+
+	
+	if(destination_decided==null || destination_decided=='')
+	{ $('#searchbar_where').text('어디든지') }
+	else { 
+		if(destination_decided.length>=6){
+			newstr = destination_decided.substring(0,4) + "..";
+			$('#searchbar_where').text(newstr);
+		} else {
+			$('#searchbar_where').text(destination_decided);
+		}
+	}
+	
+	if(checkin_decided==null || checkin_decided=='')
+	{ $('#searchbar_when').text('언제든지') }
+	else { $('#searchbar_when').text(checkin_decided + "-" + checkout_decided);}
+	
+	if(howmanypeople_decided==null || howmanypeople_decided=='')
+	{ $('#searchbar_howmanypeople').text('게스트추가') }
+	else{ $('#searchbar_howmanypeople').text(howmanypeople_decided) }
 	
 	$.ajax({url:'/getPlaces', type:'post', dataType:'json', 
 		data:{
-			keyword:keyword,
+
 			selected_environment:selected_environment,
-			where:$('#where').val(),
-			when_checkin:$('#when_checkin').val(),
-			when_checkout:$('#when_checkout').val(),
-			howmanypeople:$('#howmanypeople').val()
+			destination_around:destination_decided,
+			checkin:checkin_decided,
+			checkout:checkout_decided,
+			howmanypeople:howmanypeople_decided,
+			price:price_decided,
+			placeTypes:placeTypes_decided,
+			roomtype_options:roomtypeOptions_decided
+
 		},
 		success:function(data){
 			placesToShow = [];
@@ -1197,42 +1492,24 @@ function getPlaces(keyword){
 				data[i].place_name;
 				data[i].place_address;
 				data[i].place_imgs;
-				data[i].place_reviewRate;
+				data[i].roomtype_price;
+				data[i].place_review;
 				
 				a_place = {
 						'seq':data[i].place_seq,
 						'name':data[i].place_name,
 						'address':data[i].place_address,
 						'imgs':data[i].place_imgs,
-						'reviewRate':data[i].place_reviewRate
-						// 나중에 다른 data 필요하면 그때 보고서 담기.
+						'price':data[i].roomtype_price,
+						'reviewRate':data[i].place_review
 				}
-				
 				placesToShow.push(a_place);
-				
-				
-				/*
-				portrait = makeStructure();
-				portrait.setMoveToUrl("/place/"+data[a].place_seq);
-				portrait.setBody(data[a].place_name,"★" + data[a].place_reviewRate ,data[a].place_address, '');
-				
-				imgsArray = data[a].place_imgs.split(",");
-				for(b=0;b<imgsArray.length;b++){
-					portrait.add_picture(imgsArray[b]);
-				}
-				
-				cssStr = portrait.getPortraitCss();
-				tagStr = portrait.getPortrait();
-				
-				$('body').append(cssStr)
-				$('section').append(tagStr)
-				*/
 			}
 		},
 		complete:function(){
-			showPlaceList();
+			$('#listButton').trigger('click')
 		}
-	})		// placePrice 는 나중에 db join 해서 1박기준 알아와야할듯.. 아니면 그냥 빈칸으로두던가
+	})		
 }
 
 function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만들어 section 에 표시하는 함수
@@ -1245,7 +1522,7 @@ function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만�
 		
 		portrait = makeStructure();
 		portrait.setMoveToUrl("/place/"+ place.seq);
-		portrait.setBody(place.name , "★" + place.reviewRate , place.address, '');
+		portrait.setBody(place.name , "★ " + place.reviewRate.toFixed(1) , place.address, place.price.toLocaleString() + ' \\ / 박');
 		
 		imgsArray = place.imgs.split(",");
 		for(b=0;b<imgsArray.length;b++){
@@ -1261,7 +1538,7 @@ function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만�
 	}
 	
 }
-function showPlaceMap(){	// placeToShow 에 담긴 places 들을 list 로 만들어 section 에 표시하는 함수
+function showPlaceMap(){	// placeToShow 에 담긴 places 들을 kakao map 에 표시하는 함수
 	$('section').empty();
 	if(!$('section').hasClass('forMap')){$('section').addClass('forMap');}
 	if($('section').hasClass('forList')){console.log('forlist');$('section').removeClass('forList');}
@@ -1296,324 +1573,12 @@ function showPlaceMap(){	// placeToShow 에 담긴 places 들을 list 로 만들
 			}
 		})
 	})
-	
 	function setBounds(){
-		
 		map.setBounds(bounds);
-		
 	}
-	
 }
-/*
-function getPlacesToMap(keyword){
-	
-	section = document.getElementsByTagName('section')[0];	
-	section.classList.remove('forList');
-	$('section').empty();
-	
-
-	// 지도생성
-	
-	places = [];
-	
-	$.ajax({url:'/getPlaces', type:'post', dataType:'json',
-		data:{
-			keyword:keyword,
-			selected_environment:selected_environment,
-			where:$('#where').val(),
-			when_checkin:$('#when_checkin').val(),
-			when_checkout:$('#when_checkout').val(),
-			howmanypeople:$('#howmanypeople').val()
-		},
-		success:function(data){
-			for(i=0;i<data.length;i++){
-				place = {
-						seq:data[i].place_seq,
-						name:data[i].place_name,
-						address:data[i].place_address,
-						imgs:data[i].place_imgs
-				};
-				places.push(place);
-			}
-		}, 
-		complete:function(){
-			
-			$('section').append('<div id=map></div>')
-			let container = document.getElementById('map'); 
-			let options = { 
-				center: new kakao.maps.LatLng(33.450701, 126.570667), 
-				level: 3 
-			};
-			let map = new kakao.maps.Map(container, options); 
-			// 지도만들기 
-			
-			// 이제 주소를 이용해 좌표로 변환하면서, 그 좌표를가지고 customoverlay 를 형성함 
-			   
-			for(i=0;i<places.length;i++){
-	
-				let place = places[i];
-				
-				address = place.address.split(",")[1];
-				
-				var geocoder = new kakao.maps.services.Geocoder();
-				geocoder.addressSearch(address, function(result,status){
-					if(status===kakao.maps.services.Status.OK){
-						var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-						coordinates.push(coords);
-						var customOverlay = new kakao.maps.CustomOverlay({
-							position:coords,
-							content:'<button>'+ place.name +'</button>'
-						});
-						customOverlay.setMap(map); // customOverlay 를 지도에 찍음
-					} else {console.log("making place-customoverlay > fail")}
-				})
-			}
-			/////////////////////////// 콜백함수  필요 ////////////////////////////////////
-			// 이건 임시방편이고 실제로 callback 함수를 만들어야함.
-			var bounds = new kakao.maps.LatLngBounds();
-			setTimeout(function(){
-				console.log(coordinates);
-				for(i=0;i<coordinates.length;i++){
-					bounds.extend(coordinates[i]);
-				}
-				
-				map.setBounds(bounds);
-			},500);
-			
-
-		}
-	})		
-}
-*/
-
-
-// getPlacesByKeyWord => 이건 안쓰는거라 나중에 지워도 될듯?
-/*
-function getPlacesByKeyword(keyword){
-	
-	$('section').empty();
-	
-	$.ajax({url:'/getPlaces', type:'post', dataType:'json', 
-		
-		data:{keyword:keyword},
-		
-		success:function(data){
-		
-			for(a=0;a<data.length;a++){
-				
-				seq = data[a].place_seq;
-				name = data[a].place_name;
-				price = data[a].place_price;
-				address = data[a].place_address;
-				imgs = data[a].place_imgs;
-				reviewRate = data[a].place_reviewRate;
-				
-				portrait = makeStructure();
-				portrait.setMoveToUrl("/place/"+seq);
-				portrait.setBody(name,"★" + reviewRate ,address,''); //마지막꺼 price
-				
-				imgsArray = imgs.split(",");
-				for(b=0;b<imgsArray.length;b++){
-					portrait.add_picture(imgsArray[b]);
-				}
-				
-				cssStr = portrait.getPortraitCss();
-				tagStr = portrait.getPortrait();
-				
-				$('body').append(cssStr)
-				$('section').append(tagStr)
-				
-
-			}		
-			
-		}
-	
-	})		// placePrice 는 나중에 db join 해서 1박기준 알아와야할듯.. 아니면 그냥 빈칸으로두던가
-}
-*/
-// portrait-maker function
-function makeStructure(){
-
-    uuid = self.crypto.randomUUID();
-    uuid = "a" + uuid.substring(0,10);
-
-    portraitStructure = {
-		
-        test:function(){console.log('makeStructure for portrait')},
-        
-        moveToUrl:null,
-        setMoveToUrl:function(data){this.moveToUrl=data;},
-
-        portrait_code:uuid+ "-portrait",
-        portrait_style:'text-align:center;width:250px;height:400px;',
-        // portrait_width:'300px',
-        // portrait_height:'400px',
-        set_portrait_width:function(data){this.portrait_width=data;},
-
-        radio_code: uuid + '-slide',
-        radio_id  : uuid + '-radio',
-        radio_name: uuid + "-slide",
-
-        head_code:uuid+ "-head",
-        head_style:'width:100%;height:250px;position:relative;',
-        // head_height:"300px",
-        set_head_height:function(data){this.head_height=data;},
-
-        pictureList_code:uuid+ "-pictureList",
-        pictureList_style:'width:100%;height:100%;white-space:nowrap;overflow:hidden;padding:0px;font-size:0px;border:1px solid #ddd;border-radius:10% 10% 10% 10%;cursor:pointer;',
-        pictureList_elements:[],    // 사용자입력 
-
-        add_picture:function(data){this.pictureList_elements.push(data)},
-        pictureList_li_code:uuid+ "-pictureList",
-        pictureList_li_style:'list-style:none; display:inline-block; width:100%; height:100%; transition:0.5s;',
-
-        control_code:uuid+ "-control",
-        control_style:'font-weight:bold;',
-
-        left_code:uuid+"-left",
-        left_style:'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);left:10px;width:30px;height:30px;',
-        left_img:"/img/test/left.png",
-
-        right_code:uuid+"-right",
-        right_style:'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);right:10px;width:30px;height:30px;',   
-        right_img:"/img/test/right.png",
-
-        body_code:uuid+ "-body",
-        body_style:	'display:grid;grid-template-columns:3fr 1fr;grid-template-rows:0.5fr 1fr 1fr;height:100px;padding:0px;cursor:pointer;',
-        // body_height:'100px',
-		
-        body_element_name:null,
-        body_element_review:null,
-        body_element_address:null,
-        body_element_price:null,
-
-        setBody:function(name,review,address,price){
-            this.body_element_name = name;
-            this.body_element_review = review;
-            this.body_element_address = address;
-            this.body_element_price = price;
-        },     
-
-        getPortrait:function(){
-            
-            if(this.pictureList_elements.length==0){console.log('portrait에 사진을 넣어주세요');return false;}
-
-            radiostr = '';
-            imgstr = '';
-            controlstr = '';
-
-            for(i=0;i<this.pictureList_elements.length;i++){
-                
-                if(i==0){
-                    radiostr += '<input type=radio class=' + this.radio_code + ' id='+ this.radio_id + i + ' name='+ this.radio_name + ' style="display:none" checked>'
-                } else {
-                    radiostr += '<input type=radio class=' + this.radio_code + ' id='+ this.radio_id + i + ' name='+ this.radio_name +' style="display:none">'
-                }
-               
-                
-                imgstr += '<li class=' + this.pictureList_li_code + ' style="' + this.pictureList_li_style + '">'
-                imgstr += '<img src="' + this.pictureList_elements[i] + '">'
-                imgstr += '</li>'
-
-                if(i==0){
-                    controlstr += '<div class=' + this.control_code + i + ' style="'+ this.control_style +'">';
-                    controlstr += '<label class=' + this.left_code + ' for=' + this.radio_id + (this.pictureList_elements.length-1) +' style='+ this.left_style +'>'
-                    controlstr += '<img src="' + this.left_img +'" style="'+ this.left_style +'"></label>';
-                    controlstr += '<label class=' + this.right_code + ' for=' + this.radio_id + (i+1) +' style='+ this.right_style +'>'
-                    controlstr += '<img src="' + this.right_img +'" style="'+ this.right_style +'"></label>';
-                    controlstr += '</div>'
-                } else if(i==this.pictureList_elements.length-1){
-                    controlstr += '<div class=' + this.control_code + i + ' style="'+ this.control_style +'">';
-                    controlstr += '<label class=' + this.left_code + ' for=' + this.radio_id + (i-1) +' style='+ this.left_style +'>'
-                    controlstr += '<img src="' + this.left_img +'" style="'+ this.left_style +'"></label>';
-                    controlstr += '<label class=' + this.right_code + ' for=' + this.radio_id + (0) +' style='+ this.right_style +'>'
-                    controlstr += '<img src="' + this.right_img +'" style="'+ this.right_style +'"></label>';
-                    controlstr += '</div>'
-                } else {
-                    controlstr += '<div class=' + this.control_code + i + ' style="'+ this.control_style +'">';
-                    controlstr += '<label class=' + this.left_code + ' for=' + this.radio_id + (i-1) +' style='+ this.left_style +'>'
-                    controlstr += '<img src="' + this.left_img +'" style="'+ this.left_style +'"></label>';
-                    controlstr += '<label class=' + this.right_code + ' for=' + this.radio_id + (i+1) +' style='+ this.right_style +'>'
-                    controlstr += '<img src="' + this.right_img +'" style="'+ this.right_style +'"></label>';
-                    controlstr += '</div>'
-                }
-            }
-
-            portraitStr = "";
-                                // 여기 sectionItem 임시로 전체클래스 준거임. 나중에 고치던가하셈
-            portraitStr += '<div class=' + this.portrait_code + ' style="' + this.portrait_style +'">';
-                portraitStr += radiostr;
-
-                portraitStr += '<div class=' + this.head_code + ' style="' + this.head_style + '">'
-                    
-                    portraitStr += '<ul class=' + this.pictureList_code + ' style="' + this.pictureList_style + '" onclick=\'location.href="'+ this.moveToUrl +'"\'>' 
-                        portraitStr += imgstr;
-                    portraitStr += '</ul>'
-                    
-                    portraitStr += '<div class=' + this.control_code + '>';
-                        portraitStr += controlstr;
-                    portraitStr += '</div>'
-
-                portraitStr += '</div>';
-
-                portraitStr += '<div class=' + this.body_code + ' style="'+ this.body_style + '" onclick=\'location.href="'+ this.moveToUrl +'"\'>' 
-                    portraitStr += '<div></div> <div></div>'
-                    portraitStr += '<div style="text-align:left;font-weight:bold;">' + this.body_element_name + '</div>'
-                    portraitStr += '<div style="text-align:right">' + this.body_element_review + '</div>'
-                    portraitStr += '<div style="text-align:left;color:gray;">' + this.body_element_address + '</div>'
-                    portraitStr += '<div></div>'
-                 	 portraitStr +='<div style="text-align:left">' + this.body_element_price + '</div>'
-                    portraitStr += '<div></div>' 
-                portraitStr += '</div>';
-            portraitStr += '</div>'
-
-            return portraitStr;
-        },
-
-        getPortraitCss:function(){
-            
-            cssStr1 = '';
-            cssStr2 = '';
-            cssStr3 = '.' + this.head_code + " img{width:100%;height:100%}\n";
-            cssStr4 = '.' + this.left_code + "{display:none;}\n";
-            cssStr5 = '.' + this.right_code + "{display:none;}\n";
-
-            for(i=0;i<this.pictureList_elements.length;i++){
-
-                cssStr1 += "." + this.radio_code + ":nth-child(" + (i+1) + "):checked ~ ." + 
-                            this.head_code + " ul li{transform:translateX(" + (i*(-100)) + "%);}\n" 
-                
-                if(this.pictureList_elements.length==1){
-                	
-                } else if(i==0){
-                	cssStr2 += '.' + this.portrait_code + ":hover ." + this.radio_code +":nth-child(" + (i+1) + 
-                    "):checked ~ ." + this.head_code + " div div:nth-child(" + (i+1) + ") ." + this.right_code +
-                    "{display:block;}\n" 
-                } else if(i==this.pictureList_elements.length-1){
-                	cssStr2 += '.' + this.portrait_code + ":hover ." + this.radio_code +":nth-child(" + (i+1) + 
-                    "):checked ~ ." + this.head_code + " div div:nth-child(" + (i+1) + ") ." + this.left_code +
-                    "{display:block;}\n" 
-                } else {
-                	  cssStr2 += '.' + this.portrait_code + ":hover ." + this.radio_code +":nth-child(" + (i+1) + 
-                      "):checked ~ ." + this.head_code + " div div:nth-child(" + (i+1) + ") label" +
-                      "{display:block;}\n" 
-                }
-             
-            }
-            
-            portraitCssStr = '<style>' + cssStr1 + cssStr2 +  cssStr3 + cssStr4 + cssStr5 + "</style>";
-
-            return portraitCssStr;
-        }
-
-    }
-    return portraitStructure;
-}
-
-// 인원수 변경될때 총 인원수/modal_cell 인원수에 값이 전달되는 code
 
 function setTheAmountOfGuest(){
-	
 	total = 0;
 	for(i=0;i<$('.howmanyGuest').length;i++){
 		num = $('.howmanyGuest:eq('+i+')').val();
@@ -1630,10 +1595,8 @@ function setTheAmountOfGuest(){
 
 }
 
-
 // 검색내역 종합을 표시하는 code 
 function searchResult(){
-	
 	str = '';
 	flag = 0;
 	if( $('#where').val()!=null && $('#where').val()!='' ){
@@ -1658,18 +1621,71 @@ function searchResult(){
 	$('#searchResult').append(str);
 }
 
-
 function resizeMap(width,height){
-	console.log(width);
-	console.log(height);
 	$('#map').width( width );
 	$('#map').height( height );
 	MAP.relayout();
+}
 
+
+// placetype checkboxes 와 placeoption(roomtype options) checkboxes 를 채워넣는 method.
+function fill_placeType_checkBoxes(){
+	
+	// 초기화부분은 아직선언안함. 사실초기화 안해두되긴함, 맨처음에 ready 만 쓰일 method 라서.
+	
+	$.ajax({url:'/getPlaceTypes', type:'post', dataType:'json', 
+		
+		success:function(data){
+
+			str = '<table>';
+			
+			for(i=0;i<data.length;i++){
+				str += '<td><input type=checkbox class=placeType_checkbox value=' + data[i].type_seq + '> ' ;
+				str += data[i].type_name + '&nbsp;&nbsp;&nbsp;</td>'
+				if((i+1)%3==0){
+					str = '<tr>' + str;
+					str = str + '</tr>';
+				}
+			}
+			str += '</table>'
+			$('#placetype_checkboxes').append(str);
+			
+			
+		}
+		
+	})
+	
+	
+}
+function fill_placeOption_checkBoxes(){
+	
+	// 초기화부분은 아직선언안함. 사실초기화 안해두되긴함, 맨처음에 ready 만 쓰일 method 라서.
+	
+	$.ajax({url:'/getPlaceOptions', type:'post', dataType:'json', 
+		
+		success:function(data){
+			str = '<table>';
+			
+			for(i=0;i<data.length;i++){
+				str += '<td><input type=checkbox class=placeOption_checkbox value=' + data[i].option_seq + '> ' ;
+				str += data[i].option_name + '&nbsp;&nbsp;&nbsp;</td>'
+				if((i+1)%3==0){
+					str = '<tr>' + str;
+					str = str + '</tr>';
+				}
+			}
+
+			str += '</table>'
+			$('#placeoptions_checkboxes').append(str);
+			
+		}
+		
+	})
+	
+	
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
-
 
 
 

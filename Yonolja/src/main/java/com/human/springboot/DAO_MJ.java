@@ -13,7 +13,13 @@ public interface DAO_MJ {
 	
 	ArrayList<DTO_MJ_placeOptionDTO> getPlaceOptions();
 	ArrayList<DTO_MJ_placeEnvironmentDTO> getPlaceEnvironments();
-	ArrayList<DTO_MJ_placeDTO> getPlaces(String sql);
+	ArrayList<DTO_MJ_placeTypeDTO> getPlaceTypes();
+	ArrayList<DTO_MJ_placeDTO_forMain> getPlaces(String sql);
 	
 	float getReviewRate(int placeSeq);
+	
+	
+	DTO_MJ_placeDTO getPlace(int place_seq);
+	
+	
 }
