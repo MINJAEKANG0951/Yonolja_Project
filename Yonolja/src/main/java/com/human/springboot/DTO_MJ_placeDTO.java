@@ -14,7 +14,6 @@ public class DTO_MJ_placeDTO {
 	  String place_address;
 	  String place_imgs;
 	  String place_mobile;
-	  String place_options;
 	  String place_guide;
 	  String place_environment;
 	  
@@ -71,12 +70,6 @@ public class DTO_MJ_placeDTO {
 	}
 	public void setPlace_mobile(String place_mobile) {
 		this.place_mobile = place_mobile;
-	}
-	public String getPlace_options() {
-		return place_options;
-	}
-	public void setPlace_options(String place_options) {
-		this.place_options = place_options;
 	}
 	public String getPlace_guide() {
 		return place_guide;

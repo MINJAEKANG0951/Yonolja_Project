@@ -1,6 +1,7 @@
 package com.human.springboot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -23,61 +24,12 @@ public class Controller_MJ {
 	@Autowired
 	DAO_MJ mjdao;
 	
-	// 테스트
-	@GetMapping("/test")
-	public String showtestPage() {
-		return "test/slideImgTest";
-	}
-	@GetMapping("/test2")
-	public String showtestPage2() {
-		return "test/ImgUploadTest";
-	}
-	@GetMapping("/test3")
-	public String showtestPage3() {
-		return "test/portraitModuleTest";
-	}
-	@GetMapping("/test4")
-	public String showtestPage4() {
-		return "test/portraitModuleTest2";
-	}
-	@GetMapping("/modalTest")
-	public String showModalTestPage() {
-		return "/test/modal_practice";
-	}
-	@GetMapping("/modalTest2")
-	public String showModalTestPage2() {
-		return "/test/modal_byMyself";
-	}
-	@GetMapping("/test5")
-	public String showKakaoMapsAPI() {
-		return "/test/kakaoMapsAPI";
-	}
-	@GetMapping("/calendar")
-	public String showCalendar() {
-		return "/test/calendar";
-	}
-	@GetMapping("/calendarTest")
-	public String showCalendarTest() {
-		return "/test/calendarTest";
-	}
-	
-	@GetMapping("/showStructure")
-	public String showStructure() {
-		return "/structure/all";
-	}
-	
 	// 회원가입 (나중에 바꿔야함. 조금 더 간편하게)
 	@GetMapping("/signin")
 	public String showSignin() {
 		return "signin";
 	}
-	@PostMapping("/getImg")
-	public void getImg(@RequestParam(value="img") MultipartFile img) {
-		
-		System.out.println(img);
-		
-		
-	}
+	
 	@PostMapping("/doSignin")
 	public String doSignin(HttpServletRequest req, Model model) {
 		
@@ -179,7 +131,12 @@ public class Controller_MJ {
 
 	// 메인 보여주기
 	@GetMapping("/main")
-	public String showMain() {
+	public String showMain(Model model) {
+		
+		// filter modal 에 place_type 이랑, place_options 보여주기위함.
+		// 아니면 그냥 ajax 로 ready 때만 붙여놓고 나중에 안건드리는방법도 있음. 
+		
+		
 		return "main";
 	}
 	
@@ -196,9 +153,9 @@ public class Controller_MJ {
 		for(int i=0;i<placeOptions.size();i++) {
 			JSONObject jo = new JSONObject();
 			
-			jo.put("seq", placeOptions.get(i).getPlace_option_seq());
-			jo.put("name", placeOptions.get(i).getPlace_option_name());
-			jo.put("img", placeOptions.get(i).getPlace_option_img());
+			jo.put("option_seq", placeOptions.get(i).getPlace_option_seq());
+			jo.put("option_name", placeOptions.get(i).getPlace_option_name());
+			jo.put("option_img", placeOptions.get(i).getPlace_option_img());
 			
 			ja.put(jo);
 		}
@@ -230,54 +187,26 @@ public class Controller_MJ {
 	}
 	
 	
-	// Place 가져오기
-	@PostMapping("/getPlaces")
+	// PlaceTypes 가져오기
+	@PostMapping("/getPlaceTypes")
 	@ResponseBody
-	public String getPlaces(HttpServletRequest req) {
+	public String getPlaceTypes() {
 		
-		ArrayList<DTO_MJ_placeDTO> places = null;
+		ArrayList<DTO_MJ_placeTypeDTO> placeTypes = mjdao.getPlaceTypes();
 		
-		
-		if( req.getParameter("keyword")==null ) {
-			
-			places = mjdao.getPlaces(null);
-			
-		} else if( req.getParameter("keyword").equals("environment") ) {
-			// 주변환경검색시
-			String environment_seq = req.getParameter("selected_environment");
-			String sql = "where place_environment like '" + environment_seq + ",%'";
-			sql += "or place_environment like'%," + environment_seq + ",%'";		 
-			sql += "or place_environment like'%," + environment_seq + "'";			 
-			sql += "or place_environment like'" + environment_seq + "'";			 
-			places = mjdao.getPlaces(sql);
-			
-		} else if( req.getParameter("keyword").equals("searchbar") ) {
-			// 서치바로 검색시
-		} else if( req.getParameter("keyword").equals("filter") ) {
-			// 필터로 검색시
-		}
 		JSONArray ja = new JSONArray();
 		
-		for(int i=0;i<places.size();i++) {
+		for(int i=0;i<placeTypes.size();i++) {
 			
 			JSONObject jo = new JSONObject();
 			
-			jo.put("place_seq", places.get(i).getPlace_seq());
-			jo.put("place_name", places.get(i).getPlace_name());
-			jo.put("user_seq", places.get(i).getUser_seq());
-			jo.put("place_type_seq", places.get(i).getPlace_type_seq());
-			jo.put("place_checkin_time", places.get(i).getPlace_checkin_time());
-			jo.put("place_checkout_time", places.get(i).getPlace_checkout_time());
-			jo.put("place_address", places.get(i).getPlace_address());
-			jo.put("place_imgs", places.get(i).getPlace_imgs());
-			jo.put("place_mobile", places.get(i).getPlace_mobile());
-			jo.put("place_options", places.get(i).getPlace_options());
-			jo.put("place_guide", places.get(i).getPlace_guide());
-		
-			// review average 도 가져오기
-			jo.put("place_reviewRate", mjdao.getReviewRate( places.get(i).getPlace_seq() ));
+			jo.put("type_seq", placeTypes.get(i).getPlace_type_seq());
+			jo.put("type_name", placeTypes.get(i).getPlace_type_name());
+			jo.put("type_img", placeTypes.get(i).getPlace_type_img());
+
 			
 			ja.put(jo);
+			
 		}
 		
 		return ja.toString();
@@ -285,10 +214,158 @@ public class Controller_MJ {
 	
 	
 	
+	
+	// main page 에 places 가져오기
+	@PostMapping("/getPlaces")
+	@ResponseBody
+	public String getPlacesForMain(HttpServletRequest req) {
+		
+		ArrayList<DTO_MJ_placeDTO_forMain> places = null;
+		
+		String sql = " ";
+		
+		if(  req.getParameter("selected_environment")!=null && 
+			!req.getParameter("selected_environment").equals("") ) 
+		{
+			String environmentSeq = req.getParameter("selected_environment");
+			sql += "and (place_environment like '" + environmentSeq + ",%' or ";
+			sql += "place_environment like '%," + environmentSeq + ",%' or ";
+			sql += "place_environment like '%," + environmentSeq + "' or ";
+			sql += "place_environment like '" + environmentSeq + "') ";
+
+		}
+		if(  req.getParameter("destination_around")!=null &&
+			!req.getParameter("destination_around").equals("")  ) 
+		{	// 라는 단어를 포함해야함
+			String location = req.getParameter("destination_around");
+			sql += "and (place_address like '%" + location + "%') "; 
+		}
+		
+		if( req.getParameter("howmanypeople")!=null && 
+		   !req.getParameter("howmanypeople").equals("")  ) 
+		{	// 보다 많아야함
+			String howmanypeople = req.getParameter("howmanypeople").replace("명", "");
+			sql += "and (rt.roomtype_capacity>=" + howmanypeople + ") ";
+		}
+		if( req.getParameter("price")!=null && 
+		   !req.getParameter("price").equals("")  ) 
+		{	// 보다 작아야함.
+			String price = req.getParameter("price");
+			sql += "and (rt.roomtype_price<=" + price + ") ";
+		}
+		if( req.getParameter("placeTypes")!=null &&
+			!req.getParameter("placeTypes").equals("")) 
+		{	
+			String []placeTypes = req.getParameter("placeTypes").split(",");
+			System.out.println(Arrays.toString(placeTypes));
+			sql += "and (";
+			for(int i=0;i<placeTypes.length;i++) {
+				if(i==0) {sql += "place_type_seq=" + placeTypes[i];}
+				else {sql += " or place_type_seq=" + placeTypes[i];}
+			}
+			sql += ")";
+		}
+		if( req.getParameter("roomtype_options")!=null &&
+		   !req.getParameter("roomtype_options").equals("")) 
+		{	// 이건 place option 마냥.
+			// 근데 여러개니깐 str 만드는 for문 만들어서 돌린다음에 그 문자열을 ${param1} 으로 보내야할듯
+			String []roomtype_options = req.getParameter("roomtype_options").split(",");
+			
+			for(int i=0;i<roomtype_options.length;i++) {
+				sql += "and (roomtype_options like '" + roomtype_options[i] + ",%' or ";
+				sql += "roomtype_options like '%," + roomtype_options[i] + ",%' or ";
+				sql += "roomtype_options like '%," + roomtype_options[i] + "' or ";
+				sql += "roomtype_options like '" + roomtype_options[i] + "') ";
+			}
+	
+		}
+		// 예약날짜로 거르기
+		if( (req.getParameter("checkin")!=null && req.getParameter("checkout")!=null) && 
+			(!req.getParameter("checkin").equals("") && !req.getParameter("checkout").equals(""))) 
+		{
+			String checkin = req.getParameter("checkin");
+			String checkout = req.getParameter("checkout");
+			
+			sql += "and rm.room_seq not in ";
+			sql += "(select room_seq from yonolja_book where ";
+			sql += "( to_date('" + checkin + "')>=to_date(checkin_date) and to_date(checkout_date) > to_date('" + checkin + "') )";
+			sql += " or ";
+			sql += "( to_date('" + checkout + "')>to_date(checkin_date) and to_date(checkout_date) >= to_date('" + checkout + "') )";
+			sql += ") order by rm.room_seq";
+			
+		}
+		sql += " ";
+		
+		
+		// place_type 으로 거르는것도 해두 될듯..?
+		
+		places = mjdao.getPlaces(sql);
+		
+		// json 작업해서 client 로 보내기.
+		JSONArray ja = new JSONArray();
+		for(int i=0;i<places.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("place_seq", places.get(i).getPlace_seq());
+			jo.put("place_name", places.get(i).getPlace_name());
+			jo.put("place_address", places.get(i).getPlace_address());
+			jo.put("place_imgs", places.get(i).getPlace_imgs());
+			jo.put("roomtype_price", places.get(i).getRoomtype_price());
+			
+			// 리뷰 가져와서 더하기 
+			float review = mjdao.getReviewRate(places.get(i).getPlace_seq());
+			jo.put("place_review", review);
+			
+			ja.put(jo);
+		}
+		return ja.toString();
+	}
 
 	
 	
+	// place (숙소/숙박업소 상세페이지 보여주기)
 	
+	@GetMapping("/place/{place_seq}")
+	public String showPlace(Model model, @PathVariable("place_seq") int seq) {
+		/* 
+		  main.jsp 에서 place/place_seq url을 보낼때
+		  만약에 searchbar keyword 에 대한 global variable 값이 null 이 아니라면,
+		  그 keyword 들을 session 으로 생성하면됨.
+		  keyword 에 대한 내용들을 session 으로 client(jsp)에서 생성한다음,
+		  여기서 받고 바로 삭제.
+		  session 은 더도말고 덜도말고 3개(where,when,howmanypeople) 에 대한것만 받고,
+		  그거만 옮기고 바로 삭제하면됨.
+		  
+		  일단 그건 나중에하고, searchbar 로 검색 안하고 place/seq 보냈을시 작업먼저 해보자.
+		*/
+		
+		// place 에 대한 정보를 가져와서, model 을 통해서 page 로 전송해주면됨.
+		
+		return "place";
+	}
+	
+	
+	
+	@PostMapping("/getPlace")
+	@ResponseBody
+	public String getPlaceInfo(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt(req.getParameter("place_seq"));
+		DTO_MJ_placeDTO place = mjdao.getPlace(place_seq);
+		
+		JSONObject jo = new JSONObject();
+		
+		jo.put("name", place.getPlace_name());
+		jo.put("imgs", place.getPlace_imgs());
+		jo.put("address", place.getPlace_address());
+		jo.put("checkin_time", place.getPlace_checkin_time());
+		jo.put("checkout_time", place.getPlace_checkout_time());
+		jo.put("guide", place.getPlace_guide());
+		jo.put("mobile", place.getPlace_mobile());
+
+		return jo.toString();
+	}
 	
 	
 	
@@ -313,5 +390,79 @@ public class Controller_MJ {
 	
 	
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// 테스트
+	@GetMapping("/test")
+	public String showtestPage() {
+		return "test/slideImgTest";
+	}
+	@GetMapping("/test2")
+	public String showtestPage2() {
+		return "test/ImgUploadTest";
+	}
+	@GetMapping("/test3")
+	public String showtestPage3() {
+		return "test/portraitModuleTest";
+	}
+	@GetMapping("/test4")
+	public String showtestPage4() {
+		return "test/portraitModuleTest2";
+	}
+	@GetMapping("/modalTest")
+	public String showModalTestPage() {
+		return "/test/modal_practice";
+	}
+	@GetMapping("/modalTest2")
+	public String showModalTestPage2() {
+		return "/test/modal_byMyself";
+	}
+	@GetMapping("/test5")
+	public String showKakaoMapsAPI() {
+		return "/test/kakaoMapsAPI";
+	}
+	@GetMapping("/calendar")
+	public String showCalendar() {
+		return "/test/calendar";
+	}
+	@GetMapping("/calendarTest")
+	public String showCalendarTest() {
+		return "/test/calendarTest";
+	}
+	
+	@GetMapping("/showStructure")
+	public String showStructure() {
+		return "/structure/all";
+	}
+	
+	@PostMapping("/getImg")
+	public void getImg(@RequestParam(value="img") MultipartFile img) {
+		System.out.println(img);
+	}
 	
 }
