@@ -161,6 +161,10 @@ section {
 		</div>
 		
 		<div>
+		 	<c:if test="${empty mybook}">
+	  			<p>예약내역이 없습니다</p>
+			</c:if> 
+		
 			<c:forEach items="${mybook}" var="book" varStatus="status">
 				<c:if test="${book.checkin_date gt currentDate}">
 					<!-- '이용전' 예약 정보 출력 -->
@@ -199,7 +203,11 @@ section {
 			<span>리뷰</span>
 		</div>
 		
-		<div>
+		<div>	
+			<c:if test="${empty mybook}">
+	  			<p>예약내역이 없습니다</p>
+			</c:if> 
+		
 			<c:forEach items="${mybook}" var="book" varStatus="status">
 				<c:if test="${book.checkin_date le currentDate}">
 					<!-- '이용가능' 또는 '이용완료' 예약 정보 출력 -->

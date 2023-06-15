@@ -154,16 +154,16 @@ a {
 
 /* 모달창 비밀번호확인창 */
 #passwordModal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgb(0,0,0); /* Fallback color */
-    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
 }
 
 /* Modal Content/Box */
@@ -193,9 +193,6 @@ a {
 
 </style>
 <body>
-<%-- <jsp:include page="./structure/all.jsp"></jsp:include> --%>
-<%-- <jsp:include page="main.jsp"></jsp:include> --%>
-
 <section>
 <div class="mynolja">
 	<span><h1><b>My 요놀자</b></h1></span>
@@ -217,8 +214,9 @@ a {
 		<span><b>예약</b></span><br>
 		<a href="#" id="mybooks">예약내역조회</a><br>
 		
-		<span><b>찜</b></span><br>
-		<a href="#" id="mylikes">찜한 호텔</a><br>
+<!-- 		<span><b>찜</b></span><br>
+		<a href="#" id="mylikes">찜한 호텔</a><br> -->
+		
 	</div><br>
 	
 	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
@@ -288,27 +286,104 @@ a {
 								</div>
 							</c:when>
 							<c:otherwise>
-							<div class="s_control">
-								<button class="s_prev">이전</button>
-								<button class="s_next">다음</button>
-								<button class="addH">업장추가</button>
+							
+							<div class="page_nation">
+								<c:if test="${placeList.size() >= 1}">       	
+									<ul class="pagination">
+										<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+											<a class="page-link" href="/mypage?page=1&size=${size}">
+												처음
+											</a>
+										</li>
+										<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+											<a class="page-link" href="/mypage?page=${currentPage-1}&size=${size}">
+												이전
+											</a>
+										</li>
+										
+										<c:choose>
+											<c:when test="${totalPages <= 5}">
+												<c:forEach begin="1" end="${totalPages}" var="i">
+													<li class="page-item ${currentPage == i ? 'active' : ''}">
+														<a class="page-link" href="/mypage?page=${i}&size=${size}">
+															${i}
+														</a>
+													</li>
+												</c:forEach>
+											</c:when>
+											
+											<c:when test="${currentPage <= 2}">
+												<c:forEach begin="1" end="5" var="i">
+													<li class="page-item ${currentPage == i ? 'active' : ''}">
+														<a class="page-link" href="/mypage?page=${i}&size=${size}">
+															${i}
+														</a>
+													</li>
+												</c:forEach>
+												
+												<li class="page-item disabled">
+													<a class="page-link">...</a>
+												</li>
+											</c:when>
+											
+											<c:when test="${currentPage >= totalPages - 1}">
+												<li class="page-item disabled">
+													<a class="page-link">...</a>
+												</li>
+												<c:forEach begin="${totalPages-4}" end="${totalPages}" var="i">
+													<li class="page-item ${currentPage == i ? 'active' : ''}">
+														<a class="page-link" href="/mypage?page=${i}&size=${size}">
+															${i}
+														</a>
+													</li>
+												</c:forEach>
+											</c:when>
+											
+											<c:otherwise>
+												<li class="page-item disabled">
+													<a class="page-link">...</a>
+												</li>
+												<c:forEach begin="${currentPage-1}" end="${currentPage+2}" var="i">
+													<li class="page-item ${currentPage == i ? 'active' : ''}">
+														<a class="page-link" href="/mypage?page=${i}&size=${size}">
+															${i}
+														</a>
+													</li>
+												</c:forEach>
+												
+												<li class="page-item disabled">
+												  <a class="page-link">...</a>
+												</li>
+											</c:otherwise>
+										</c:choose>
+										
+										<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+											<a class="page-link" href="/mypage?page=${currentPage+1}&size=${size}">
+												다음
+											</a>
+										</li>
+										
+										<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+											<a class="page-link" href="/mypage?page=${totalPages}&size=${size}">
+												끝
+											</a>
+										</li>
+									</ul>
+								</c:if> 
 							</div>
+
 							</c:otherwise>
 						</c:choose>
 					</c:otherwise>
 				</c:choose>
-				
 			</div>
 		</div><br>
-	</c:if>
-
-	
+	</c:if>	
 	<div class="mypost">
 		<span><b>고객센터</b></span><br>
 		<a href="#" id="post">문의하러가기</a><br>
 		<a href="#" id="mypostlist">나의문의</a><br>
 	</div>
-
 </div>
 
 <div id="passwordModal">
@@ -360,17 +435,6 @@ $(document).ready(function() {
 
 	  showSlides();
 	})
-
-/* .on("click", "#myinfo", function() {
-	var password = prompt("비밀번호를 입력해주세요.");
-	var user_ps = $(".user_ps").val();
-
-		if (password === user_ps) {
-			window.location.href = '/MyYonolja_myinfo';
-		} else {
-			alert('비밀번호가 일치하지 않습니다.');
-		}
-}) */
 
 $(document)
 .on("click", "#myinfo", function() {

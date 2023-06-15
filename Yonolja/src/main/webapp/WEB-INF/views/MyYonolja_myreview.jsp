@@ -182,7 +182,93 @@ section {
 			<input type="hidden" value="${review.roomtype_name}" id="seq_${review.review_seq}_roomtype_name">
 
 		</div>
-	</c:forEach>   
+	</c:forEach>  
+	
+	<div class="page_nation">
+	<c:if test="${myreview.size() >= 1}">       	
+		<ul class="pagination">
+			<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_myreview?page=1&size=${size}">
+					처음
+				</a>
+			</li>
+			<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_myreview?page=${currentPage-1}&size=${size}">
+					이전
+				</a>
+			</li>
+			
+			<c:choose>
+				<c:when test="${totalPages <= 5}">
+					<c:forEach begin="1" end="${totalPages}" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+				</c:when>
+				
+				<c:when test="${currentPage <= 2}">
+					<c:forEach begin="1" end="5" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+					
+					<li class="page-item disabled">
+						<a class="page-link">...</a>
+					</li>
+				</c:when>
+				
+				<c:when test="${currentPage >= totalPages - 1}">
+					<li class="page-item disabled">
+						<a class="page-link">...</a>
+					</li>
+					<c:forEach begin="${totalPages-4}" end="${totalPages}" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+				</c:when>
+				
+				<c:otherwise>
+					<li class="page-item disabled">
+						<a class="page-link">...</a>
+					</li>
+					<c:forEach begin="${currentPage-1}" end="${currentPage+2}" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+					
+					<li class="page-item disabled">
+					  <a class="page-link">...</a>
+					</li>
+				</c:otherwise>
+			</c:choose>
+			
+			<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_myreview?page=${currentPage+1}&size=${size}">
+					다음
+				</a>
+			</li>
+			
+			<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_myreview?page=${totalPages}&size=${size}">
+					끝
+				</a>
+			</li>
+		</ul>
+	</c:if> 
+</div>
+	 
 	</div> 
 </div>
 

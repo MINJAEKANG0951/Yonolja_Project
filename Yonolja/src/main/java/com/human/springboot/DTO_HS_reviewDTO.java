@@ -15,4 +15,9 @@ public class DTO_HS_reviewDTO {
 	String checkin_date;
 	int place_seq;
 	String roomtype_name;
+	
+    // Pagination
+	private int totalCount;  // 전체 리뷰 갯수
+	private int pageNumber;  // 현재 페이지 번호
+	private int pageSize;    // 페이지당 출력할 항목 수
 }
