@@ -8,11 +8,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import java.time.LocalDate;
 
 @Controller
 public class Controller_HS {
@@ -21,18 +21,40 @@ public class Controller_HS {
 
 	// 마이페이지
     @GetMapping("/mypage")
-    public String MyYonolja_host(Model model, HttpServletRequest req) {
+    public String MyYonolja_host(Model model, HttpServletRequest req, 
+    							 @RequestParam(defaultValue = "1") int page, 
+    							 @RequestParam(defaultValue = "3") int size) {
         HttpSession session = req.getSession();
         int user_seq = (int) session.getAttribute("user_seq");
         String name = (String) session.getAttribute("login_name");
-        String type = (String) session.getAttribute("user_type");
+        String type = (String) session.getAttribute("user_type");  
+        
+        //페이지네이션
+        
+        
+        int totalCount = hsdao.img_count(user_seq);
+        int startIndex = (page - 1) * size + 1;
+        int endIndex = Math.min(startIndex + size - 1, totalCount);
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+        ArrayList<DTO_HS_userDTO> placeList = hsdao.host_imgs(startIndex, size);
+        
+        model.addAttribute("placeList", placeList);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", page);
+	    //System.out.println(reviewList);
+	    System.out.println("placeList= "+placeList);
+	    System.out.println("totalPages= "+totalPages);
+	    System.out.println("page= "+page);
+	    System.out.println("size= "+size); 
 
         // 사용자 정보를 Model 객체에 저장
         model.addAttribute("user_name", name);
         model.addAttribute("user_type", type);
+        model.addAttribute("page", page);
+
         
-        ArrayList<DTO_HS_userDTO> placeList = hsdao.host_imgs();
-        model.addAttribute("placeList", placeList);
+        //ArrayList<DTO_HS_userDTO> placeList = hsdao.host_imgs();
+        //model.addAttribute("placeList", placeList);
         
         List<DTO_HS_userDTO> user_ps = hsdao.user_all(user_seq);
         if (!user_ps.isEmpty()) {
@@ -44,7 +66,7 @@ public class Controller_HS {
         
 
         return "MyYonolja";
-    }
+    } 
     
     // 내정보관리(수정페이지)
 	@GetMapping("/MyYonolja_myinfo")
@@ -177,19 +199,51 @@ public class Controller_HS {
     }
     
     
-    
     // 내후기보기 페이지
     @GetMapping("/MyYonolja_myreview")
-    public String MyYonolja_myreview(Model model, HttpServletRequest req) {
+    public String MyYonolja_myreview(Model model, 
+    								 HttpServletRequest req,
+    								 @RequestParam(defaultValue = "1") int page, 
+    								 @RequestParam(defaultValue = "3") int size) {
     	
-        HttpSession session = req.getSession();
+        HttpSession session = req.getSession();        
         int user_seq = (int) session.getAttribute("user_seq");
+        
+		/* int review_seq = Integer.parseInt(req.getParameter("user_seq")); */
 
-        List<DTO_HS_reviewDTO> myreview = hsdao.myReviewlist(user_seq);
+        
+        //페이지네이션
+        int totalCount = hsdao.myreview_count(user_seq);
+        int startIndex = (page - 1) * size + 1;
+        int endIndex = Math.min(startIndex + size - 1, totalCount);
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+        List<DTO_HS_reviewDTO> myreview = hsdao.myReviewlist(user_seq, startIndex, size);
+
         model.addAttribute("myreview", myreview);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("page", page);
+        
+	    System.out.println("myreview= "+myreview);
+	    System.out.println("totalPages= "+totalPages);
+	    System.out.println("page= "+page);
+	    System.out.println("size= "+size); 
         
     	return "MyYonolja_myreview";
     }
+    
+    
+//    @GetMapping("/MyYonolja_myreview")
+//    public String MyYonolja_myreview(Model model, HttpServletRequest req) {
+//    	
+//        HttpSession session = req.getSession();
+//        int user_seq = (int) session.getAttribute("user_seq");
+//
+//        List<DTO_HS_reviewDTO> myreview = hsdao.myReviewlist(user_seq);
+//        model.addAttribute("myreview", myreview);
+//        
+//    	return "MyYonolja_myreview";
+//    }
     
 	// 리뷰수정(업데이트)
     @PostMapping("/myReview_update")

@@ -4,12 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface DAO_HS {
 	
 	// 마이페이지 업주 등록한 업장 사진 select
-	ArrayList<DTO_HS_userDTO> host_imgs();
+	//ArrayList<DTO_HS_userDTO> host_imgs();
+	// 페이지네이션 구현
+	ArrayList<DTO_HS_userDTO> host_imgs(int offset, int limit);
+	int img_count(int user_seq);
+
 	
 	// 유저 정보 user_seq에 맞게 가져오기
 	List<DTO_HS_userDTO> user_all(int user_seq);
@@ -33,7 +38,11 @@ public interface DAO_HS {
 	void myBook_delete(int book_seq);
 	
 	// 나의후기에서 등록한 리뷰 내역 가져오기
-	List<DTO_HS_reviewDTO> myReviewlist(int user_seq);
+	//List<DTO_HS_reviewDTO> myReviewlist(int user_seq);
+	//페이지네이션
+	List<DTO_HS_reviewDTO> myReviewlist(int user_seq, int offset, int limit);
+	int myreview_count(int user_seq);
+	
 	
 	// 나의후기에서 리뷰 수정(업데이트) 하기
 	void myreview_update(int review_seq, String review_content, int review_star);

@@ -5,10 +5,30 @@
 	
 <mapper namespace="com.human.springboot.DAO_HS">
 	<!-- 마이페이지 -->
-	<select id="host_imgs" resultType="com.human.springboot.DTO_HS_userDTO">
+<!--  	<select id="host_imgs" resultType="com.human.springboot.DTO_HS_userDTO">
 		select a.user_seq, a.user_id, b.place_imgs, b.place_seq, a.user_type, b.place_name
-		from yonolja_user a, yonolja_place b where a.user_seq = b.user_seq
+		from yonolja_user a, yonolja_place b 
+		where a.user_seq = b.user_seq
 		order by b.place_seq
+	</select> 	 -->
+	
+	<!-- 마이페이지 -->
+	<select id="host_imgs" resultType="com.human.springboot.DTO_HS_userDTO">
+	<![CDATA[
+	    select *
+	    from (
+	        select a.user_seq, a.user_id, b.place_imgs, b.place_seq, a.user_type, b.place_name,
+	        ROW_NUMBER() OVER (ORDER BY b.place_seq) AS rnum
+	    from yonolja_user a, yonolja_place b 
+	    where a.user_seq = b.user_seq
+	          ) where rnum BETWEEN #{param1} and #{param1} + #{param2} - 1
+	
+	    ]]>
+	</select>
+	<select id="img_count" resultType="java.lang.Integer">
+	    <![CDATA[
+	        SELECT COUNT(*) FROM yonolja_place WHERE user_seq = #{param1}
+	    ]]>
 	</select>
 	
 	<select id="user_all" resultType="com.human.springboot.DTO_HS_userDTO">
@@ -65,19 +85,6 @@
 	
 	</select>	
 	
-<!-- 	<select id="myBooklist" resultType="com.human.springboot.DTO_HS_bookDTO">
-	    select a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, 
-	           c.roomtype_name, d.place_name,
-	           (case when e.book_seq is null then '미등록' else '등록' end) as review_status
-	    from yonolja_book a 
-	    left join yonolja_review e on a.book_seq = e.book_seq
-	    inner join yonolja_room b on a.room_seq = b.room_seq 
-	    inner join yonolja_roomtype c on b.roomtype_seq = c.roomtype_seq
-	    inner join yonolja_place d on c.place_seq = d.place_seq
-	    where a.user_seq = #{param1}
-	    order by a.checkin_date DESC
-	</select> -->
-	
 	<!-- 예약내역에서 리뷰 등록하기 -->
  	<insert id="review_insert">
 		insert into yonolja_review values(review_seq.nextval, #{param1}, sysdate, #{param2}, #{param3})
@@ -89,7 +96,7 @@
 	</delete>
 	
 	<!-- 나의후기에서 리뷰 조회(출력)하기 -->
-	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
+<!-- 	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
 		select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date, e.place_seq, a.review_star, d.roomtype_name
 		  from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e
 		 where a.book_seq=  b.book_seq
@@ -99,7 +106,31 @@
 		   and b.user_seq = #{param1}
 	  order by b.checkin_date DESC,
 	  		   a.review_date DESC
+	</select> -->
+	
+	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
+	<![CDATA[
+	    select *
+	    from (
+	        select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date, e.place_seq, a.review_star, d.roomtype_name,
+	        ROW_NUMBER() OVER (ORDER BY b.checkin_date DESC, a.review_date DESC) AS rnum
+	    from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e
+	    where a.book_seq=  b.book_seq
+		  and b.room_seq = c.room_seq
+		  and c.roomtype_seq = d.roomtype_seq
+		  and d.place_seq = e.place_seq
+	      and b.user_seq = #{param1}
+	          ) where rnum BETWEEN #{param2} and #{param2} + #{param3} - 1
+	
+	    ]]>
 	</select>
+	<select id="myreview_count" resultType="java.lang.Integer">
+	        SELECT COUNT(*) 
+	        FROM yonolja_review a, yonolja_book b 
+	        WHERE a.book_seq = b.book_seq
+	          AND user_seq = #{param1}
+	</select>
+	
 	
 	<!-- 나의후기에서 리뷰 수정(업데이트)하기 -->
 	<update id="myreview_update">
