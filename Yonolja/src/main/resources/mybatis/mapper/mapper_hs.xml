@@ -12,7 +12,7 @@
 		order by b.place_seq
 	</select> 	 -->
 	
-	<!-- 마이페이지 -->
+	<!-- 마이페이지/업주 업장정보 페이지네이션 구현 -->
 	<select id="host_imgs" resultType="com.human.springboot.DTO_HS_userDTO">
 	<![CDATA[
 	    select *
@@ -48,42 +48,138 @@
 	</delete>
 	
 	<!-- 나의문의 -->
+
 	<select id="myPostlist" resultType="com.human.springboot.DTO_HS_postDTO">
+			<![CDATA[
+	    select *
+	    from (
+	        select b.post_seq, b.post_title, b.post_date, b.post_comment,
+	        ROW_NUMBER() OVER (ORDER BY b.post_seq DESC) AS rnum
+	    from yonolja_user a, yonolja_post b 
+	    where a.user_seq = b.user_seq 
+		  and b.user_seq = #{param1}
+	          ) where rnum BETWEEN #{param2} and #{param2} + #{param3} - 1
+	
+	    ]]>
+	</select>
+		<select id="mypost_count" resultType="java.lang.Integer">
+	        SELECT COUNT(*) 
+	        FROM yonolja_post 
+	        WHERE user_seq = #{param1}
+	</select>
+
+<!-- 	<select id="myPostlist" resultType="com.human.springboot.DTO_HS_postDTO">
 	    select b.post_seq, b.post_title, b.post_date, b.post_comment
 	    from yonolja_user a, yonolja_post b 
 	    where a.user_seq = b.user_seq and b.user_seq = #{param1}
 	    order by b.post_seq
-	</select>
+	</select> -->
 	
 	<!-- 예약내역, 리뷰 등록 여부 체크 -->
-	<select id="myBooklist" resultType="com.human.springboot.DTO_HS_bookDTO">
 	
-		<![CDATA[
-			SELECT a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, 
-			    c.roomtype_name, d.place_name,
-			    (case when e.book_seq is null then '미등록' else '등록' end) as review_status,
-			    (case 
-			        when a.checkin_date > SYSDATE then '이용전'
-			        when a.checkin_date <= SYSDATE AND a.checkout_date > SYSDATE then '이용가능'
-			        when a.checkout_date <= SYSDATE then '이용완료'
-			    end) as usage_status
-			FROM yonolja_book a 
-			LEFT JOIN yonolja_review e ON a.book_seq = e.book_seq
-			INNER JOIN yonolja_room b ON a.room_seq = b.room_seq 
-			INNER JOIN yonolja_roomtype c ON b.roomtype_seq = c.roomtype_seq
-			INNER JOIN yonolja_place d ON c.place_seq = d.place_seq
-			WHERE a.user_seq = #{param1} 
-			ORDER BY 
-			    CASE 
-			        WHEN usage_status = '이용가능' THEN 1
-			        WHEN usage_status = '이용완료' THEN 2
-			        ELSE 3
-			    END ASC,
-			    a.checkin_date DESC,
-			    a.checkout_date DESC	
+<!-- 이용 전인 예약 목록을 가져오는 쿼리 -->
+<select id="waiting_book" resultType="com.human.springboot.DTO_HS_bookDTO">
+	<![CDATA[
+	    select *
+	    from (
+	    select a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, 
+	    c.roomtype_name, d.place_name,
+	    (case when e.book_seq is null then '미등록' else '등록' end) as review_status,
+	    (case 
+	        when a.checkin_date > SYSDATE then '이용전'
+	    end) as usage_status,
+	        ROW_NUMBER() OVER (ORDER BY a.checkin_date DESC, a.checkout_date DESC) AS rnum
+	    from yonolja_book a 
+	LEFT JOIN yonolja_review e ON a.book_seq = e.book_seq
+	INNER JOIN yonolja_room b ON a.room_seq = b.room_seq 
+	INNER JOIN yonolja_roomtype c ON b.roomtype_seq = c.roomtype_seq
+	INNER JOIN yonolja_place d ON c.place_seq = d.place_seq
+	    where a.user_seq = #{param1} AND a.checkin_date > SYSDATE
+	          ) where rnum BETWEEN #{param2} and #{param2} + #{param3} - 1
+	
+	    ]]>
+	</select>
+
+<!-- 이용 중 또는 이용 완료인 예약 목록을 가져오는 쿼리 -->
+<select id="con_book" resultType="com.human.springboot.DTO_HS_bookDTO">
+	<![CDATA[
+	    select *
+	    from (
+	        SELECT a.book_seq, a.user_seq, a.room_seq, a.checkin_date, a.checkout_date, a.book_price, 
+	    c.roomtype_name, d.place_name,
+	    (case when e.book_seq is null then '미등록' else '등록' end) as review_status,
+	    (case 
+	        when a.checkin_date <= SYSDATE AND a.checkout_date > SYSDATE then '이용가능'
+	        when a.checkout_date <= SYSDATE then '이용완료'
+	    end) as usage_status,
+	        ROW_NUMBER() OVER (                
+            ORDER BY 	    
+                    CASE 
+                        WHEN a.checkin_date <= SYSDATE AND a.checkout_date > SYSDATE THEN 1
+                        WHEN a.checkout_date <= SYSDATE THEN 2
+                    END ASC,
+                    a.checkin_date DESC,
+                    a.checkout_date DESC
+                    ) AS rnum
+	    from yonolja_book a 
+	LEFT JOIN yonolja_review e ON a.book_seq = e.book_seq
+	INNER JOIN yonolja_room b ON a.room_seq = b.room_seq 
+	INNER JOIN yonolja_roomtype c ON b.roomtype_seq = c.roomtype_seq
+	INNER JOIN yonolja_place d ON c.place_seq = d.place_seq
+	WHERE a.user_seq = #{param1} AND a.checkin_date <= SYSDATE
+	          ) where rnum BETWEEN #{param2} and #{param2} + #{param3} - 1
+	]]>
+</select>
+
+	<select id="mybook_count" resultType="java.lang.Integer">
+		select count(*)
+		  from yonolja_book
+		 where user_seq = #{param1}
+	</select>
+	
+	<select id="waiting_count" resultType="java.lang.Integer">
+	<![CDATA[
+		SELECT COUNT(*) 
+		FROM yonolja_book a 
+		WHERE a.user_seq = #{param1}
+		AND a.checkin_date > SYSDATE
 		]]>
+	</select>
+
+	<select id="con_count" resultType="java.lang.Integer">
+		<![CDATA[
+SELECT SUM(count) AS count
+FROM (
+    SELECT COUNT(*) AS count
+    FROM yonolja_book a 
+    WHERE a.user_seq = #{param1}
+    AND a.checkin_date <= SYSDATE AND a.checkout_date > SYSDATE
+    UNION ALL
+    SELECT COUNT(*) AS count
+    FROM yonolja_book a 
+    WHERE a.user_seq = #{param1}
+    AND a.checkout_date <= SYSDATE
+) subquery
+		]]>
+	</select>
 	
-	</select>	
+<!-- 	<select id="con_count1" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(*) 
+			FROM yonolja_book a 
+			WHERE a.user_seq = #{param1}
+			AND a.checkin_date <= SYSDATE AND a.checkout_date > SYSDATE
+		]]>
+	</select>
+	<select id="con_count2" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT COUNT(*) 
+			FROM yonolja_book a 
+			WHERE a.user_seq = #{param2}
+			AND a.checkout_date <= SYSDATE
+		]]>
+	</select> -->
+	
 	
 	<!-- 예약내역에서 리뷰 등록하기 -->
  	<insert id="review_insert">
@@ -95,18 +191,7 @@
 		delete from yonolja_book where book_seq = #{param1}
 	</delete>
 	
-	<!-- 나의후기에서 리뷰 조회(출력)하기 -->
-<!-- 	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
-		select a.review_seq, b.user_seq, e.place_name, b.checkin_date, a.review_content, a.review_date, e.place_seq, a.review_star, d.roomtype_name
-		  from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e
-		 where a.book_seq=  b.book_seq
-		   and b.room_seq = c.room_seq
-		   and c.roomtype_seq = d.roomtype_seq
-		   and d.place_seq = e.place_seq
-		   and b.user_seq = #{param1}
-	  order by b.checkin_date DESC,
-	  		   a.review_date DESC
-	</select> -->
+	<!-- 나의후기에서 리뷰 조회(출력)하기/페이지네이션 구현 -->
 	
 	<select id="myReviewlist" resultType="com.human.springboot.DTO_HS_reviewDTO">
 	<![CDATA[

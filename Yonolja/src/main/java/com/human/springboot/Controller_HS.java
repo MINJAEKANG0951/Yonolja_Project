@@ -130,36 +130,126 @@ public class Controller_HS {
     
     // 나의문의 페이지
     @GetMapping("/MyYonolja_mypost")
-    public String MyYonolja_mypost(Model model, HttpServletRequest req) {
+    public String MyYonolja_mypost(Model model, HttpServletRequest req,
+    							   @RequestParam(defaultValue = "1") int page, 
+    							   @RequestParam(defaultValue = "10") int size) {
         HttpSession session = req.getSession();
         int user_seq = (int) session.getAttribute("user_seq");
 
-        List<DTO_HS_postDTO> mypost = hsdao.myPostlist(user_seq);
+        //페이지네이션
+        int totalCount = hsdao.mypost_count(user_seq);
+        int startIndex = (page - 1) * size + 1;
+        int endIndex = Math.min(startIndex + size - 1, totalCount);
+        int totalPages = (int) Math.ceil((double) totalCount / size);
+        List<DTO_HS_postDTO> mypost = hsdao.myPostlist(user_seq, startIndex, size);
+
         model.addAttribute("mypost", mypost);
+        model.addAttribute("totalPages", totalPages);
+        model.addAttribute("currentPage", page);
+        model.addAttribute("page", page);
         
-        System.out.println(mypost);
+	    System.out.println("mypost= "+mypost);
+	    System.out.println("totalPages= "+totalPages);
+	    System.out.println("page= "+page);
+	    System.out.println("size= "+size); 
+        
+        //List<DTO_HS_postDTO> mypost = hsdao.myPostlist(user_seq);
+        //model.addAttribute("mypost", mypost);
+        
+        //System.out.println(mypost);
 
         return "MyYonolja_mypost";
     }
     
-    // 예약내역조회 페이지
+ // Controller
     @GetMapping("/MyYonolja_mybooklist")
-    public String MyYonolja_mybooklist(Model model, HttpServletRequest req) {
-    	
+    public String MyYonolja_mybooklist(Model model, HttpServletRequest req,
+                                       @RequestParam(defaultValue = "1") int waitingPage,
+                                       @RequestParam(defaultValue = "3") int waitingSize,
+                                       @RequestParam(defaultValue = "1") int confirmedPage,
+                                       @RequestParam(defaultValue = "3") int confirmedSize) {
         HttpSession session = req.getSession();
         int user_seq = (int) session.getAttribute("user_seq");
 
-        List<DTO_HS_bookDTO> mybook = hsdao.myBooklist(user_seq);
-        
-        model.addAttribute("mybook", mybook);
-        
-        System.out.println(mybook);
-        System.out.println(user_seq);
-        
-		/* printExceptionMsg("MyYonolja_mybooklist", e.getMessage()); */
-    	
-    	return "MyYonolja_mybooklist";
-    }    
+        // 예약대기 페이지네이션
+        int waitingTotalCount = hsdao.waiting_count(user_seq);
+        int waitingStartIndex = (waitingPage - 1) * waitingSize + 1;
+        int waitingEndIndex = Math.min(waitingStartIndex + waitingSize - 1, waitingTotalCount);
+        int waitingTotalPages = (int) Math.ceil((double) waitingTotalCount / waitingSize);
+        List<DTO_HS_bookDTO> waitingList = hsdao.waiting_book(user_seq, waitingStartIndex, waitingSize);
+
+        model.addAttribute("waitingList", waitingList);
+        model.addAttribute("waitingTotalPages", waitingTotalPages);
+        model.addAttribute("waitingCurrentPage", waitingPage);
+        model.addAttribute("waitingPage", waitingPage);
+
+        // 예약확정 페이지네이션
+        int confirmedTotalCount = hsdao.con_count(user_seq);
+        int confirmedStartIndex = (confirmedPage - 1) * confirmedSize + 1;
+        int confirmedEndIndex = Math.min(confirmedStartIndex + confirmedSize - 1, confirmedTotalCount);
+        int confirmedTotalPages = (int) Math.ceil((double) confirmedTotalCount / confirmedSize);
+        List<DTO_HS_bookDTO> confirmedList = hsdao.con_book(user_seq, confirmedStartIndex, confirmedSize);
+
+        model.addAttribute("confirmedList", confirmedList);
+        model.addAttribute("confirmedTotalPages", confirmedTotalPages);
+        model.addAttribute("confirmedCurrentPage", confirmedPage);
+        model.addAttribute("confirmedPage", confirmedPage);
+
+        return "MyYonolja_mybooklist";
+    }
+
+
+
+    
+    
+//    @GetMapping("/MyYonolja_mybooklist")
+//    public String MyYonolja_mybooklist(Model model, HttpServletRequest req,
+//							    	   @RequestParam(defaultValue = "1") int page, 
+//									   @RequestParam(defaultValue = "3") int size,
+//							    	   @RequestParam(defaultValue = "1") int page2, 
+//									   @RequestParam(defaultValue = "3") int size2) {
+//
+//        HttpSession session = req.getSession();
+//        int user_seq = (int) session.getAttribute("user_seq");
+//
+//        //페이지네이션 // 예약대기
+//        int totalCount = hsdao.waiting_count(user_seq);
+//        int startIndex = (page - 1) * size + 1;
+//        int endIndex = Math.min(startIndex + size - 1, totalCount);
+//        int totalPages = (int) Math.ceil((double) totalCount / size);
+//        List<DTO_HS_bookDTO> waitingList = hsdao.waiting_book(user_seq, startIndex, size);
+//
+//        model.addAttribute("waitingList", waitingList);
+//        model.addAttribute("totalPages", totalPages);
+//        model.addAttribute("currentPage", page);
+//        model.addAttribute("page", page);
+//        
+//	    System.out.println("waitingList"+waitingList);
+//	    System.out.println("totalPages= "+totalPages);
+//	    System.out.println("page= "+page);
+//	    System.out.println("size= "+size); 
+//        
+//        //페이지네이션 // 예약확정
+//        int totalCount2 = hsdao.con_count(user_seq);
+//        int startIndex2 = (page2 - 1) * size2 + 1;
+//        int endIndex2 = Math.min(startIndex2 + size2 - 1, totalCount2);
+//        int totalPages2 = (int) Math.ceil((double) totalCount2 / size2);
+//        List<DTO_HS_bookDTO> confirmedList = hsdao.con_book(user_seq, startIndex2, size2);
+//
+//        model.addAttribute("confirmedList", confirmedList);
+//        model.addAttribute("totalPages2", totalPages2);
+//        model.addAttribute("currentPage2", page2);
+//        model.addAttribute("page2", page2);
+//        
+//	    System.out.println("confirmedList= "+confirmedList);
+//	    System.out.println("totalPages2= "+totalPages2);
+//	    System.out.println("page2= "+page2);
+//	    System.out.println("size2= "+size2); 
+//        
+//        return "MyYonolja_mybooklist";
+//    }
+
+    
     
     // 예약내역조회 페이지에서 리뷰(review) 등록하기insert
     @PostMapping("/book_review_insert")
