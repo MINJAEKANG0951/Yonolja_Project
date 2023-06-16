@@ -75,12 +75,7 @@ height:100%;
          <label for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
        </c:forEach>
        
-      <h3>사업장 보유 옵션</h3>
-      <c:forEach items="${pfeatures}" var="pfeature">
-      <input type="checkbox" id="pfeature${pfeature.place_option_seq}" name="pfeatures" value="${pfeature.place_option_seq}">
-      <label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>
-      </c:forEach>
-
+      
   
         <input type="file" id="pimage" name="img" accept="image/*" multiple>
      <!--    <button type="button" class="btn btn-secondary mb-2" onclick="document.getElementById('file-input').click()">파일 선택</button>

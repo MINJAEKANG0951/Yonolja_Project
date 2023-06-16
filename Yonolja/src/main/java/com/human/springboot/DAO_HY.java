@@ -24,7 +24,7 @@ public interface DAO_HY {
 	// host_managePlace 관련 정보수정 
 	
 	void changePlace(int place_seq, String place_name, int user_seq, int place_type_seq, String place_checkin_time,
-			String place_checkout_time, String place_address,String place_mobile, String place_options,
+			String place_checkout_time, String place_address,String place_mobile,
 			String place_guide,String place_environment);
 	
 	// RoomType insert 
@@ -37,7 +37,7 @@ public interface DAO_HY {
 	
 	//Roomtype update
 	
-	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq, String roomtype_imgs, int roomtype_capacity, int roomtype_price, String roomtype_guide);
+	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq, String roomtype_imgs, int roomtype_capacity, int roomtype_price, String roomtype_guide);	
 
 	//Roomtype delete 
 	
@@ -54,9 +54,25 @@ public interface DAO_HY {
 	void deleteRoomNum(int room_number);
 
 	//room insert 시 동일객실존재하는지 체크 part 
-	boolean checkRoomExists(@Param("roomTypeId") int roomTypeId, @Param("roomNumber") int roomNumber);
+//	int checkRoomExists(int place_seq, int roomNumber);
+	Integer checkRoomExists(int place_seq, int roomNumber);
+
 
 	// place Delete 
 	void deletePlace(int place_seq);	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// test img insert
+	Object getImgAddress(int img_seq);
+	void updateImg(String img_address);
+	
 	
 }
