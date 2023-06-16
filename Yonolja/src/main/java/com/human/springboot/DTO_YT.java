@@ -14,4 +14,8 @@ public class DTO_YT {
     String user_id;
     String post_img;
     
+    int num;
+    String type;
+    String searchCategory;
+    String keyword;
 }

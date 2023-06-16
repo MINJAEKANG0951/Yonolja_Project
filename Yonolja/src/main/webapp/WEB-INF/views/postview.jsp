@@ -311,11 +311,62 @@ label {
         <input class="btn btn-primary" type="button" value="목록" id="btnShow">
       </div>
     </div>
+    <br><br>
+<!-- 댓글창   -->
+
+<div class="mt-4">
+    <h2 class="mt-4">Comments:</h2>
+    <form action="postcomment" method="post">
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" class="form-control" readonly id="user_id" style="width:100%; border: none; outline: none;" placeholder="Enter your username" value="${user_id}">
+        </div>
+        <div class="form-group">
+            <label for="comment">Comment</label>
+            <textarea class="form-control" id="post_comment" rows="3" style="width:100%" ></textarea>
+        </div>
+        <input type="submit" class="btn btn-primary" id=comment_submit value="submit">
+    </form>
+</div>
+
+     <div class="mt-4">
+        <h5 class="mb-4">Comment List:</h5>
+        <ul class="list-group">
+            <!-- Single comment item -->
+            <li class="list-group-item" style=width:720px;>
+                <h6 class="mb-1" style="font-weight: bold;">kytghy123456</h6><br>
+                <p class="mb-1">안녕하세요 맞는 말씀이십니다</p><br>
+                <input type="button" class="btn btn-secondary btn-sm" value="Edit">
+				<input type="button" class="btn btn-danger btn-sm" value="Delete">
+
+            </li>
+            <!-- More comments... -->
+        </ul>
+    </div>
+    
+     <div class="mt-4">
+        <h5 class="mb-4"></h5>
+        <ul class="list-group">
+            <!-- Single comment item -->
+            <li class="list-group-item" style=width:720px;>
+                <h6 class="mb-1" style="font-weight: bold;">zzzzzz</h6><br>
+                <p class="mb-1">ㅋㅋㅋㅋ  끼 </p><br>
+                <button type="button" class="btn btn-secondary btn-sm">Edit</button>
+                <button type="button" class="btn btn-danger btn-sm">Delete</button>
+            </li>
+            <!-- More comments... -->
+        </ul>
+    </div>
     
     
-    
-    
-    
+
+
+
+
+
+
+
+
     </form>
   </div>
   

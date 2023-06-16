@@ -175,7 +175,9 @@ section {
     background-color: #ddd;
 }
 
-.post_line{cursor:pointer;}
+.post_line{
+cursor:pointer;
+}
 
 /* .pagination .write-post-btn { */
 /*     background-color: #0d6efd; */
@@ -208,7 +210,7 @@ section {
 /* 	margin-left:300px; */
 /* 	padding:1000px; */
 /* 	text-align:right; */
-   	background-color:red; 
+/*    	background-color:red;  */
     
   }
 
@@ -256,10 +258,10 @@ section {
               <th scope="col">답변여부</th>
             </tr>
           </thead>
-          <tbody>
-             <c:forEach var="post" items="${posts}">
+          <tbody><!-- ${seq.post_seq} -->
+             <c:forEach var="post" items="${posts}" >
                 <tr class=post_line>
-                    <th scope="row">${post.post_seq}</th>
+                    <th scope="row">${post.num}<input type=hidden value="${post.post_seq}"></th>
                     <td>${post.post_category}</td>
                     <td>${post.post_title}</td>
                     <td>${post.user_id }</td> 
@@ -274,11 +276,39 @@ section {
         
         
         
-        <div class="pagination" id="pagination" style=background-color:green;>
+        <div class="pagination" id="pagination" >
         
        
-        
         </div>
+        
+ <div class="container">
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <form action="/search" method="get">
+                <div class="input-group">
+                    <!-- Adding Dropdown Select for Search Category -->
+                    <div class="col-2 pl-0">
+                        <select class="form-control" id="searchCategory" name="searchCategory" style="width:100px;">
+                            <option value="title">Title</option>
+                            <option value="author">Author</option>
+                        </select>
+                    </div>
+                    <div class="col-10 d-flex">
+                        <input type="text" name="searchTerm" id="searchTerm" class="form-control" value="" placeholder="Search" style="width:200px;"></input>
+                        <input class="btn btn-outline-secondary" id='searchButton'  name="keyword" type="button" value="Search" style="margin-left:0;"></input>
+                    </div>
+                </div>
+            </form>
+            <!-- Results will be placed here -->
+            <div id="searchResults"></div>
+        </div>
+    </div> 
+</div>
+
+
+
+        
+     
         
         
 
@@ -316,15 +346,17 @@ section {
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 
 <script>
 $(document)
+
 .on('click','#mypage_button',function(){
     
 })
 .on('click','.post_line',function(){
 	
-	post_seq = $(this).find('th').text();
+	post_seq = $(this).find('th input').val();
 	document.location = "/postview/" + post_seq;
 	return false;
 })
@@ -425,7 +457,49 @@ function renderPagination(totalPages) {
     
 }
 
+////// 게시글 검색
 
+
+
+
+$(document).ready(function() {
+    $('#searchButton').click(function() {
+        var searchCategory = $('#searchCategory').val();
+        var searchTerm = $('#searchTerm').val();
+
+        $.ajax({
+            url: '/search',
+            type: 'GET',
+            data: {
+                searchCategory: searchCategory,
+                keyword: searchTerm
+            },
+            success: function(response) {
+                // 검색 결과를 처리하는 코드 작성
+                // 예시: 검색 결과를 테이블에 표시
+                var tableBody = $('#postTable tbody');
+                tableBody.empty();
+				
+                for (var i = 0; i < response.length; i++) {
+                    var post = response[i];
+                    var row = '<tr>' +
+                        '<th scope="row">' + post.num + '<input type="hidden" value="' + post.post_seq + '"></th>' +
+                        '<td>' + post.post_category + '</td>' +
+                        '<td>' + post.post_title + '</td>' +
+                        '<td>' + post.user_id + '</td>' +
+                        '<td>' + post.post_date + '</td>' +
+                        '<td class="text-success">답변 안함</td>' +
+                        '</tr>';
+                    tableBody.append(row);
+                }
+            },
+            error: function(xhr, status, error) {
+                // 에러 처리
+                console.error(xhr.responseText);
+            }
+        });
+    });
+});
 
 
 

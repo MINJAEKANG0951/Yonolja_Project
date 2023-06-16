@@ -24,9 +24,87 @@
 <!-- 		from yonolja_post -->
 <!-- 	</select> -->
 
+<select id="post_board_list_count" resultType="int">
+	select count(*) from yonolja_post
+</select>
+
+
+<select id="searchPosts" resultType="com.human.springboot.DTO_YT">
+    SELECT 
+        ROW_NUMBER() OVER (ORDER BY a.post_date ASC) AS num, 
+        a.post_seq seq, 
+        a.post_category, 
+        a.post_title, 
+        a.post_date, 
+        b.USER_ID
+    FROM 
+        yonolja_post a
+    JOIN 
+        Yonolja_user b 
+    ON 
+        a.user_seq = b.user_seq
+    <where>
+        <choose>
+            <when test="searchCategory == 'title'">
+                AND a.post_title LIKE '%' || #{keyword} || '%'
+            </when>
+            <when test="searchCategory == 'author'">
+                AND b.USER_ID LIKE '%' || #{keyword} || '%'
+            </when>
+        </choose>
+    </where>
+    ORDER BY 
+        num DESC
+</select>
+
+
+
+<!--  <select id="searchPosts" resultType="com.human.springboot.DTO_YT"> -->
+<!--         select * from yonolja_post -->
+<!--         where post_category = #{searchCategory} -->
+<!--         and post_title = #{keyword} -->
+<!--     </select> -->
+    
+<!-- <select id="searchPosts" resultType="com.human.springboot.DTO_YT"> -->
+<!--     select * from yonolja_post -->
+<!--     <where> -->
+<!--         <choose> -->
+<!--             <when test="searchCategory == 'title'"> -->
+<!--                 and post_title like '%' || #{keyword} || '%' -->
+<!--             </when> -->
+<!--             <when test="searchCategory == 'author'"> -->
+<!--                 and user_id like '%' || #{keyword} || '%' -->
+<!--             </when> -->
+<!--             검색 카테고리가 추가된다면 여기에 when 절을 추가 -->
+<!--         </choose> -->
+<!--     </where> -->
+<!-- </select> -->
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	<select id="selectPost" resultType="com.human.springboot.DTO_YT">
-    select 
-    a.post_seq, 
+select num,post_seq,post_category,post_title,post_date,user_id from
+    
+    (select 
+    ROW_NUMBER() OVER (ORDER BY a.post_date ASC) as num,
+    a.post_seq , 
     a.post_category, 
     a.post_title, 
     a.post_date, 
@@ -38,9 +116,18 @@ join
 on 
     a.user_seq = b.user_seq
     ORDER BY 
-    a.post_seq desc
+    post_seq desc)
+    
+
+     
 </select>
+
 	
+<!-- 	<insert id="insertComment"> -->
+<!--     insert INTO yonolja_post (user_seq, user_id, post_comment) -->
+<!--     values (#{user_seq}, #{user_id}, #{post_comment}); -->
+<!-- 	</insert> -->
+
 
 <select id="postview" resultType="com.human.springboot.DTO_YT">
 
