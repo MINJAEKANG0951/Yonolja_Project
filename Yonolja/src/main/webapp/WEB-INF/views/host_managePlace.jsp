@@ -242,7 +242,7 @@
         </div>
         <div class="modal-body">
           <h2>객실 타입 사진입력</h2>
-            
+            <input type="text" id="picRoomType_seq" name="picRoomType_seq" value="" readonly><br>
 			<hr>
 				<button id=addFile> 파일추가하기 </button><br><br>
 				<button id=reset> 비우기 </button><br><br>
@@ -903,6 +903,48 @@ $(document)
 
 	
 })
+
+
+//////////////////사진 클릭시 사진 update delete 가능한 모달 실행 코드 /////////////////
+$(document).ready(function() {
+  $("#tblRoomtype tbody > tr > td > img").click(function(event) {
+    // 이미지를 클릭했을 때 실행되는 코드
+    // 추가 동작을 수행하도록 합니다
+//     alert('정상실행');
+  	var roomtype_seq = $(this).closest('tr').find("td:eq(0)").text();
+    $("#picManageModal").modal("show");
+    $("#picRoomType_seq").val(roomtype_seq);
+  
+    // 추가 동작 실행 코드를 여기에 작성하세요
+    // 예를 들어, 모달 대신 다른 기능을 실행하거나 다른 이벤트를 트리거하는 코드를 추가할 수 있습니다
+  });
+
+  $("#tblRoomtype tbody > tr").click(function(event) {
+    if (event.target.tagName !== 'IMG') {  // 이미지가 아닌 다른 부분을 클릭했을 때만 실행
+      var roomtype_seq = $(this).find("td:eq(0)").text();
+      var roomtype_name = $(this).find("td:eq(1)").text();
+      var roomtype_capacity = $(this).find("td:eq(3)").text();
+      var roomtype_price = $(this).find("td:eq(4)").text();
+      var roomtype_guide = $(this).find("td:eq(6)").text();
+      
+      console.log(roomtype_seq);
+  
+      $("#roomtype_seq").val(roomtype_seq);
+      $("#roomtype_name").val(roomtype_name);
+      $("#roomtype_capacity").val(roomtype_capacity);
+      $("#roomtype_price").val(roomtype_price);
+      $("#roomtype_guide").val(roomtype_guide);
+      
+      $("input[type=submit]").val("수정");
+      
+      var actionUrl = roomtype_seq !== '' ? '/modifyRoomtype' : '/insertRoomType';
+      $("#roomTypeForm").attr("action", actionUrl);
+
+      $("#roomTypeModal").modal("show");
+    }
+  });
+});
+
 		
 		
 		
