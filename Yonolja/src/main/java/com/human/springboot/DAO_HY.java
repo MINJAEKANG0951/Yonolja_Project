@@ -29,7 +29,7 @@ public interface DAO_HY {
 	
 	// RoomType insert 
 	
-	void addRoomType(String rname,int place_seq, String img, int maxCapacity, int nightRate, String roomtype_options, String roomGuide);
+	void addRoomType(String rname,int place_seq, int maxCapacity, int nightRate, String roomtype_options, String roomGuide);
 	
 	// RoomType select
 	
@@ -37,7 +37,7 @@ public interface DAO_HY {
 	
 	//Roomtype update
 	
-	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq, String roomtype_imgs, int roomtype_capacity, int roomtype_price,String roomtype_opt, String roomtype_guide);	
+	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq,  int roomtype_capacity, int roomtype_price,String roomtype_opt, String roomtype_guide);	
 
 	//Roomtype delete 
 	

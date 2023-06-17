@@ -376,7 +376,7 @@ public class Controller_HY {
 			@RequestParam(value="place_seq") String place_Seq,
 //			@RequestParam(value="roomtype_seq") String roomtype_seq,
 			@RequestParam(value="roomtype_name") String rname,
-			@RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
+//			@RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
 			@RequestParam(value="roomtype_capacity") String rcap,
 			@RequestParam(value="roomtype_price") String nightrate,
 			@RequestParam(value ="pfeatures") String[] roomtype_options,
@@ -392,42 +392,19 @@ public class Controller_HY {
 			String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
 					"");
 
-		//////////////////////////////////////////////////////////////////////////
-///////////////////////////사진파트
-		String DBpath = "";
-		for(int i=0;i<imgs.length;i++) {
-			MultipartFile img = imgs[i];
-			
-			String realName = img.getOriginalFilename();
-			UUID randomStr = UUID.randomUUID();
-			String rstr = (""+randomStr).substring(0,8);
-			
-			String saveName = rstr + "-" + realName;
-			
-			File file = new File(roomtype_optionImgPath,saveName);
-			try { img.transferTo(file); }
-			catch(Exception e) { System.out.println("fail"); }
-			
-			DBpath += "," + "/img/roomtype_option/" + saveName;
-		}
-		DBpath = DBpath.replaceFirst(",", "");
-	//사진파트 끝 	
-		hydao.addRoomType(rname, place_seq, DBpath, maxCapacity, nightRate,roomtype_opt, roomGuide);
+
+		hydao.addRoomType(rname, place_seq, maxCapacity, nightRate,roomtype_opt, roomGuide);
 		
 		return "main";
 	}
 
-	
-
-	/////////////////// 객실타입 수정 코드 /////////////////////
 
 	  ///////////////////객실타입 수정 코드 /////////////////
 		@PostMapping("/modifyRoomtype")
 		public String modifyRoomtype(HttpServletRequest req, Model model,
 		        @RequestParam(value="place_seq") String place_Seq,
 		        @RequestParam(value="roomtype_seq") int roomtype_seq,//수정부분
-		        @RequestParam(value="roomtype_name") String rname,
-		        @RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
+		        @RequestParam(value="roomtype_name") String rname, 
 		        @RequestParam(value="roomtype_capacity") String rcap,
 		        @RequestParam(value="roomtype_price") String nightrate,
 		        @RequestParam(value ="pfeatures") String[] roomtype_options,
@@ -441,27 +418,8 @@ public class Controller_HY {
 		    String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
 					"");
 		
-		    // 사진파트
-		    String DBpath = "";
-		    for(int i=0;i<imgs.length;i++) {
-		        MultipartFile img = imgs[i];
-		        
-		        String realName = img.getOriginalFilename();
-		        UUID randomStr = UUID.randomUUID();
-		        String rstr = (""+randomStr).substring(0,8);
-		        
-		        String saveName = rstr + "-" + realName;
-		        
-		        File file = new File(roomtype_optionImgPath,saveName);
-		        try { img.transferTo(file); }
-		        catch(Exception e) { System.out.println("fail"); }
-		        
-		        DBpath += "," + "/img/roomtype_option/" + saveName;
-		    }
-		    DBpath = DBpath.replaceFirst(",", "");
-		    // 사진파트 끝
 
-		    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, DBpath, maxCapacity, nightRate,roomtype_opt, roomGuide);
+		    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, maxCapacity, nightRate,roomtype_opt, roomGuide);
 		    
 		    return "redirect:/mypage";
 		}

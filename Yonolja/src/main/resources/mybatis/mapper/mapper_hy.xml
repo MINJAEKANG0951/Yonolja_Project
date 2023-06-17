@@ -59,7 +59,6 @@
 			        ROOMTYPE_SEQ,
 			        ROOMTYPE_NAME,
 			        PLACE_SEQ,
-			        ROOMTYPE_IMGS, 
 			        ROOMTYPE_CAPACITY,
 			        ROOMTYPE_PRICE,
 			        roomtype_options,
@@ -73,8 +72,7 @@
 			     	#{param3},
 			        #{param4},
 			  		#{param5},
-			  		#{param6},
-			  		#{param7}
+			  		#{param6}
 			    )
 		</insert>
 			
@@ -109,11 +107,10 @@
     	UPDATE yonolja_roomtype SET
 	        roomtype_name = #{param2},
 	        place_seq = #{param3},
-	        roomtype_imgs = #{param4},
-	        roomtype_capacity = #{param5},
-	        roomtype_price = #{param6},
-	         roomtype_options=#{param7},
-	        roomtype_guide = #{param8}
+	        roomtype_capacity = #{param4},
+	        roomtype_price = #{param5},
+	        roomtype_options=#{param6},
+	        roomtype_guide = #{param7}
    		 WHERE roomtype_seq= #{param1}
 	 </update>
  
