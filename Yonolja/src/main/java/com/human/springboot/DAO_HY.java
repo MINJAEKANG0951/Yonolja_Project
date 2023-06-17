@@ -73,6 +73,7 @@ public interface DAO_HY {
 	// test img insert
 	Object getImgAddress(int img_seq);
 	void updateImg(String img_address);
+	void insertimg(String img_address);
 	
 	
 }

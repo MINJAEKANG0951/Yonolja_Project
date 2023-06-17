@@ -141,15 +141,11 @@
 //               $('#pictures').append(str);
 //             }
         	for(i=0;i<imgs.length;i++){
-				if(i==0){
-				    str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton" style="display:none"></div>';
-					$('#pictures').append(str);
-				} else {
 			
 				   str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton" ></div>';
 	               $('#pictures').append(str);
 	               
-				}
+				
 
 			}
            

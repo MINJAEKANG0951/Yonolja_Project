@@ -94,8 +94,8 @@
 			update imgTest set img_address=#{param1} where img_seq=2
 		</update>
 
-
-
+	
+	
 
 
     <select id="getRoomtype" resultType="com.human.springboot.DTO_HY_roomtypeDTO">

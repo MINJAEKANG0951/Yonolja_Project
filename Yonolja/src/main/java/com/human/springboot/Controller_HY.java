@@ -122,12 +122,19 @@ public class Controller_HY {
 			System.out.println("fail");
 		}
 
-		String dbAddress = (String) hydao.getImgAddress(2);
+		
+		
+		if(hydao.getImgAddress(2)==null) {
+			String dbAddress = (DBpath + fileName);
+			hydao.updateImg(dbAddress);
+		} else {
+			String dbAddress = (String) hydao.getImgAddress(2);
+			dbAddress += ("," + DBpath + fileName);
+			hydao.updateImg(dbAddress);
 
-		dbAddress += ("," + DBpath + fileName);
-
-		hydao.updateImg(dbAddress);
-
+		}
+		
+		
 	}
 
 	@PostMapping("/deleteImg")
@@ -145,13 +152,36 @@ public class Controller_HY {
 		 * File file = new File(testPath,fileName); try{ img.transferTo(file); }
 		 * catch(Exception e) {System.out.println("fail");}
 		 */
-		String name = src.replace(",/files/", "");
+		String name = src.replace("/files/", "");
+	
 		File file = new File(path + "/" + name);
 		System.out.println(path + "/" + name);
 
 		String dbAddress = (String) hydao.getImgAddress(2);
 
-		dbAddress = dbAddress.replace(src, "");
+		String[]Alladdresses = dbAddress.split(",");
+		
+		String addressStr = "";
+		
+		for(int i=0;i<Alladdresses.length;i++) {
+			if(Alladdresses[i].equals(src)) {
+				// ignore
+			} else {
+				addressStr += "," + Alladdresses[i];
+			}
+		}
+		// files/abc.jpg , files/add.jpg, files/acc.jpg
+		// ===> [files/abc.jpg, files/add.jpg, files/acc.jpg]
+		// files/add.jpg
+		
+		// str = '' 
+		// str ==> ,files/abc.jpg
+		// str ==> 
+		// str ==> files/abc.jpg,files/acc.jpg
+		
+		
+		
+		addressStr = addressStr.replaceFirst(",", "");
 
 		if (file.exists()) {
 			if (file.delete()) {
@@ -163,7 +193,7 @@ public class Controller_HY {
 			System.out.println("no file");
 		}
 
-		hydao.updateImg(dbAddress);
+		hydao.updateImg(addressStr);
 
 	}
 
@@ -178,7 +208,7 @@ public class Controller_HY {
 			return "-";
 		} else {
 
-			result = ((String) hydao.getImgAddress(2)).replaceFirst(",,", "");
+			result = (String) hydao.getImgAddress(2);
 		}
 
 		return result;

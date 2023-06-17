@@ -55,8 +55,8 @@
     }
     .xButton:hover {
       transition: 0.5s;
-      width: 13%;
-      height: 13%;
+      width: 23%;
+      height: 23%;
     }
 </style>
 <body>
@@ -810,7 +810,7 @@ $(document).ready(function() {
       });
     }).on('click', '.xButton', function() {
       var imgContainer = $(this).closest('.img');
-      var src = "," + imgContainer.find('img.photo').attr('src');
+      var src = imgContainer.find('img.photo').attr('src');
 
       // 이미지 삭제를 위한 Ajax 요청 등의 처리 수행
       // ...
@@ -844,7 +844,7 @@ $(document).ready(function() {
 //             }
             for(i=0;i<imgs.length;i++){
 				if(i==0){
-				    str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton" style="display:none"></div>';
+				    str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton"></div>';
 					$('#pictures').append(str);
 				} else {
 			
