@@ -175,9 +175,12 @@
             <label for="nightRate">1박 금액:</label><br>
             <input type="number" id="roomtype_price" name="roomtype_price"><br>
             
-<!--             <label for="amenities">객실편의시설:</label><br> -->
-<!--             <textarea id="roomtype_options" name="roomtype_options"></textarea><br> -->
-            
+            <label for="amenities">객실편의시설:</label><br>
+             <c:forEach items="${pfeatures}" var="pfeature">
+              	<input type="checkbox" id="pfeature${pfeature.place_option_seq}" name="pfeatures" value="${pfeature.place_option_seq}">
+              	<label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>
+             </c:forEach>
+
             <label for="roomGuide">객실 설명:</label><br>
             <textarea id="roomtype_guide" name="roomtype_guide"></textarea><br>
             
@@ -488,9 +491,7 @@ $(document)
 	    });
 	*/
  
-    console.log($('#pcheckin').val());
-    console.log($('#pcheckout').val());
-    console.log($('#pguide').val());
+ 
 
 
 
@@ -811,24 +812,27 @@ $(document).ready(function() {
       });
     })
     
-    .on('click', '.xButton', function() {
-		  var imgContainer = $(this).closest('.img');
-		  var src = imgContainer.find('img.photo').attr('src');
-		
-		  var data = {
-		    src: src,
-		    roomtype_seq: $('#picRoomType_seq').val()  // 객실 타입 ID 추가
-		  };
-		
-		  $.ajax({
-		    url:'/deleteImg', 
-		    type:'post', 
-		    data: data,
-		    success:function(){
-		      refreshImgs();
-		    }
-		  });
-		});
+	.on('click', '.xButton', function() {
+	  if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
+	    var imgContainer = $(this).closest('.img');
+	    var src = imgContainer.find('img.photo').attr('src');
+	
+	    var data = {
+	      src: src,
+	      roomtype_seq: $('#picRoomType_seq').val()  // 객실 타입 ID 추가
+	    };
+	
+	    $.ajax({
+	      url:'/deleteImg', 
+	      type:'post', 
+	      data: data,
+	      success:function(){
+	        refreshImgs();
+	      }
+	    });
+	  }
+	});
+
 
   
 
@@ -912,8 +916,7 @@ $(document)
 $(document).ready(function() {
   $("#tblRoomtype tbody > tr > td > img").click(function(event) {
     // 이미지를 클릭했을 때 실행되는 코드
-    // 추가 동작을 수행하도록 합니다
-//     alert('정상실행');
+	event.stopPropagation(); // 이벤트 전파 중지
   	var roomtype_seq = $(this).closest('tr').find("td:eq(0)").text();
     $("#picManageModal").modal("show");
     $("#picRoomType_seq").val(roomtype_seq);

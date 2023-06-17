@@ -380,6 +380,8 @@ public class Controller_HY {
 			@RequestParam(value="roomtype_capacity") String rcap,
 			@RequestParam(value="roomtype_price") String nightrate,
 //			@RequestParam(value="roomtype_options") String amenities,
+
+			@RequestParam(value ="pfeatures") String[] roomtype_options,
 			@RequestParam(value="roomtype_guide") String roomGuide
 			) {
 		
@@ -389,10 +391,8 @@ public class Controller_HY {
 			int maxCapacity = Integer.parseInt(rcap);
 			System.out.println(maxCapacity);
 			int nightRate = Integer.parseInt(nightrate);
-			System.out.println(nightRate);
-			System.out.println(rname);
-			System.out.println(roomGuide);
-
+			String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
+					"");
 
 		//////////////////////////////////////////////////////////////////////////
 ///////////////////////////사진파트
@@ -414,7 +414,7 @@ public class Controller_HY {
 		}
 		DBpath = DBpath.replaceFirst(",", "");
 	//사진파트 끝 	
-		hydao.addRoomType(rname, place_seq, DBpath, maxCapacity, nightRate, roomGuide);
+		hydao.addRoomType(rname, place_seq, DBpath, maxCapacity, nightRate,roomtype_opt, roomGuide);
 		
 		return "main";
 	}

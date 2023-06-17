@@ -62,6 +62,7 @@
 			        ROOMTYPE_IMGS, 
 			        ROOMTYPE_CAPACITY,
 			        ROOMTYPE_PRICE,
+			        roomtype_options,
 			        ROOMTYPE_GUIDE
 			    )
 			 
@@ -72,7 +73,8 @@
 			     	#{param3},
 			        #{param4},
 			  		#{param5},
-			  		#{param6}
+			  		#{param6},
+			  		#{param7}
 			    )
 		</insert>
 			
