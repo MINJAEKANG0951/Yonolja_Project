@@ -379,8 +379,6 @@ public class Controller_HY {
 			@RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
 			@RequestParam(value="roomtype_capacity") String rcap,
 			@RequestParam(value="roomtype_price") String nightrate,
-//			@RequestParam(value="roomtype_options") String amenities,
-
 			@RequestParam(value ="pfeatures") String[] roomtype_options,
 			@RequestParam(value="roomtype_guide") String roomGuide
 			) {
@@ -432,21 +430,17 @@ public class Controller_HY {
 		        @RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
 		        @RequestParam(value="roomtype_capacity") String rcap,
 		        @RequestParam(value="roomtype_price") String nightrate,
-//		        @RequestParam(value="roomtype_options") String amenities,
+		        @RequestParam(value ="pfeatures") String[] roomtype_options,
 		        @RequestParam(value="roomtype_guide") String roomGuide
 		        ) {
 		    
 		    int place_seq = Integer.parseInt(place_Seq);
-		    System.out.println(place_seq);
 		    int roomtype_Seq = req.getParameter("roomtype_seq") != null ? Integer.parseInt(req.getParameter("roomtype_seq")) : 0;
-		    System.out.println(roomtype_Seq);
 		    int maxCapacity = Integer.parseInt(rcap);
-		    System.out.println(maxCapacity);
 		    int nightRate = Integer.parseInt(nightrate);
-		    System.out.println(nightRate);
-		    System.out.println(rname);
-		    System.out.println(roomGuide);
-
+		    String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
+					"");
+		
 		    // 사진파트
 		    String DBpath = "";
 		    for(int i=0;i<imgs.length;i++) {
@@ -467,7 +461,7 @@ public class Controller_HY {
 		    DBpath = DBpath.replaceFirst(",", "");
 		    // 사진파트 끝
 
-		    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, DBpath, maxCapacity, nightRate, roomGuide);
+		    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, DBpath, maxCapacity, nightRate,roomtype_opt, roomGuide);
 		    
 		    return "redirect:/mypage";
 		}

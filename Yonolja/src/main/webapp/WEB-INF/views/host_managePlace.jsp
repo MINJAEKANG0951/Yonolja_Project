@@ -579,6 +579,7 @@ $(document)
       $("#roomtype_name").val(roomtype_name);
       $("#roomtype_capacity").val(roomtype_capacity);
       $("#roomtype_price").val(roomtype_price);
+      $("#roomtype_option").val(roomtype_option);
       $("#roomtype_guide").val(roomtype_guide);
       
       // input type submit value를 수정으로 바꿉니다.
