@@ -797,6 +797,7 @@ $(document).ready(function() {
       var imgfile = $(this)[0].files[0];
       var formData = new FormData();
       formData.append('img', imgfile);
+      formData.append('roomtype_seq', $('#picRoomType_seq').val());  // 객실 타입 ID 추가
 
       $.ajax({
         url: '/addImg',
@@ -808,40 +809,42 @@ $(document).ready(function() {
           refreshImgs();
         }
       });
-    }).on('click', '.xButton', function() {
-      var imgContainer = $(this).closest('.img');
-      var src = imgContainer.find('img.photo').attr('src');
+    })
+    
+    .on('click', '.xButton', function() {
+		  var imgContainer = $(this).closest('.img');
+		  var src = imgContainer.find('img.photo').attr('src');
+		
+		  var data = {
+		    src: src,
+		    roomtype_seq: $('#picRoomType_seq').val()  // 객실 타입 ID 추가
+		  };
+		
+		  $.ajax({
+		    url:'/deleteImg', 
+		    type:'post', 
+		    data: data,
+		    success:function(){
+		      refreshImgs();
+		    }
+		  });
+		});
 
-      // 이미지 삭제를 위한 Ajax 요청 등의 처리 수행
-      // ...
-
-//       imgContainer.remove();
-      
-
-	   $.ajax({url:'/deleteImg', type:'post', 
-   			
-   			data:{src:src},
-   			success:function(){
-   				refreshImgs();
-   			}
-   		})
-   		
-    });
+  
 
     function refreshImgs() {
       $('#pictures').empty();
       $.ajax({
         url: '/getImgs',
         type: 'post',
+//         여기수정함
+        data: { roomtype_seq: $('#picRoomType_seq').val() },
         dataType: 'text',
         success: function(data) {
           $('#pictures').empty();
           if (data != '-') {
             imgs = data.split(",");
-//             for (i = 0; i < imgs.length; i++) {
-//               var str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton"></div>';
-//               $('#pictures').append(str);
-//             }
+
             for(i=0;i<imgs.length;i++){
 				if(i==0){
 				    str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton"></div>';
@@ -914,6 +917,7 @@ $(document).ready(function() {
   	var roomtype_seq = $(this).closest('tr').find("td:eq(0)").text();
     $("#picManageModal").modal("show");
     $("#picRoomType_seq").val(roomtype_seq);
+    refreshImgs();//여기수정함 0618 
   
     // 추가 동작 실행 코드를 여기에 작성하세요
     // 예를 들어, 모달 대신 다른 기능을 실행하거나 다른 이벤트를 트리거하는 코드를 추가할 수 있습니다

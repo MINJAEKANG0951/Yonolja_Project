@@ -105,7 +105,8 @@ public class Controller_HY {
 
 	@PostMapping("/addImg")
 	@ResponseBody
-	public void getData(@RequestParam("img") MultipartFile img) {
+	public void getData(@RequestParam("img") MultipartFile img,
+			   @RequestParam("roomtype_seq") Integer roomtype_seq) {
 
 		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
 		String DBpath = "/files/";
@@ -124,13 +125,13 @@ public class Controller_HY {
 
 		
 		
-		if(hydao.getImgAddress(2)==null) {
+		if(hydao.getImgAddress(roomtype_seq)==null) {
 			String dbAddress = (DBpath + fileName);
-			hydao.updateImg(dbAddress);
+			hydao.updateImg(dbAddress,roomtype_seq);
 		} else {
-			String dbAddress = (String) hydao.getImgAddress(2);
+			String dbAddress = (String) hydao.getImgAddress(roomtype_seq);
 			dbAddress += ("," + DBpath + fileName);
-			hydao.updateImg(dbAddress);
+			hydao.updateImg(dbAddress,roomtype_seq);
 
 		}
 		
@@ -139,7 +140,7 @@ public class Controller_HY {
 
 	@PostMapping("/deleteImg")
 	@ResponseBody
-	public void getData(@RequestParam("src") String src) {
+	public void getData(@RequestParam("src") String src,@RequestParam("roomtype_seq") int roomtype_seq) {
 
 		System.out.println("delete Img");
 		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
@@ -157,7 +158,7 @@ public class Controller_HY {
 		File file = new File(path + "/" + name);
 		System.out.println(path + "/" + name);
 
-		String dbAddress = (String) hydao.getImgAddress(2);
+		String dbAddress = (String) hydao.getImgAddress(roomtype_seq);
 
 		String[]Alladdresses = dbAddress.split(",");
 		
@@ -193,22 +194,22 @@ public class Controller_HY {
 			System.out.println("no file");
 		}
 
-		hydao.updateImg(addressStr);
+		hydao.updateImg(addressStr,roomtype_seq);
 
 	}
 
 	@PostMapping("/getImgs")
 	@ResponseBody
-	public String getImgs() {
+	public String getImgs(@RequestParam("roomtype_seq") int roomtype_seq) {
 
 		String result = "";
-		Object dbAddress = hydao.getImgAddress(2);
+		Object dbAddress = hydao.getImgAddress(roomtype_seq);
 		if (dbAddress == null) {
 			System.out.println("no photo");
 			return "-";
 		} else {
 
-			result = (String) hydao.getImgAddress(2);
+			result = (String) hydao.getImgAddress(roomtype_seq);
 		}
 
 		return result;

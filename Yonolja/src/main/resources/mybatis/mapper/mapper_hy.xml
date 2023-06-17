@@ -80,18 +80,15 @@
 	
 <!-- 객실타입 사진관련 코드 -->
 
- 		<delete id="deletePlace" >
-    		DELETE FROM yonolja_place
-    		WHERE place_seq = #{param1}
-  		</delete>
-		
+ 
 		
 		<select id="getImgAddress" resultType="Object">
-			select img_address from imgTest where img_seq = #{param1}
+			select roomtype_imgs from yonolja_roomtype 
+			where roomtype_seq = #{param1}
 		</select>
 		
 		<update id="updateImg">
-			update imgTest set img_address=#{param1} where img_seq=2
+			update yonolja_roomtype set roomtype_imgs=#{param1} where roomtype_seq=#{param2}
 		</update>
 
 	
@@ -175,6 +172,12 @@
 
 		
 <!-- place Delete part -->
+
+		<delete id="deletePlace" >
+    		DELETE FROM yonolja_place
+    		WHERE place_seq = #{param1}
+  		</delete>
+		
 
 
 </mapper>
