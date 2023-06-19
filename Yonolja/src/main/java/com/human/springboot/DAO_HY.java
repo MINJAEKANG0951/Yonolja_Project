@@ -29,7 +29,7 @@ public interface DAO_HY {
 	
 	// RoomType insert 
 	
-	void addRoomType(String rname,int place_seq, int maxCapacity, int nightRate, String roomtype_options, String roomGuide);
+	void addRoomType(String rname,int place_seq, String defalt_img, int maxCapacity, int nightRate, String roomtype_options, String roomGuide);
 	
 	// RoomType select
 	
@@ -60,6 +60,11 @@ public interface DAO_HY {
 
 	// place Delete 
 	void deletePlace(int place_seq);	
+	
+	
+	// roomtype_optin name 관련 
+	ArrayList<DTO_HY_roomtypeDTO> getroomtype2(int place_option_seq);
+	
 	
 	
 	

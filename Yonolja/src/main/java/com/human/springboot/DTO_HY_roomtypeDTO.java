@@ -19,6 +19,10 @@ public class DTO_HY_roomtypeDTO {
 	int room_seq;
 	int room_number;
 	
+	// roomtype option select 관련
 	
+	int place_option_seq;
+	String place_option_name;
+
 
 }

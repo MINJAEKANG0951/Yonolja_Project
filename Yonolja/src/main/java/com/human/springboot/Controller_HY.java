@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.view.RedirectView;
 
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -140,7 +141,8 @@ public class Controller_HY {
 
 	@PostMapping("/deleteImg")
 	@ResponseBody
-	public void getData(@RequestParam("src") String src,@RequestParam("roomtype_seq") int roomtype_seq) {
+	public void getData(@RequestParam("src") String src,
+			@RequestParam("roomtype_seq") int roomtype_seq) {
 
 		System.out.println("delete Img");
 		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
@@ -312,10 +314,9 @@ public class Controller_HY {
 		model.addAttribute("place_seq", place_Seq);
 
 		///////////////// 객실타입 게시하는 코드시작/////////////
-
 		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
+		
 		model.addAttribute("roomTypes", roomTypes);
-
 		return "host_managePlace";
 
 	}
@@ -374,9 +375,7 @@ public class Controller_HY {
 	public String insertRoomType(HttpServletRequest req, Model model,
 			
 			@RequestParam(value="place_seq") String place_Seq,
-//			@RequestParam(value="roomtype_seq") String roomtype_seq,
-			@RequestParam(value="roomtype_name") String rname,
-//			@RequestParam(value="roomtype_imgs") MultipartFile[]imgs, 
+			@RequestParam(value="roomtype_name") String rname, 
 			@RequestParam(value="roomtype_capacity") String rcap,
 			@RequestParam(value="roomtype_price") String nightrate,
 			@RequestParam(value ="pfeatures") String[] roomtype_options,
@@ -391,9 +390,11 @@ public class Controller_HY {
 			int nightRate = Integer.parseInt(nightrate);
 			String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
 					"");
+			
+			
+			String defaultImagePath = "/img/roomtype_option/default-image.jpg";
 
-
-		hydao.addRoomType(rname, place_seq, maxCapacity, nightRate,roomtype_opt, roomGuide);
+		hydao.addRoomType(rname, place_seq,defaultImagePath, maxCapacity, nightRate,roomtype_opt, roomGuide);
 		
 		return "main";
 	}
@@ -448,46 +449,7 @@ public class Controller_HY {
 
 		return redirectView;
 	}
-///////////수정했었던 코든데 오류남 /////////
-//	@PostMapping("/addRoom")
-//	public RedirectView addRoom(
-//			@RequestParam("roomTypeId") int roomTypeId,
-//			@RequestParam("roomNumber") String roomNumber,
-//			@RequestParam("place_seq") int place_seq) {
-//		
-//		System.out.println(roomTypeId);
-//		System.out.println(roomNumber);
-//		System.out.println(place_seq);
-//		
-//		int room_Num = Integer.parseInt(roomNumber);
-//		
-//		hydao.addRoom(roomTypeId, room_Num);
-//		  RedirectView redirectView = new RedirectView();
-//		  redirectView.setUrl("/host_managePlace/" + place_seq);
-//
-//		return redirectView;
-//	}
 
-	///////////////// 객실타입별 객실 게시 코드 //////////////
-//	@PostMapping("/showRooms")
-//	public RedirectView showRooms(
-//			  @RequestParam(value="roomTypeNum") int roomtype_seq,
-//			  @RequestParam("place_seq") int place_seq,
-//			  Model model) {
-//		
-//		System.out.println(roomtype_seq);
-//		System.out.println(place_seq);
-//		
-//		ArrayList<DTO_HY_roomtypeDTO> roomNums = hydao.showRooms(roomtype_seq);
-//        model.addAttribute("roomNums", roomNums);
-//        System.out.println(roomNums);
-//        
-//        RedirectView redirectView = new RedirectView();
-//		redirectView.setUrl("/host_managePlace/" + place_seq);
-//
-//		
-//    	return redirectView;
-//	}
 
 	/// 객실타입 선택후 해당 객실만 select part////
 	@PostMapping("/showRooms")
@@ -528,21 +490,6 @@ public class Controller_HY {
 
 	////////////// 객실 insert시 동일객실번호 체크 part/////////////////
 
-//	@GetMapping("/checkRoomExists")
-//	@ResponseBody
-//	public Map<String, Boolean> checkRoomExists(
-//	        @RequestParam("place_seq") int place_seq,
-//	        @RequestParam("roomNumber") int roomNumber) {
-//
-//	    int count = hydao.checkRoomExists(place_seq, roomNumber);
-//	    System.out.println(count);
-//	    boolean exists = count >= 1;
-//
-//	    Map<String, Boolean> response = new HashMap<>();
-//	    response.put("exists", exists);
-//
-//	    return response;
-//	}
 
 	@GetMapping("/checkRoomExists")
 	@ResponseBody

@@ -65,7 +65,13 @@
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modifyBusinessModal" id="updatePlace">
     업장정보 수정
   </button>
-
+  
+  
+ <!-- 업장사진 관리 버튼 -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#placePicModal" id="updatePlacePic">
+    업장사진 관리
+  </button>
+ 
   <!-- 객실타입 버튼 -->
   <button type="button" id="btnRoomtype"class="btn btn-primary" data-toggle="modal" data-target="#roomTypeModal">
     객실타입
@@ -78,7 +84,7 @@
   
    <!-- 사진관리 버튼 -->
   <button type="button" id="btnManagePic" class="btn btn-primary" data-toggle="modal" data-target="#picManageModal">
-    사진관리
+    객실타입사진관리
   </button>
 
   <!-- 업장정보 수정 모달 -->
@@ -135,7 +141,7 @@
             
 
 
-            <input type="file" id="pimage" name="img" accept="image/*" multiple>
+          
  
         </div>
         <div class="modal-footer">
@@ -165,9 +171,7 @@
             
             <label for="roomName">객실 이름:</label><br>
             <input type="text" id="roomtype_name" name="roomtype_name"><br>
-            
-            <label for="roomImage">객실 사진:</label><br>
-            <input type="file" id="roomtype_imgs" name="roomtype_imgs" accept="image/*" multiple><br>
+          
             
             <label for="maxCapacity">객실 최대 숙박 인원:</label><br>
             <input type="number" id="roomtype_capacity" name="roomtype_capacity"><br>
@@ -238,7 +242,7 @@
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="manageRoom">사진관리</h5>
+          <h5 class="modal-title" id="manageRoomPhoto"> 객실사진관리</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -258,7 +262,43 @@
 			
 			</div>
              
-            <input type="submit" value="제출">
+       
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+  
+   <!-- 업장 사진관리 모달 -->
+  <div class="modal fade" id="placePicModal" tabindex="-1" role="dialog" aria-labelledby="roomManagementModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="managePlacePhoto"> 업장사진관리</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h2>업장 사진입력</h2>
+            <input type="text" id="place_seq" name="place_seq" value="" readonly><br>
+			<hr>
+				<button id=addFile> 파일추가하기 </button><br><br>
+				<button id=reset> 비우기 </button><br><br>
+				<input type="file" id=imgInput name="img" accept="image/*" ><br><br>
+			<hr>
+				
+			<h1>미리보기</h1>
+			<div id=pictures>
+			
+			
+			</div>
+             
+       
           
         </div>
         <div class="modal-footer">
@@ -296,7 +336,7 @@
       		</td>
             <td>${roomType. roomtype_capacity}</td>
             <td>${roomType.roomtype_price}</td>
-            <td>${roomType.roomtype_options}</td>
+            <td>${optionNames}</td>
             <td>${roomType.roomtype_guide}</td>
           </tr>
         </c:forEach>
@@ -579,7 +619,7 @@ $(document)
       $("#roomtype_name").val(roomtype_name);
       $("#roomtype_capacity").val(roomtype_capacity);
       $("#roomtype_price").val(roomtype_price);
-      $("#roomtype_option").val(roomtype_option);
+      $("#roomtype_price").val(roomtype_option);
       $("#roomtype_guide").val(roomtype_guide);
       
       // input type submit value를 수정으로 바꿉니다.
@@ -952,10 +992,21 @@ $(document).ready(function() {
     }
   });
 });
-
+/* $(document)
+.ready(function(){
+	getRoomTypeOptionName()
+})
+/* .on("click","#tblRoomtype tr:gt(1) td:nth-child(6)",function(){
+	alert($(this).text())
+	getRoomTypeOptionName
+}) */
 		
-		
-		
+// function getRoomTypeOptionName(){
+	
+// 	let number = $("#tblRoomtype tr:gt(1) td:nth-child(6)").text()
+// 	alert(number.length)
+// 	console.log(number)
+// }		 
 		
 		
 		

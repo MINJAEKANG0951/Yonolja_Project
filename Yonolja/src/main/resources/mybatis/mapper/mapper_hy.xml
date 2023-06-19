@@ -59,6 +59,7 @@
 			        ROOMTYPE_SEQ,
 			        ROOMTYPE_NAME,
 			        PLACE_SEQ,
+			        roomtype_imgs,
 			        ROOMTYPE_CAPACITY,
 			        ROOMTYPE_PRICE,
 			        roomtype_options,
@@ -72,7 +73,8 @@
 			     	#{param3},
 			        #{param4},
 			  		#{param5},
-			  		#{param6}
+			  		#{param6},
+			  		#{param7}
 			    )
 		</insert>
 			
@@ -100,6 +102,10 @@
         where place_seq = #{param1}
     </select>
     
+<!--     정훈이 -->
+    <select id="getroomtype2" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+    	select * from yonolja_place_option where place_option_seq =#{param1}
+    </select>
     
 <!--     Roomtype update 코드 PART -->
 
@@ -177,6 +183,11 @@
     		DELETE FROM yonolja_place
     		WHERE place_seq = #{param1}
   		</delete>
+  		
+  		
+<!--  객실타입 표시하는 select 코드(place_seq이용) -->
+
+
 		
 
 
