@@ -100,12 +100,28 @@
     <select id="getRoomtype" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
         SELECT * FROM yonolja_roomtype
         where place_seq = #{param1}
+        order by roomtype_seq asc
     </select>
     
-<!--     정훈이 -->
+ 
     <select id="getroomtype2" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
-    	select * from yonolja_place_option where place_option_seq =#{param1}
+select place_option_name
+from
+(SELECT 
+   REGEXP_SUBSTR(a.roomtype_options,'[^,]+', 1, LEVEL) AS num, place_seq,roomtype_seq
+FROM 
+   yonolja_roomtype a
+where roomtype_seq=#{param2}
+CONNECT BY 
+   REGEXP_SUBSTR(a.roomtype_options, '[^,]+', 1, LEVEL) IS NOT NULL
+   AND PRIOR SYS_GUID() IS NOT NULL
+   AND PRIOR a.roomtype_seq = a.roomtype_seq 
+   order by roomtype_seq asc) a,yonolja_place_option b,yonolja_place c
+   where  c.place_seq=a.place_seq and  a.num=b.place_option_seq and c.place_seq=#{param1}
+   
     </select>
+    
+    
     
 <!--     Roomtype update 코드 PART -->
 

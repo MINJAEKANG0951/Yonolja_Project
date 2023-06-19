@@ -336,7 +336,14 @@
       		</td>
             <td>${roomType. roomtype_capacity}</td>
             <td>${roomType.roomtype_price}</td>
-            <td>${optionNames}</td>
+            <td>
+<%--             <c:forEach items="${roomTypes_select}" var="roomTypes_selects"> --%>
+<%--           		 ${roomTypes_selects.place_option_name} --%>
+<%--         	</c:forEach> --%>
+              <c:forEach items="${roomType.options}" var="option">
+                ${option.place_option_name}
+              </c:forEach>
+        	</td>
             <td>${roomType.roomtype_guide}</td>
           </tr>
         </c:forEach>
@@ -836,7 +843,7 @@ $(document).ready(function() {
     }).on('click', '#reset', function() {
       $('#imgInput').val(null);
     }).on('input', '#imgInput', function() {
-      var imgfile = $(this)[0].files[0];
+      /*var imgfile = $(this)[0].files[0];
       var formData = new FormData();
       formData.append('img', imgfile);
       formData.append('roomtype_seq', $('#picRoomType_seq').val());  // 객실 타입 ID 추가
@@ -849,35 +856,24 @@ $(document).ready(function() {
         data: formData,
         success: function() {
           refreshImgs();
+          
         }
-      });
+      });*/
+      addPhoto($(this),'roomtype_seq','picRoomType_seq')
+      
     })
     
 	.on('click', '.xButton', function() {
-	  if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
-	    var imgContainer = $(this).closest('.img');
-	    var src = imgContainer.find('img.photo').attr('src');
-	
-	    var data = {
-	      src: src,
-	      roomtype_seq: $('#picRoomType_seq').val()  // 객실 타입 ID 추가
-	    };
-	
-	    $.ajax({
-	      url:'/deleteImg', 
-	      type:'post', 
-	      data: data,
-	      success:function(){
-	        refreshImgs();
-	      }
-	    });
-	  }
+
+  		if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
+			btnDelete($(this),'roomtype_seq','picRoomType_seq')
+  		}
 	});
 
 
   
 
-    function refreshImgs() {
+    function refreshImgs() { //업장용만들기 
       $('#pictures').empty();
       $.ajax({
         url: '/getImgs',
@@ -908,7 +904,47 @@ $(document).ready(function() {
       });
     }
 
-		
+function addPhoto(a,b,c){
+    var imgfile = a[0].files[0];
+    var formData = new FormData();
+    formData.append('img', imgfile);
+    formData.append(b, $("#"+c).val());  // 객실 타입 ID 추가
+// 	d='/addImg'+d
+    $.ajax({
+      url: '/addImg',
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: function() {
+       
+    	  refreshImgs()
+      }
+    });
+}
+
+function btnDelete(a,b,c){
+	 
+		    var imgContainer = a.closest('.img');
+		    console.log(imgContainer)
+		    var src = imgContainer.find('img.photo').attr('src');
+			console.log(src)
+		    var data = {
+		      src: src,
+		     }; 
+		      data[b] = $('#'+c).val()  // 객실 타입 ID 추가
+		    
+		console.log(data)
+		    $.ajax({
+		      url:'/deleteImg', 
+		      type:'post', 
+		      data: data,
+		      success:function(){
+		        refreshImgs();
+		      }
+		    });
+		  
+}
 ////////////////////////////////////객실타입 insert 코드//////////////////////////
 $(document)
 .on('click','#btnAddroomtype',function(){

@@ -89,10 +89,6 @@ public class Controller_HY {
 
 //	
 
-//	@GetMapping("/mypage")
-//	public String showMypage() {
-//		return "mypage";
-//	}
 	@GetMapping("/imgpreview")
 	public String imgpreview() {
 		return "/test/imgPreview";
@@ -145,6 +141,7 @@ public class Controller_HY {
 			@RequestParam("roomtype_seq") int roomtype_seq) {
 
 		System.out.println("delete Img");
+		System.out.println("toom"+roomtype_seq);
 		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
 		String DBpath = "/files/";
 		/*
@@ -314,9 +311,43 @@ public class Controller_HY {
 		model.addAttribute("place_seq", place_Seq);
 
 		///////////////// 객실타입 게시하는 코드시작/////////////
-		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
+//		ArrayList<DTO_HY_roomtypeDTO> roomTypes_select =null;
+//		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
+//		for(int i=0;i<roomTypes.size();i++) {
+//			System.out.println(roomTypes.get(i).roomtype_seq);
+//			roomTypes_select = hydao.getroomtype2(place_Seq,roomTypes.get(0).roomtype_seq);
+//			
+//			}
+//		roomTypes_select = hydao.getroomtype2(place_Seq,roomTypes.get(0).roomtype_seq);
+//		model.addAttribute("roomTypes_select", roomTypes_select);
+//		model.addAttribute("roomTypes", roomTypes);
+//		
 		
+//		ArrayList<DTO_HY_roomtypeDTO> roomTypes_select = new ArrayList<>();
+//		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
+//
+//		for(DTO_HY_roomtypeDTO roomType : roomTypes) {
+//		    int roomtype_seq = roomType.roomtype_seq;
+//		    ArrayList<DTO_HY_roomtypeDTO> result = hydao.getroomtype2(place_Seq, roomtype_seq);
+//		    roomTypes_select.addAll(result);
+//		}
+//
+//		model.addAttribute("roomTypes_select", roomTypes_select);
+//		model.addAttribute("roomTypes", roomTypes);
+		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
+
+		for(int i = 0; i < roomTypes.size(); i++) {
+		    DTO_HY_roomtypeDTO roomType = roomTypes.get(i);
+		    int roomtype_seq = roomType.roomtype_seq;
+		    ArrayList<DTO_HY_roomtypeDTO> options = hydao.getroomtype2(place_Seq, roomtype_seq);
+		    roomType.setOptions(options);  // roomType DTO에 setOptions라는 메소드를 추가해야 함.
+		}
+
 		model.addAttribute("roomTypes", roomTypes);
+
+		
+
+		
 		return "host_managePlace";
 
 	}

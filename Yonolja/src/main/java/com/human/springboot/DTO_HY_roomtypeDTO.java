@@ -1,5 +1,7 @@
 package com.human.springboot;
 
+import java.util.ArrayList;
+
 import lombok.Data;
 
 @Data
@@ -23,6 +25,6 @@ public class DTO_HY_roomtypeDTO {
 	
 	int place_option_seq;
 	String place_option_name;
-
+	ArrayList<DTO_HY_roomtypeDTO> options;
 
 }

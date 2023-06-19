@@ -63,7 +63,7 @@ public interface DAO_HY {
 	
 	
 	// roomtype_optin name 관련 
-	ArrayList<DTO_HY_roomtypeDTO> getroomtype2(int place_option_seq);
+	ArrayList<DTO_HY_roomtypeDTO> getroomtype2(int place_seq, int roomtype_seq);
 	
 	
 	
