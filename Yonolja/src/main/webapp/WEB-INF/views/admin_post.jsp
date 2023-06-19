@@ -12,28 +12,38 @@
 </head>
 <%@ include file ="./structure/header.jsp" %>
 <style>
-div {
+.admin_post_page {
  text-align: center;
 }
-
-#post_delete{
- margin-left:555px;
+body{
+display: block;
+padding-left:210px;
+padding-top:150px;
 }
+#post_delete{
+ margin-left:900px;
+}
+table{
+
+border-left: none;
+border-right: none;
+}
+
 tr:first-child{
-background-color: #e2e2e2;
-border:none
+border: 1px;
 }
 </style>
 
 <body>
-<div id="admin_post_page">
-	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><a href='/admin'>관리자 페이지</a><input type=hidden id=admin_post_reset value=0>
+<%@ include file ="./structure/admin_side.jsp" %>
+<div class=admin_post_page id="admin_post_page">
+	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><input type=hidden id=admin_post_reset value=0>
 	<div id=post_delete_div>
 		<input type=button id=post_delete value=삭제>
 		
 	</div>
 	
-	<table border=1px class="table table-striped" id=admin_post_page_table>
+	<table border=1px class="table table-striped" id=admin_post_page_table style="width: 1000px; margin-left: auto;margin-right: auto;">
 		
 		<tr>
 			<td><input type="checkbox" id=checkList></td><td>문의번호</td><td>문의분류</td><td>문의제목</td><td>아이디</td><td>문의일</td><td>문의상태</td><td>답변작성</td>
@@ -378,7 +388,7 @@ console.log($('#admin_post_searchBar').val())
 })
 
 .on('click','#admin_post_page_reset',function(){
-	reset()
+	post_reset()
 })
 
 function post_list(page){
@@ -398,7 +408,7 @@ function post_list(page){
 						test="";
 					}
 				str +='<tr><td><input class=check_service type=checkbox id=checkboxid'+i+'></td><td>'
-						+data[i]['post_seq']+'</td><td>'
+						+data[i]['post_seq']+'</td><td>'// 내일 오면 게시글 삭제 seq 히든으로 넣어줄것
 						+data[i]['post_category']+'</td><td class=admin_post_diolog>' //추후에 물어보고 할것
 						+data[i]['post_title']+'</td><td>'		// user_seq 사용
 						+data[i]['user_id']+'</td><td>'
@@ -424,7 +434,7 @@ function post_paging(){
 			if(data!=0){
 				str="";
 				$('#admin_post_controller').empty()
-			
+				console.log(data)
 				for(let i=1;i<=data;i++){
 					str+= "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
 				}
@@ -480,7 +490,7 @@ function search_list(page,select_val){
 		}
 	})
 }
-function reset(){
+function post_reset(){
 			window.location.href = "http://localhost:8081/admin_post"
 	
 }

@@ -9,29 +9,46 @@
 </head>
 <%@ include file ="./structure/header.jsp" %>
 <style>
-
+body{
+display: block;
+padding-left:210px;
+padding-top:150px;
+}
 .admin_review_grid{
 	display:grid;
 
 }
-div{
+#admin_review_delete{
+ margin-left:900px;
+}
+.admin_review{
 	text-align: center;
+}
+table{
+
+border-left: none;
+border-right: none;
+}
+
+tr:first-child{
+border: 1px;
 }
 </style>
 <body>
+<%@ include file ="./structure/admin_side.jsp" %>
 <div class='admin_review'>
 	<div class='admin_page_login'>
 		<input type='hidden' id='adminCheck' value="${adcheck}">
 		
 	</div>
 
- 	<div>
- 		<h2>리뷰 관리 게시판</h2><a href='/admin'>관리자 페이지</a><br>
+ 	<div id=admin_review_title>
+ 		<h2>리뷰 관리 게시판</h2>
  		<input type=button id=admin_review_delete value=삭제>
  	</div>
- 	<table border="1px solid:black" class="table table-striped" id='admin_review_management'>
+ 	<table border="1px solid:black" class="table table-striped" id='admin_review_management' style="width: 1000px; margin-left: auto;margin-right: auto;">
  		<tr>
- 			<td><input type=checkbox id=checkbox_list></td><td>번호</td><td>숙소이름</td><td>제목</td><td>날짜</td><td>평점</td>
+ 			<td><input type=checkbox id=checkbox_list></td><td>리뷰번호</td><td>숙소이름</td><td>작성자</td><td>내용</td><td>날짜</td><td>평점</td>
  		</tr>
  	</table>
  	<div id="admin_page_controller" class='paging'>
@@ -75,7 +92,9 @@ $(document)
 	console.log("hello")
 	
 })
-
+.on('click','#admin_review_title',function(){
+	document.location='/admin_review'
+})
 .on('click','#admin_page_controller>a',function(){
 	console.log($(this).text())
 	review_list($(this).text())
@@ -106,7 +125,10 @@ $(document)
 		type:'post',
 		beforeSend:function(){
 			if(confirm('정말로 삭제하시겠습니까?')){
-				
+				if(checkedValues.join(',')==""){
+					alert('선택된 게시글이 없습니다.')
+					return false;
+				}
 				
 			} else{
 				alert("정지하였습니다")
@@ -151,18 +173,24 @@ $(document)
 		},
 		success:function(data){
 			console.log(data)
-			$('#admin_page_controller').empty();
-			$('#admin_page_search_controller').empty();
-			  if (data != "") {
-                    
+
+			  if (data != 0) {
+				  	search_list(1)
+				  	console.log("test list_ok?");
+					$('#admin_page_controller').empty();
+					$('#admin_page_search_controller').empty();                    
                     let str = "";
                     for (let i = 1; i <= data; i++) {
                         str += "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
                     }
                     $('#admin_page_search_controller').append(str);
                     $('#pagenum1').css('font-weight', 'bold');
-                    search_list(1)
+                    
+			} else{
+				alert("검색된 내용이 없습니다")
+				return false;
 			}
+			
 		}
 	})
 		
@@ -186,6 +214,7 @@ function review_list(a){
 				for(i=0;i<data.length;i++){
 					str+='<tr><td><input class=check_service type=checkbox id=checkboxid'+i+'></td><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
 					+data[i]['place_name']+"</td><td>"//book_seq 를 활용하여 place_name 을 가져온다
+					+data[i]['user_name']+"</td><td>"
  					+data[i]['review_content']+"</td><td>"
  					+data[i]['review_date']+"</td><td>"
  					+data[i]['review_star']+"</td></tr>"
@@ -234,20 +263,27 @@ function search_list(num){
 		dataType:'json',
 		type:'post',
 		success:function(data){
-			$('#admin_review_management tr:gt(0)').remove();
-			console.log("test")
-			let str='';
-			console.log(data.length)
-			for(i=0;i<data.length;i++){
-				str+='<tr><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
-				+data[i]['place_name']+"</td><td>"//book_seq 를 활용하여 place_name 을 가져온다
+			if(data!=""){
+				$('#admin_review_management tr:gt(0)').remove();
+				console.log("test")
+				let str='';
+				console.log(data.length)
+				for(i=0;i<data.length;i++){
+					str+='<tr><td><input class=check_service type=checkbox id=checkboxid'+i+'></td><td>'+data[i]['review_seq']+'</td><td>' // review table을 활용하여 정보를 가져온다
+					+data[i]['place_name']+"</td><td>"//book_seq 를 활용하여 place_name 을 가져온다
+					+data[i]['user_name']+"</td><td>"
 					+data[i]['review_content']+"</td><td>"
 					+data[i]['review_date']+"</td><td>"
 					+data[i]['review_star']+"</td></tr>"
-					
-			}
+						
+				}
 
-			$('#admin_review_management').append(str);	
+				$('#admin_review_management').append(str);	
+			}else{
+				
+				return false;
+			}
+				
 		}
 		
 	})

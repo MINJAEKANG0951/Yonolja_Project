@@ -210,16 +210,24 @@
 	<delete id="yonolja_place_option_delete">
 		delete from yonolja_place_option where place_option_seq=#{param1}
 	</delete>
+	
+	
 	<!-- 리뷰 관리  차후 변경 필요 -->
 	<select id="yonolja_review_list" resultType='com.human.springboot.DTO_TH'>
-    select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,num from(
-    select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,rownum as num from
-    (select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ from review order by review_seq_test desc))
-    where num between #{param1} and #{param2}
+		select review_seq,place_seq,place_name, user_name, review_date, review_star,review_content, num from
+			(select review_seq,place_seq,place_name, user_name, review_date, review_star,review_content, rownum as num from
+				(select a.review_seq,e.place_seq,e.place_name, f.user_name, a.review_date, a.review_star,a.review_content
+					from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e, yonolja_user f
+						where a.book_seq=b.book_seq and
+						b.room_seq=c.room_seq and
+						c.roomtype_seq=d.roomtype_seq and 
+						d.place_seq=e.place_seq and 
+						b.user_seq=f.user_seq order by a.review_seq desc))
+						where num between #{param1} and #{param2}
 	</select>
 	<!--  리뷰관리 페이징 -->
 	<select id="yonolja_review_page" resultType="int">
-		select count(*) from review
+		select count(*) from yonolja_review
 	</select> 
 	<!-- 나중에 변경해야됨 변경 내역은 테이블 명, 및 컬럼 명, bookseq는 다른 테이블과 조인이 필요 -->
 	<select id="yonolja_review_search" resultType='com.human.springboot.DTO_TH'>

@@ -32,12 +32,10 @@ public class Controller_TH {
 	@Autowired
 	DAO_TH tdao;
 	
-	@GetMapping("/admin")
-	public String admin() {
-		return "admin";
-	}
-	
-
+//	@GetMapping("/admin")
+//	public String admin() {
+//		return "admin";
+//	}
 
 	@GetMapping("/admin_user")
 	public String admin_user(Model model, HttpServletRequest req) {
@@ -267,9 +265,11 @@ public class Controller_TH {
 
 		int category;
 		String postCate="";
-
+		System.out.println("end val="+end);
 		int count =tdao.post_count();
 		System.out.println(count);
+		
+		System.out.println("count%10="+(count%10));
 		for(int i=0;i<list.size();i++) {
 			
 			JSONObject jo=new JSONObject();
@@ -286,6 +286,21 @@ public class Controller_TH {
 			}else {
 				postCate="일반게시글";
 			}
+			if(curpage==1) {
+				jo.put("num", count-(i));
+			}else {
+				
+					jo.put("num", count-(i+(curpage*10-10)));
+				
+		
+				
+				
+			}
+			System.out.println("val cur="+curpage);
+			System.out.println("why? i value="+i);
+			System.out.println("int="+(count-(end-i)));
+			System.out.println("check jo="+jo);
+			System.out.println(list.get(i).getPost_seq());
 			jo.put("post_seq",list.get(i).getPost_seq());
 			jo.put("user_id",list.get(i).getUSER_ID());
 			jo.put("post_category",postCate);
@@ -906,8 +921,9 @@ public class Controller_TH {
 		for(int i=0;i<list.size();i++) {
 			JSONObject jo= new JSONObject();
 			
-			jo.put("review_seq", list.get(i).getReview_seq_test());
-			jo.put("place_name", list.get(i).getBook_seq());
+			jo.put("review_seq", list.get(i).getReview_seq());
+			jo.put("place_name", list.get(i).getPlace_name());
+			jo.put("user_name",list.get(i).getUSER_NAME());
 			jo.put("review_content", list.get(i).getReview_content());
 			jo.put("review_date", list.get(i).getReview_date());
 			jo.put("review_star", list.get(i).getReview_star());
@@ -953,8 +969,8 @@ public class Controller_TH {
 		for(int i=0;i<list.size();i++) {
 			JSONObject jo= new JSONObject();
 			
-			jo.put("review_seq", list.get(i).getReview_seq_test());
-			jo.put("place_name", list.get(i).getBook_seq());
+			jo.put("review_seq", list.get(i).getReview_seq());
+			jo.put("place_name", list.get(i).getPlace_name());
 			jo.put("review_content", list.get(i).getReview_content());
 			jo.put("review_date", list.get(i).getReview_date());
 			jo.put("review_star", list.get(i).getReview_star());
@@ -970,15 +986,19 @@ public class Controller_TH {
 	@ResponseBody
 	public int admin_review_search_paging(HttpServletRequest req) {
 		String search=req.getParameter("search");
-		int page=(int)tdao.yonolja_review_search_page(search);
-		int pageend;
-		if(page%10==0) {
-			pageend=page/10;
-			System.out.println(pageend);
-		}else {
-			pageend=page/10+1;
-			System.out.println(pageend);
+		int pageend=0;
+		if(tdao.yonolja_review_search_page(search)!=0) {
+			int page=(int)tdao.yonolja_review_search_page(search);
+			
+			if(page%10==0) {
+				pageend=page/10;
+				System.out.println(pageend);
+			}else {
+				pageend=page/10+1;
+				System.out.println(pageend);
+			}
 		}
+		
 		
 		
 		
