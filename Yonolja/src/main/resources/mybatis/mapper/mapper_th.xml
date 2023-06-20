@@ -257,12 +257,12 @@
 	</select>
 	<select id="yonolja_review_search_page" resultType="int">
 		select count(*)
-            from review where ( REVIEW_CONTENT like '%' || #{param1} || '%' 
+            from yonolja_review where ( REVIEW_CONTENT like '%' || #{param1} || '%' 
                <!-- 날짜는 나중에 다시 확인  or  REVIEW_DATE like '%' || #{param1} || '%' --> 
               or BOOK_SEQ like '%' || #{param1} || '%' )
 	</select>
 	<delete id="review_delete_list">
-		delete from review where review_seq_test=#{param1}
+		delete from yonolja_review where review_seq=#{param1}
 	</delete>
 </mapper>
 

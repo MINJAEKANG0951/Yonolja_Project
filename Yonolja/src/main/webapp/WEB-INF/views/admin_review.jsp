@@ -7,7 +7,7 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <title>Insert title here</title>
 </head>
-<%@ include file ="./structure/header.jsp" %> 
+
 <style>
 body{
 display: block;
@@ -60,8 +60,7 @@ border: 1px;
  	<div id="admin_review_search_div">
  		<select id=admin_review_select>
  			<option value=0>통합검색</option>
- 			<option value=1>숙소이름</option>
- 			<option value=2>제목</option>
+
  		</select>
  		<input type=text id=admin_review_search>
  		<input type=button id=admin_review_btn value="검색">
