@@ -15,7 +15,7 @@
         position: absolute;
         left:0px;
         top:85px;
-        width: 220px;
+        width: 170px;
         height: 828px;
 
  
@@ -38,8 +38,8 @@
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
                 <div class="nav">
-                    <div class="sb-sidenav-menu-heading">회원관리</div>
-                    <a class="nav-link" href="/admin_user" onclick="scrollToSection(event,'/admin_user')">
+                    <div class="sb-sidenav-menu-heading" id="admin_manager">회원관리</div>
+                    <a class="nav-link" id="admin_user_select" href="#" >
                         <div class="sb-nav-link-icon" ><i class="fas fa-tachometer-alt"></i></div>
                         회원관리
                     </a>
@@ -59,11 +59,11 @@
                     </a>
                     <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
                         <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages" >
-                            <a class="nav-link collapsed" href="/admin_post" onclick="scrollToSection(event, '/admin_post')">
+                            <a class="nav-link collapsed" id="admin_post_select" href="#" >
                             <!--  이동 안되는 건데왜 안되는지 모르겟음 우선 지워서 되는지는 확인이 됨<a class="nav-link collapsed" href="/admin_post" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="true" aria-controls="pagesCollapseAuth"> -->
                                 게시글
                             </a>
-                            <a class="nav-link collapsed" href="/admin_review" onclick="scrollToSection(event, '/admin_review')">
+                            <a class="nav-link collapsed" id="admin_review_select"href="#" >
                             <!--이동 안되는 건데왜 안되는지 모르겟음 우선 지워서 되는지는 확인이 됨 <a class="nav-link collapsed" href="/admin_review" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="true" aria-controls="pagesCollapseError"> -->
                                 리뷰                            
                             </a>
@@ -274,9 +274,13 @@
 		</table>
 	</div>
 	 -->
-
-    
+<!-- <section> -->
+	<div id=iframe_controller class="d-flex float-end">
+		<iframe id=selected_admin_page src="/admin_user" style="width: 1200px; height: 900px;"></iframe>
+	</div>
+<!-- </section> -->    
 </body>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
 <script src="js/scripts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
@@ -292,6 +296,19 @@ $(document)
 	type_list()
 	option_list()
 })
+.on('click','#admin_user_select',function(){
+	$('#selected_admin_page').attr('src','/admin_user')
+	
+})
+.on('click','#admin_post_select',function(){
+	$('#selected_admin_page').attr('src','/admin_post')
+	
+})
+.on('click','#admin_review_select',function(){
+	$('#selected_admin_page').attr('src','/admin_review')
+	
+})
+
 
 .on('click','#Yonolja_place_type',function(){
 	  $('#type_model').modal('show');
@@ -777,18 +794,6 @@ function option_list(){
 	})
 }
 
-function scrollToSection(event, sectionId) {
-	  event.preventDefault(); // Prevent the default behavior of the anchor tag
-	  console.log('test')
-	  var targetElement = document.getElementById(sectionId);
-	  console.log(targetElement )
-	  if (targetElement) {
-		  console.log('check')
-	    targetElement.scrollIntoView({
-	      behavior: 'smooth'
-	    });
-	  }
-	}
 
 </script>
 </html>

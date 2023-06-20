@@ -17,8 +17,8 @@
 }
 body{
 display: block;
-padding-left:210px;
-padding-top:150px;
+/* padding-left:210px;
+padding-top:150px; */
 }
 #post_delete{
  margin-left:900px;
@@ -35,7 +35,7 @@ border: 1px;
 </style>
 
 <body>
-<%@ include file ="./structure/admin_side.jsp" %>
+
 <div class=admin_post_page id="admin_post_page">
 	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><input type=hidden id=admin_post_reset value=0>
 	<div id=post_delete_div>

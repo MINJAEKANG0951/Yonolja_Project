@@ -7,12 +7,12 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 <title>Insert title here</title>
 </head>
-<%@ include file ="./structure/header.jsp" %>
+<%@ include file ="./structure/header.jsp" %> 
 <style>
 body{
 display: block;
-padding-left:210px;
-padding-top:150px;
+/* padding-left:210px;
+padding-top:150px; */
 }
 .admin_review_grid{
 	display:grid;
@@ -35,7 +35,7 @@ border: 1px;
 }
 </style>
 <body>
-<%@ include file ="./structure/admin_side.jsp" %>
+
 <div class='admin_review'>
 	<div class='admin_page_login'>
 		<input type='hidden' id='adminCheck' value="${adcheck}">

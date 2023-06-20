@@ -32,30 +32,14 @@ public class Controller_TH {
 	@Autowired
 	DAO_TH tdao;
 	
-//	@GetMapping("/admin")
-//	public String admin() {
-//		return "admin";
-//	}
+	@GetMapping("/admin")
+	public String admin() {
+		return "admin";
+	}
 
 	@GetMapping("/admin_user")
 	public String admin_user(Model model, HttpServletRequest req) {
-//		HttpSession login=req.getSession();
-//		login.getAttribute("logid");
-//	    int memberEndPageCount = tdao.member_count() / 10; // 전체수의 10을 나눴을때 값
-//	    int remainder = tdao.member_count() % 10; // 나머지 값이 있는지 확인
-//	    
-//	    if (remainder != 0) {
-//	        memberEndPageCount++;
-//	        
-//	    }
-//	    int viewpage=tdao.member_count() / 10;
-//	    System.out.println("viewpage"+viewpage);
-//	    if(viewpage!=1) {
-//	    		    model.addAttribute("end", memberEndPageCount);
-//	    }
-//	    model.addAttribute("start", viewpage);
-//
-//	    return "admin_user";
+
 		   HttpSession logIn=req.getSession();
 		   logIn.getAttribute("logid");
 		   model.addAttribute("logId",logIn.getAttribute("logid"));
