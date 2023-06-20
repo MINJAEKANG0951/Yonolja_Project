@@ -285,7 +285,7 @@
         </div>
         <div class="modal-body">
           <h2>업장 사진입력</h2>
-            <input type="text" id="place_seq" name="place_seq" value="" readonly><br>
+            <input type="text" id="place_seq" name="place_seq" value= ${place_seq} readonly><br>
 			<hr>
 				<button id=addPic> 파일추가하기 </button><br><br>
 				<button id=erase> 비우기 </button><br><br>
@@ -840,8 +840,13 @@ $(document).ready(function() {
 		
 //////////////////// photo preview 관련 /////////////////////
   $(document).ready(function() {
-      refreshImgs();
+      refreshImgs();  
     });
+  $(document).ready(function() {
+   	  refreshPlaceImgs(); // 충돌안난다고함 
+    });
+    
+
 
 	// 객실타입사진관리모달
     $(document).on('click', '#addFile', function() {
@@ -849,7 +854,7 @@ $(document).ready(function() {
     }).on('click', '#reset', function() {
       $('#imgInput').val(null);
     }).on('input', '#imgInput', function() {
-      addPhoto($(this),'roomtype_seq','picRoomType_seq')
+      addPhoto($(this),'roomtype_seq','picRoomType_seq','/addImg')
       
     })
     
@@ -860,7 +865,7 @@ $(document).ready(function() {
     }).on('click', '#erase', function() {
       $('#picInput').val(null);
     }).on('input', '#picInput', function() {
-      addPhoto($(this),'place_seq','place_seq')
+      addPhoto($(this),'place_seq','place_seq','/addPImg')
       
     })
     
@@ -870,14 +875,14 @@ $(document).ready(function() {
 	.on('click', '.xButton', function() {
 
   		if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
-			btnDelete($(this),'roomtype_seq','picRoomType_seq')
+			btnDelete($(this),'roomtype_seq','picRoomType_seq','/deleteImg')
   		}
 	});
-	
+    $(document)
     .on('click', '.bButton', function() {
     	place_seq
   		if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
-			btnDelete($(this),'place_seq','place_seq')
+			btnDelete($(this),'place_seq','place_seq','/deletePImg')
   		}
 	});
 
@@ -947,26 +952,32 @@ $(document).ready(function() {
       });
     }
 
-function addPhoto(a,b,c){
+function addPhoto(a,b,c,d){
     var imgfile = a[0].files[0];
     var formData = new FormData();
     formData.append('img', imgfile);
     formData.append(b, $("#"+c).val());  // 객실 타입 ID 추가
-// 	d='/addImg'+d
+//  	d='/addImg'+d
     $.ajax({
-      url: '/addImg',
+      url: d,
       type: 'post',
       processData: false,
       contentType: false,
       data: formData,
       success: function() {
+    	  
+    	 if (d === '/addImg') {
+    	     refreshImgs();
+    	 } else if (d === '/addPImg') {
+    	     refreshPlaceImgs();
+    	 }
        
-    	  refreshImgs()
+    	 
       }
     });
 }
 
-function btnDelete(a,b,c){
+function btnDelete(a,b,c,d){
 	 
 		    var imgContainer = a.closest('.img');
 		    console.log(imgContainer);
@@ -977,13 +988,19 @@ function btnDelete(a,b,c){
 		     }; 
 		      data[b] = $('#'+c).val()  // 객실 타입 ID 추가
 		    
-		console.log(data);
+// 		    d='/deleteImg'+d
 		    $.ajax({
-		      url:'/deleteImg', 
+		      url:d, 
 		      type:'post', 
 		      data: data,
 		      success:function(){
-		        refreshImgs();
+// 		        refreshImgs();
+
+		    	if (d === '/addImg') {
+		     	     refreshImgs();
+		     	} else if (d === '/addPImg') {
+		     	     refreshPlaceImgs();
+		     	} 
 		      }
 		    });
 		  

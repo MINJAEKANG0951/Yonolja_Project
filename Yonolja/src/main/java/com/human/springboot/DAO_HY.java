@@ -80,7 +80,7 @@ public interface DAO_HY {
 	// test img insert
 	Object getImgAddress(int img_seq);
 	void updateImg(String img_address, int roomtype_seq);
-	void insertimg(String img_address);
+	void insertimg(String img_address);// 안쓰이는듯?
 	
 	// 업장관리 
 	Object getPlaceImgPath(int place_seq);
