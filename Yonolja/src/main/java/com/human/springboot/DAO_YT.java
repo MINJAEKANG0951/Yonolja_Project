@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
 public interface DAO_YT {
 	
 	
-	
+	 
 	
 	ArrayList<DTO_YT> selectPost();
 	ArrayList<DTO_YT> selectPost_seq();

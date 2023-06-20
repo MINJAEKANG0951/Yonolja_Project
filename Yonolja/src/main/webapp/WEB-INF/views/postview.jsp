@@ -9,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
 <title>main</title>
-
+  
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">

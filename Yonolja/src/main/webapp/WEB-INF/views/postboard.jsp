@@ -643,7 +643,7 @@ document.getElementById('gridViewButton').addEventListener('click', function() {
 	
     document.getElementById('postTable').style.display = 'none';
     document.getElementById('gridContainer').style.display = '';
-
+ 
     // Clear the grid container
     const gridContainer = document.getElementById('gridContainer');
     gridContainer.innerHTML = '';

@@ -15,7 +15,7 @@ public class DTO_YT_postDTO {
 	String post_date;
 	String post_comment;
 	String post_img;
-
+ 
 	String type;
 	int num;
 	String keyword;

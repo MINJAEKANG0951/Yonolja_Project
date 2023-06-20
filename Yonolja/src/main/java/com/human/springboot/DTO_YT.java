@@ -13,7 +13,7 @@ public class DTO_YT {
     String post_content;
     String user_id;
     String post_img;
-    
+     
     int num;
     String type;
     String searchCategory;

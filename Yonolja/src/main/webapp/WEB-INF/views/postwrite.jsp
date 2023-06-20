@@ -12,7 +12,7 @@
 </head>
 <%@ include file ="./structure/header.jsp" %>
 <style>
-
+ 
 .heade{
     display: flex; 
      justify-content: center;
