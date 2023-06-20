@@ -82,9 +82,9 @@ a {
 }
 
 .myhotel img, .place_img {
-    width: 200px; /* 너비 조절. */
-    height: 200px; /* 높이 조절. */
-    padding: 8px;
+    width: 205px; /* 너비 조절. */
+    height: 205px; /* 높이 조절. */
+    padding: 0px;
 }
 
 .myB {
@@ -145,11 +145,11 @@ a {
 }
 
 .arrow_prev {
-    left: -5px;
+    left: 0px;
 }
 
 .arrow_next {
-    right: -5px;
+    right: 0px;
 }
 
 /* 모달창 비밀번호확인창 */
@@ -190,7 +190,6 @@ a {
     cursor: pointer;
 }
 
-
 </style>
 <body>
 <section>
@@ -221,7 +220,8 @@ a {
 	
 	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
 		<div class="myhotel">
-		<span class="myB"><b>My Business</b></span><br>
+		   <span class="myB"><b>My Business</b>&nbsp;<a href="#" id="newHotel" style="float:right;">업장추가</a></span><br>  		   
+		
 			<div class="s_con">
 				<div class="slider">
 					<c:forEach items="${placeList}" var="place" varStatus="loop">
@@ -263,10 +263,7 @@ a {
 					<c:when test="${empty placeList}">
 						<div class="s_control">
 							<h3>등록된 업장 정보가 없습니다.</h3>
-						</div>
-						<div class="s_control">
-							<button class="addH">업장추가</button>
-						</div>
+						</div> 
 					</c:when>
 					<c:otherwise>
 						<c:set var="userExists" value="false" />
@@ -280,9 +277,6 @@ a {
 							<c:when test="${not userExists}">
 								<div class="s_control">
 									<h3>등록된 업장 정보가 없습니다.</h3>
-								</div>
-								<div class="s_control">
-									<button class="addH">업장추가</button>
 								</div>
 							</c:when>
 							<c:otherwise>
@@ -489,6 +483,10 @@ $(document)
 
 .on("click", "#myreviews", function() {
 	window.location.href = "/MyYonolja_myreview";
+})
+
+.on("click", "#newHotel", function() {
+	window.location.href = "/host_addPlace"
 })
 
 //

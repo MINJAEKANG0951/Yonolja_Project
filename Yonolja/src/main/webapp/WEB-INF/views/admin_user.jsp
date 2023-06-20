@@ -5,12 +5,17 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous"> -->
 <title>Insert title here</title>
 </head>
 <%@ include file ="./structure/header.jsp" %>
 <style>
-div{
+body{
+display: block;
+padding-left:210px;
+padding-top:150px;
+}
+.amdin_user{
 text-align: center;
 
 }
@@ -18,14 +23,29 @@ ul{
 justify-content: center;
 
 }
+
+table{
+
+border-left: none;
+border-right: none;
+}
+
+tr:first-child{
+border: 1px;
+}
+td{
+
+}
 </style>
 <body>
+<%@ include file ="./structure/admin_side.jsp" %>
 <div class="amdin_user">
 	<div class=admin_user_management>
 		
 		<h2 id=user_management_title>회원관리</h2>
-		<a href='/admin'>관리자 페이지</a>
-		<table border="1px solid:black" id='admin_member_management_table' class="table table-striped">
+		<br>
+		<!-- 0614 추가한것 테이블 크기 고정, 테이블 중앙, 페이징 처리에 bootstrap 추가(이건 전거와 지금거 차이 보고 다시정할것) -->
+		<table border="1px solid:black" id='admin_member_management_table' class="table table-striped" style="width: 1000px; margin-left: auto;margin-right: auto;">
 			<tr>
 				<td>회원번호</td>
 				<td>이름</td>
@@ -37,8 +57,8 @@ justify-content: center;
 			</tr>
 		</table>
 		<div id=member_pagenumber>
-			<ul id=boot_pagination class=pagination>
-			</ul> 
+			<!--  <ul id=boot_pagination class=pagination>
+			</ul>  -->
 		</div>
 		<div id=pagenumber>
 
@@ -113,18 +133,18 @@ $(document)
     // 나머지 a 태그의 글자 굵기 초기화
     $('#pagenumber>a').not(this).css('font-weight', 'normal');
 })
-.on('click','#boot_pagination>li',function(){
-	console.log($(this).val())
+.on('click','#member_pagenumber>a',function(){
+	console.log($(this).text())
 	console.log($(this).children('a').text())
-	memberlist($(this).children('a').text())
-    //$(this).css('font-weight', 'bold');
+	memberlist($(this).text())
+   $(this).css('font-weight', 'bold');
 
      //나머지 a 태그의 글자 굵기 초기화
-   // $('#member_pagenumber>a').not(this).css('font-weight', 'normal');
+    $('#member_pagenumber>a').not(this).css('font-weight', 'normal');
   
   	
- 	$('#boot_pagination>li').addClass('active')
- 	$('#boot_pagination>li').not(this).removeClass('active')  
+// 	$('#boot_pagination>li').addClass('active')
+ //	$('#boot_pagination>li').not(this).removeClass('active')  
 })
 
 .on('click','#admin_user_search_btn',function(){
@@ -178,18 +198,18 @@ function paging(){
 			if(data!=0){
 				let str="";
 					for(i=1;i<=data;i++){
-						//str+=" <a id=admin_user_page"+i+" value="+i+">"+i+"</a>"
-						str+=" <li class=page-item id=page_item"+i+" ><a class=page-link id=admin_user_page"+i+" value="+i+">"+i+"</a></li>"
+						str+=" <a id=admin_user_page"+i+" value="+i+">"+i+"</a>"
+						//str+=" <li class=page-item id=page_item"+i+" ><a class=page-link id=admin_user_page"+i+" value="+i+">"+i+"</a></li>"
 						
 					}
 				
 					console.log(str)
-					//$('#member_pagenumber').empty()
-					$('#boot_pagination').empty()
-					//$('#member_pagenumber').append(str)
-					$('#boot_pagination').append(str)
-					$('#page_item1').addClass('active')
-					//$('#admin_user_page1').css('font-weight', 'bold');
+					$('#member_pagenumber').empty()
+					//$('#boot_pagination').empty()
+					$('#member_pagenumber').append(str)
+					//$('#boot_pagination').append(str)
+					//$('#page_item1').addClass('active')
+					$('#admin_user_page1').css('font-weight', 'bold');
 					
 			}
 		}

@@ -8,13 +8,70 @@
   <!-- Bootstrap CSS -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
+<%@ include file ="./structure/header.jsp" %>
+<!-- 이미지관련 스타일태그 -->
+<style>
+ #pictures {
+      border: 1px solid black;
+      min-width: 300px;
+      min-height: 300px;
+      display: flex;
+      flex-wrap: wrap;
+    }
+    .img {
+      width: 140px;
+      height: 140px;
+      border: 1px solid black;
+       margin: 5px; 
+      cursor: pointer;
+      position: relative;
+    }
+    .img:hover {
+      border: 3px solid black;
+    }
+    .frame {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 1px solid black;
+      display: none;
+    }
+    .img:hover .frame {
+      display: block;
+    }
+    .photo {
+      width: 100%;
+      height: 100%;
+    }
+    .xButton {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 20%;
+      height: 20%;
+      cursor: pointer;
+    }
+    .xButton:hover {
+      transition: 0.5s;
+      width: 23%;
+      height: 23%;
+    }
+</style>
 <body>
 
   <!-- 업장정보 수정 버튼 -->
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modifyBusinessModal" id="updatePlace">
     업장정보 수정
   </button>
-
+  
+  
+ <!-- 업장사진 관리 버튼 -->
+  <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#placePicModal" id="updatePlacePic">
+    업장사진 관리
+  </button>
+ 
   <!-- 객실타입 버튼 -->
   <button type="button" id="btnRoomtype"class="btn btn-primary" data-toggle="modal" data-target="#roomTypeModal">
     객실타입
@@ -23,6 +80,11 @@
   <!-- 객실관리 버튼 -->
   <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#roomManagementModal">
     객실관리
+  </button>
+  
+   <!-- 사진관리 버튼 -->
+  <button type="button" id="btnManagePic" class="btn btn-primary" data-toggle="modal" data-target="#picManageModal">
+    객실타입사진관리
   </button>
 
   <!-- 업장정보 수정 모달 -->
@@ -77,13 +139,9 @@
               <label for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
             </c:forEach>
             
-            <h3> 사업장 보유 옵션 </h3>
-            <c:forEach items="${pfeatures}" var="pfeature">
-              <input type="checkbox" id="pfeature${pfeature.place_option_seq}" name="pfeatures" value="${pfeature.place_option_seq}">
-              <label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>
-            </c:forEach>
 
-            <input type="file" id="pimage" name="img" accept="image/*" multiple>
+
+          
  
         </div>
         <div class="modal-footer">
@@ -96,7 +154,7 @@
   </div>
 
   <!-- 객실타입 모달 -->
-  <div class="modal fade" id="roomTypeModal" tabindex="-1" role="dialog" aria-labelledby="roomTypeModalLabel" aria-hidden="true">
+   <div class="modal fade" id="roomTypeModal" tabindex="-1" role="dialog" aria-labelledby="roomTypeModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
@@ -113,9 +171,7 @@
             
             <label for="roomName">객실 이름:</label><br>
             <input type="text" id="roomtype_name" name="roomtype_name"><br>
-            
-            <label for="roomImage">객실 사진:</label><br>
-            <input type="file" id="roomtype_imgs" name="roomtype_imgs" accept="image/*" multiple><br>
+          
             
             <label for="maxCapacity">객실 최대 숙박 인원:</label><br>
             <input type="number" id="roomtype_capacity" name="roomtype_capacity"><br>
@@ -123,9 +179,12 @@
             <label for="nightRate">1박 금액:</label><br>
             <input type="number" id="roomtype_price" name="roomtype_price"><br>
             
-<!--             <label for="amenities">객실편의시설:</label><br> -->
-<!--             <textarea id="roomtype_options" name="roomtype_options"></textarea><br> -->
-            
+            <label for="amenities">객실편의시설:</label><br>
+             <c:forEach items="${pfeatures}" var="pfeature">
+              	<input type="checkbox" id="pfeature${pfeature.place_option_seq}" name="pfeatures" value="${pfeature.place_option_seq}">
+              	<label for="pfeature${pfeature.place_option_seq}">${pfeature.place_option_name}</label><br>
+             </c:forEach>
+
             <label for="roomGuide">객실 설명:</label><br>
             <textarea id="roomtype_guide" name="roomtype_guide"></textarea><br>
             
@@ -140,6 +199,7 @@
       </div>
     </div>
   </div>
+  
 
   <!-- 객실관리 모달 -->
   <div class="modal fade" id="roomManagementModal" tabindex="-1" role="dialog" aria-labelledby="roomManagementModalLabel" aria-hidden="true">
@@ -155,11 +215,11 @@
           <h2>객실 정보 입력</h2>
           <form action="/addRoom" method="POST" id="roomForm">
          
-            <input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
+            <input type="text" id="place_seq" name="place_seq" value="${place_seq}" readonly><br>
             <label for="roomTypeId">객실타입 이름:</label><br>
           <select id="roomTypeId" name="roomTypeId">
             <c:forEach items="${roomTypes}" var="roomType" >
-            <option value="${roomType.roomtype_seq}">"${roomType.roomtype_name}"</option>
+            <option value="${roomType.roomtype_seq}">${roomType.roomtype_name}</option>
            </c:forEach>
           </select><br>
 
@@ -169,6 +229,77 @@
             
             <input type="submit" value="제출">
           </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- 사진관리 모달 -->
+  <div class="modal fade" id="picManageModal" tabindex="-1" role="dialog" aria-labelledby="roomManagementModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="manageRoomPhoto"> 객실사진관리</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h2>객실 타입 사진입력</h2>
+            <input type="text" id="picRoomType_seq" name="picRoomType_seq" value="" readonly><br>
+			<hr>
+				<button id=addFile> 파일추가하기 </button><br><br>
+				<button id=reset> 비우기 </button><br><br>
+				<input type="file" id=imgInput name="img" accept="image/*" ><br><br>
+			<hr>
+				
+			<h1>미리보기</h1>
+			<div id=pictures>
+			
+			
+			</div>
+             
+       
+          
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
+    
+        </div>
+      </div>
+    </div>
+  </div>
+  
+   <!-- 업장 사진관리 모달 -->
+  <div class="modal fade" id="placePicModal" tabindex="-1" role="dialog" aria-labelledby="roomManagementModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="managePlacePhoto"> 업장사진관리</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <h2>업장 사진입력</h2>
+            <input type="text" id="place_seq" name="place_seq" value="" readonly><br>
+			<hr>
+				<button id=addFile> 파일추가하기 </button><br><br>
+				<button id=reset> 비우기 </button><br><br>
+				<input type="file" id=imgInput name="img" accept="image/*" ><br><br>
+			<hr>
+				
+			<h1>미리보기</h1>
+			<div id=pictures>
+			
+			
+			</div>
+             
+       
+          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">닫기</button>
@@ -205,7 +336,14 @@
       		</td>
             <td>${roomType. roomtype_capacity}</td>
             <td>${roomType.roomtype_price}</td>
-            <td>${roomType.roomtype_options}</td>
+            <td>
+<%--             <c:forEach items="${roomTypes_select}" var="roomTypes_selects"> --%>
+<%--           		 ${roomTypes_selects.place_option_name} --%>
+<%--         	</c:forEach> --%>
+              <c:forEach items="${roomType.options}" var="option">
+                ${option.place_option_name}
+              </c:forEach>
+        	</td>
             <td>${roomType.roomtype_guide}</td>
           </tr>
         </c:forEach>
@@ -221,7 +359,7 @@
     	<input type="hidden" id="place_seq" name="place_seq" value="${place_seq}" readonly>
    			 <select id="showRoomtype" name="roomTypeNum">
            		 <c:forEach items="${roomTypes}" var="roomType" >
-            	 <option value="${roomType.roomtype_seq}">"${roomType.roomtype_name}"</option>
+            	 <option value="${roomType.roomtype_seq}">${roomType.roomtype_name}</option>
           		 </c:forEach>
           	 </select><br>
         <input type="button" id="fetchRoomsButton" value="조회">
@@ -234,6 +372,7 @@
           <th></th> <!-- 체크박스를 위한 새로운 열 -->
           <th>객실타입 이름</th>
           <th>객실 번호</th>
+          <th>객실 고유번호</th>
         </tr>
       </thead>
       <tbody id="roomTableBody">
@@ -304,7 +443,6 @@ $(document)
 	
 	$('#pguide').val(null);
 	$('input[name=environments]').prop('checked',false);
-	$('input[name=pfeatures]').prop('checked',false);
 	
 	
 	// 채우기
@@ -324,7 +462,7 @@ $(document)
 			data.checkout;
 			data.guide;
 			data.environments;
-			data.options;
+// 			data.options; placeopt 는 roomtypeopt로 변경예정
 			
 			$('#pname').val(data.name);
 			for(i=0;i<$('#ptype option').length;i++){
@@ -359,16 +497,16 @@ $(document)
 					}
 				}
 			}
-			if(data.options==null){
-			} else {
-				optionElements = data.options.split(",");
-				for(i=0;i<$('input[name=pfeatures]').length;i++){
-					option_seq = $('input[name=pfeatures]:eq('+i+')').val();
-					if( optionElements.includes(option_seq)  ){
-						$('input[name=pfeatures]:eq('+i+')').prop('checked',true);
-					}
-				}
-			}
+// 			if(data.options==null){
+// 			} else {
+// 				optionElements = data.options.split(",");
+// 				for(i=0;i<$('input[name=pfeatures]').length;i++){
+// 					option_seq = $('input[name=pfeatures]:eq('+i+')').val();
+// 					if( optionElements.includes(option_seq)  ){
+// 						$('input[name=pfeatures]:eq('+i+')').prop('checked',true);
+// 					}
+// 				}
+// 			} // place option->roomtype opt로 변경 
 			
 		}
 	
@@ -393,29 +531,27 @@ $(document)
       checkEnv.push($(this).val());
     });
     console.log(checkEnv);
-
-    var checkOpt = [];
-    $("input[name='pfeatures']:checked").each(function() {
-      checkOpt.push($(this).val());
-    });
-
-    console.log(checkOpt);
-    console.log($('#pcheckin').val());
-    console.log($('#pcheckout').val());
-    console.log($('#pguide').val());
+	/*
+	    var checkOpt = [];
+	    $("input[name='pfeatures']:checked").each(function() {
+	      checkOpt.push($(this).val());
+	    });
+	*/
+ 
+ 
 
 
 
-var checkEnv = '';
-$("input[name='environments']:checked").each(function(index) {
-  if (index === 0) {
-    checkEnv += $(this).val();
-  } else {
-    checkEnv += "," + $(this).val();
-  }
-});
+	var checkEnv = '';
+	$("input[name='environments']:checked").each(function(index) {
+	  if (index === 0) {
+	    checkEnv += $(this).val();
+	  } else {
+	    checkEnv += "," + $(this).val();
+	  }
+	});
 
-
+	/*
     checkOpt = '';
     for (i = 0; i < $("input[name=pfeatures]:checked").length; i++) {
       if (i == 0) {
@@ -425,7 +561,7 @@ $("input[name='environments']:checked").each(function(index) {
           $("input[name=pfeatures]:checked:eq(" + i + ")").val();
       }
     }
-
+	*/
     $.ajax({
       url: '/modifyPlace',
       type: 'post',
@@ -439,8 +575,8 @@ $("input[name='environments']:checked").each(function(index) {
         pcheckin: $('#pcheckin').val(),
         pcheckout: $('#pcheckout').val(),
         pguide: $('#pguide').val(),
-        checkEnv: checkEnv,
-        checkOpt: checkOpt
+        checkEnv: checkEnv
+ //     checkOpt: checkOpt
         // 사진 수정 기능 필요 
       },
       success: function(data) {
@@ -490,6 +626,7 @@ $(document)
       $("#roomtype_name").val(roomtype_name);
       $("#roomtype_capacity").val(roomtype_capacity);
       $("#roomtype_price").val(roomtype_price);
+      $("#roomtype_price").val(roomtype_option);
       $("#roomtype_guide").val(roomtype_guide);
       
       // input type submit value를 수정으로 바꿉니다.
@@ -553,6 +690,7 @@ $(document).ready(function() {
                     row.append($("<td>").html('<input type="checkbox" class="room-checkbox" />')); // 체크박스 추가
                     row.append($("<td>").text(rooms[i].roomtype_name));
                     row.append($("<td>").text(rooms[i].room_number));
+                    row.append($("<td>").text(rooms[i].room_seq));
                     $("#roomTableBody").append(row);
                 }
             },
@@ -604,15 +742,15 @@ $(document).ready(function() {
             var row = $(this).closest("tr");
             // 삭제할 객실 정보 가져오기
 
-            var roomNumber = row.find("td:eq(2)").text();
-            console.log(roomNumber);
+            var roomSeq = row.find("td:eq(3)").text(); // 변수 roomSeq로 수정
+            console.log(roomSeq);
 
             // 서버에 AJAX 요청으로 객실 삭제하기
             $.ajax({
                 url: '/deleteRoomNum', // 객실을 삭제하기 위한 엔드포인트
                 type: 'POST',
                 data: {
-                    roomNumber: roomNumber,
+                	roomSeq: roomSeq,
                     placeSeq: placeSeq // place_seq를 서버에 보내기
                 },
                 success: function(response) {
@@ -620,7 +758,7 @@ $(document).ready(function() {
                     if(response.status == 'success') {
                         row.remove();
                         fetchRooms(); // 객실 삭제 후 객실 목록 다시 불러오기
-                    } else {
+                    }     else {
                         // 서버에서 반환된 오류를 처리합니다
                         console.error('객실 삭제 오류: ' + response.message);
                     }
@@ -638,66 +776,276 @@ $(document).ready(function() {
 $(document).ready(function() {
     $('#roomForm').on('submit', function(event) {
         event.preventDefault(); // 원래의 submit 동작을 막습니다.
-        var roomTypeId = $('#roomTypeId').val();
+        var place_seq = $('#place_seq').val();
         var roomNumber = $('#roomNumber').val();
 
-        // 서버에 AJAX 요청으로 객실 존재 확인하기
         $.ajax({
             url: '/checkRoomExists', 
             type: 'GET',
             data: {
-                roomTypeId: roomTypeId,
+                place_seq: place_seq,
                 roomNumber: roomNumber
             },
             success: function(response) {
-                // 서버가 성공적으로 응답하면, 객실이 존재하는지 확인합니다
-                if(response.exists) {
-                    // 객실이 이미 존재하면 알림을 보여줍니다
-                    alert('같은 객실타입에 해당 객실번호가 이미 존재합니다.');
-                } else {
-                    // 객실이 존재하지 않으면 폼을 제출합니다
-                    $('#roomForm').off('submit').submit();
-                }
+            	   if (response > 0) {
+                       alert('같은 업장에 해당 객실번호가 이미 존재합니다.');
+                   } else {
+    
+                       addroom();
+                   }
+
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                // 서버와의 통신 중 발생하는 오류를 처리합니다
                 console.error('서버와의 통신 오류: ' + textStatus, errorThrown);
             }
         });
     });
 });
+
+function addroom() {
+    // addroom 메서드 구현
+    // 폼을 제출하거나 필요한 로직을 수행합니다
+    $('#roomForm').off('submit').submit();
+}
+
 ////////////place Delete////////////////////////////////
 
 $(document).ready(function() {
-    $("#btnDeletePlace").click(function(){
-        var url = window.location.pathname;
-        var placeSeq = url.substring(url.lastIndexOf('/') + 1);
+   
+		$("#btnDeletePlace").click(function() {
+				var url = window.location.pathname;
+				var placeSeq = url.substring(url.lastIndexOf('/') + 1);
 
-        // 사용자에게 삭제를 진행할 것인지 확인합니다.
-        var isConfirm = confirm("정말로 삭제하시겠습니까?");
+				// 사용자에게 삭제를 진행할 것인지 확인합니다.
+				var isConfirm = confirm("정말로 삭제하시겠습니까?");
 
-        // 사용자가 '확인'을 눌렀을 때만 삭제 요청을 보냅니다.
-        if(isConfirm) {
-            $.ajax({
-                url: "/deletePlace/" + placeSeq,
-                type: 'DELETE',
-                success: function(result) {
-                    // 삭제가 성공적으로 처리된 후, 페이지를 /mypage로 리디렉트합니다.
-                    window.location.href = "/mypage";
-                }
-            });
-        }
+				// 사용자가 '확인'을 눌렀을 때만 삭제 요청을 보냅니다.
+				if (isConfirm) {
+					$.ajax({
+						url : "/deletePlace/" + placeSeq,
+						type : 'DELETE',
+						success : function(result) {
+							// 삭제가 성공적으로 처리된 후, 페이지를 /mypage로 리디렉트합니다.
+							window.location.href = "/mypage";
+						}
+					});
+				}
+			});
+		});
+		
+//////////////////// photo preview 관련 /////////////////////
+  $(document).ready(function() {
+      refreshImgs();
     });
+
+    $(document).on('click', '#addFile', function() {
+      $('#imgInput').trigger('click');
+    }).on('click', '#reset', function() {
+      $('#imgInput').val(null);
+    }).on('input', '#imgInput', function() {
+      /*var imgfile = $(this)[0].files[0];
+      var formData = new FormData();
+      formData.append('img', imgfile);
+      formData.append('roomtype_seq', $('#picRoomType_seq').val());  // 객실 타입 ID 추가
+
+      $.ajax({
+        url: '/addImg',
+        type: 'post',
+        processData: false,
+        contentType: false,
+        data: formData,
+        success: function() {
+          refreshImgs();
+          
+        }
+      });*/
+      addPhoto($(this),'roomtype_seq','picRoomType_seq')
+      
+    })
+    
+	.on('click', '.xButton', function() {
+
+  		if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
+			btnDelete($(this),'roomtype_seq','picRoomType_seq')
+  		}
+	});
+
+
+  
+
+    function refreshImgs() { //업장용만들기 
+      $('#pictures').empty();
+      $.ajax({
+        url: '/getImgs',
+        type: 'post',
+//         여기수정함
+        data: { roomtype_seq: $('#picRoomType_seq').val() },
+        dataType: 'text',
+        success: function(data) {
+          $('#pictures').empty();
+          if (data != '-') {
+            imgs = data.split(",");
+
+            for(i=0;i<imgs.length;i++){
+				if(i==0){
+				    str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton"></div>';
+					$('#pictures').append(str);
+				} else {
+			
+				   str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton" ></div>';
+	               $('#pictures').append(str);
+	               
+				}
+
+			}
+
+          }
+        }
+      });
+    }
+
+function addPhoto(a,b,c){
+    var imgfile = a[0].files[0];
+    var formData = new FormData();
+    formData.append('img', imgfile);
+    formData.append(b, $("#"+c).val());  // 객실 타입 ID 추가
+// 	d='/addImg'+d
+    $.ajax({
+      url: '/addImg',
+      type: 'post',
+      processData: false,
+      contentType: false,
+      data: formData,
+      success: function() {
+       
+    	  refreshImgs()
+      }
+    });
+}
+
+function btnDelete(a,b,c){
+	 
+		    var imgContainer = a.closest('.img');
+		    console.log(imgContainer)
+		    var src = imgContainer.find('img.photo').attr('src');
+			console.log(src)
+		    var data = {
+		      src: src,
+		     }; 
+		      data[b] = $('#'+c).val()  // 객실 타입 ID 추가
+		    
+		console.log(data)
+		    $.ajax({
+		      url:'/deleteImg', 
+		      type:'post', 
+		      data: data,
+		      success:function(){
+		        refreshImgs();
+		      }
+		    });
+		  
+}
+////////////////////////////////////객실타입 insert 코드//////////////////////////
+$(document)
+.on('click','#btnAddroomtype',function(){
+	alert('눌림');
+		var place_seq = $("#place_seq").val(); // place_seq 값을 가져옴
+	    var roomtype_name = $("#roomtype_name").val();
+	    var roomtype_capacity = $("#roomtype_capacity").val();
+	    var roomtype_price = $("#roomtype_price").val();
+	    var roomtype_guide = $("#roomtype_guide").val();
+
+	
+	var selectedOptions = [];
+	$('input[name="pfeatures"]:checked').each(function() {
+	    selectedOptions.push($(this).val());
+	});
+	console.log(selectedOptions);
+	
+	$.ajax({
+	    url: "/insertRoomType",
+	    type: "POST",
+	    data: {
+	        place_seq: place_seq,
+	        roomtype_name: roomtype_name,
+// 	        roomtype_imgs: roomtype_imgs,
+	        roomtype_capacity: roomtype_capacity,
+	        roomtype_price: roomtype_price,
+	        pfeatures: selectedOptions.join(","),
+	        roomtype_guide: roomtype_guide
+	    },
+	    success: function(response) {
+	        // 성공적으로 처리된 경우 실행되는 코드
+	        console.log(response);
+	    },
+	    error: function(xhr) {
+	        // 에러 발생 시 실행되는 코드
+	        console.log(xhr.responseText);
+	        console.log('Error');
+	    }
+	});
+
+	
+})
+
+
+//////////////////사진 클릭시 사진 update delete 가능한 모달 실행 코드 /////////////////
+$(document).ready(function() {
+  $("#tblRoomtype tbody > tr > td > img").click(function(event) {
+    // 이미지를 클릭했을 때 실행되는 코드
+	event.stopPropagation(); // 이벤트 전파 중지
+  	var roomtype_seq = $(this).closest('tr').find("td:eq(0)").text();
+    $("#picManageModal").modal("show");
+    $("#picRoomType_seq").val(roomtype_seq);
+    refreshImgs();//여기수정함 0618 
+  
+    // 추가 동작 실행 코드를 여기에 작성하세요
+    // 예를 들어, 모달 대신 다른 기능을 실행하거나 다른 이벤트를 트리거하는 코드를 추가할 수 있습니다
+  });
+
+  $("#tblRoomtype tbody > tr").click(function(event) {
+    if (event.target.tagName !== 'IMG') {  // 이미지가 아닌 다른 부분을 클릭했을 때만 실행
+      var roomtype_seq = $(this).find("td:eq(0)").text();
+      var roomtype_name = $(this).find("td:eq(1)").text();
+      var roomtype_capacity = $(this).find("td:eq(3)").text();
+      var roomtype_price = $(this).find("td:eq(4)").text();
+      var roomtype_guide = $(this).find("td:eq(6)").text();
+      
+      console.log(roomtype_seq);
+  
+      $("#roomtype_seq").val(roomtype_seq);
+      $("#roomtype_name").val(roomtype_name);
+      $("#roomtype_capacity").val(roomtype_capacity);
+      $("#roomtype_price").val(roomtype_price);
+      $("#roomtype_guide").val(roomtype_guide);
+      
+      $("input[type=submit]").val("수정");
+      
+      var actionUrl = roomtype_seq !== '' ? '/modifyRoomtype' : '/insertRoomType';
+      $("#roomTypeForm").attr("action", actionUrl);
+
+      $("#roomTypeModal").modal("show");
+    }
+  });
 });
-
-
+/* $(document)
+.ready(function(){
+	getRoomTypeOptionName()
+})
+/* .on("click","#tblRoomtype tr:gt(1) td:nth-child(6)",function(){
+	alert($(this).text())
+	getRoomTypeOptionName
+}) */
+		
+// function getRoomTypeOptionName(){
 	
-	
-
-
-    
-    
-    
- </script>
+// 	let number = $("#tblRoomtype tr:gt(1) td:nth-child(6)").text()
+// 	alert(number.length)
+// 	console.log(number)
+// }		 
+		
+		
+		
+	</script>
 </body>
 </html>

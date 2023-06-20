@@ -1,59 +1,201 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<title>admin</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>사이드바 테스트</title>
+    <link href="css/styles.css" rel="stylesheet" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
-<%@ include file ="./structure/header.jsp" %>
-
 <style>
+    #layoutSidenav_nav{
+        position: absolute;
+        left:0px;
+        top:85px;
+        width: 220px;
+        height: 828px;
+
+ 
+    }
 .admin_img_inform {
     width: 50px;
     height: 50px;
   
 }
-#admin_page{
-	text-align: center;
+.modal{
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
-
-#layoutSidenav_nav{
-        position: relative;
-        width: 200px;
-        height: 1000px;
-
- 
-    }
 </style>
 <body>
-<%@ include file ="./structure/admin_side.jsp" %>
-<div class='admin_page'>
-	<div class='admin_page_login'>
-		<input type='hidden' id='adminCheck' value="${adcheck}">
-	</div>
-	<div class='admin_review'>
-		<a href="admin_review">고객리뷰관리</a>
-	</div>
-	<div class='admin_post'>
-		<a href="admin_post">고객센터 관리</a>
-	</div>
-	<div class='admin_user'>
-		<a href="admin_user">회원관리</a>
-	</div>
 
+    <div id="layoutSidenav_nav">
+        <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <div class="sb-sidenav-menu-heading">회원관리</div>
+                    <a class="nav-link" href="/admin_user" onclick="scrollToSection(event,'/admin_user')">
+                        <div class="sb-nav-link-icon" ><i class="fas fa-tachometer-alt"></i></div>
+                        회원관리
+                    </a>
 
-	<div id=admin_place_option_and_type>
-		<table>
+                    <div class="sb-sidenav-menu-heading">게시글/리뷰 관리</div>
+
+                    <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav">
+                        <!--      <a class="nav-link" href="layout-static.html">Static Navigation</a>
+                            <a class="nav-link" href="layout-sidenav-light.html">Light Sidenav</a> -->
+                        </nav>
+                    </div>
+                    <a class="nav-link collapsed"  data-bs-toggle="collapse" data-bs-target="#collapsePages" aria-expanded="false" aria-controls="collapsePages">
+                        <div class="sb-nav-link-icon"><i class="fas fa-book-open"></i></div>
+                        게시글/리뷰
+                        <div class="sb-sidenav-collapse-arrow"><i class="fas fa-angle-down"></i></div>
+                    </a>
+                    <div class="collapse" id="collapsePages" aria-labelledby="headingTwo" data-bs-parent="#sidenavAccordion">
+                        <nav class="sb-sidenav-menu-nested nav accordion" id="sidenavAccordionPages" >
+                            <a class="nav-link collapsed" href="/admin_post" onclick="scrollToSection(event, '/admin_post')">
+                            <!--  이동 안되는 건데왜 안되는지 모르겟음 우선 지워서 되는지는 확인이 됨<a class="nav-link collapsed" href="/admin_post" data-bs-toggle="collapse" data-bs-target="#pagesCollapseAuth" aria-expanded="true" aria-controls="pagesCollapseAuth"> -->
+                                게시글
+                            </a>
+                            <a class="nav-link collapsed" href="/admin_review" onclick="scrollToSection(event, '/admin_review')">
+                            <!--이동 안되는 건데왜 안되는지 모르겟음 우선 지워서 되는지는 확인이 됨 <a class="nav-link collapsed" href="/admin_review" data-bs-toggle="collapse" data-bs-target="#pagesCollapseError" aria-expanded="true" aria-controls="pagesCollapseError"> -->
+                                리뷰                            
+                            </a>
+
+                        </nav>
+                    </div>
+                    <div class="sb-sidenav-menu-heading">숙박업체 옵션/타입</div>
+                    <a class="nav-link" id=Yonolja_place_type>
+                        <div class="sb-nav-link-icon"><i class="fas fa-chart-area"></i></div>
+                        숙박업체 타입
+                    </a>
+                    <a class="nav-link"id=Yonolja_place_option >
+                        <div class="sb-nav-link-icon"><i class="fas fa-table"></i></div>
+                        숙박업체 옵션
+                    </a>
+                </div>
+            </div>
+            <div class="sb-sidenav-footer">
+                yonolja_admin
+            </div>
+        </nav>
+    </div>
+    <!-- 타입 -->
+    <div class="modal" id="type_model">
+ 		<div class="modal-dialog" style="width: 700px;height: 400px" >
+    		<div class="modal-content">
+          <!-- Modal Header -->
+      			<div class="modal-header">
+        			<h4 class="modal-title">place type test</h4>
+        			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      			</div>
+			<div id=yonolja_place_type_dig >
+	
+				<table>
+					<tr>
+						<td>
+							<select id='yonolja_place_type_list' size=6></select>
+						</td>
+						<td>
+							<table id='yonolja_place_type_table' border=1px;>
+								<tr>
+									<td>
+										<a>호텔타입 이름</a>
+									</td>
+									<td>
+										<input type=hidden id=type_seq value="">
+										<input type=text id=type_name value="">
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<a>호텔타입 이미지</a>
+									</td>
+									<td>
+										<input type="file" id=type_file value=""><br>
+										<img class=admin_img_inform id=type_img >
+										
+										
+									</td>				
+								</tr>
+							</table>
+							<input type='button' id='yonolja_place_type_add' value=추가/수정>
+							<input type='button' id='yonolja_place_type_delete' value=삭제>
+							<input type="button" id=type_reset value="비우기">
+							
+							</td>
+					</tr>
+				</table>
+			</div>
+          <!-- Modal footer -->
+	      	<div class="modal-footer">
+	        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+	     	</div>
+    		</div>
+  		</div>
+	</div>
+<!-- 옵션  -->
+	<div class="modal" id="option_model">
+	  <div class="modal-dialog">
+	    <div class="modal-content">
+	          <!-- Modal Header -->
+	      <div class="modal-header">
+	        <h4 class="modal-title">place option test</h4>
+	        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+	      </div>
+	
+		 <div id=yonolja_place_option_dig>
+		
+			<table>
 			<tr>
-				<td><a id=Yonolja_place_type>Yonolja_place_type</a></td>
-				<td><a id=Yonolja_place_option>Yonolja_place_option</a></td>
-			</tr>
-		</table>
+				<td>
+					<select id='yonolja_place_option_list' size=6></select>
+				</td>
+				<td>
+					<table id='yonolja_place_option_table' border=1px;>
+						<tr>
+							<td>
+								<a>호텔옵션 이름</a>
+							</td>
+							<td>
+								<input type=hidden id=option_seq value="">
+								<input type=text id=option_name value="">
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<a>호텔옵션 이미지</a>
+							</td>
+							<td>
+								<input type="file" id=option_file value=""><br>
+								<img class=admin_img_inform id=option_img >
+								
+								
+							</td>				
+						</tr>
+					</table>
+					<input type='button' id='yonolja_place_option_add' value=추가/수정>
+					<input type='button' id='yonolja_place_option_delete' value=삭제>
+					<input type="button" id=reset_option value="비우기">
+					
+					</td>
+				</tr>
+			</table>
+		</div>
+	          <!-- Modal footer -->
+	      <div class="modal-footer">
+	        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
+	      </div>
+	    </div>
+	  </div>
 	</div>
+<!-- 에러시 다이얼로그로 수정용 -->
 	<!-- <div id=yonolja_place_type_dig style="display:none">
 	
 		<table>
@@ -132,122 +274,14 @@
 		</table>
 	</div>
 	 -->
-<div class="modal" id="type_model">
-  <div class="modal-dialog" style="width: 700px;height: 400px" >
-    <div class="modal-content">
-          <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">place type test</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-<div id=yonolja_place_type_dig >
-	
-		<table>
-		<tr>
-			<td>
-				<select id='yonolja_place_type_list' size=6></select>
-			</td>
-			<td>
-				<table id='yonolja_place_type_table' border=1px;>
-					<tr>
-						<td>
-							<a>호텔타입 이름</a>
-						</td>
-						<td>
-							<input type=hidden id=type_seq value="">
-							<input type=text id=type_name value="">
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<a>호텔타입 이미지</a>
-						</td>
-						<td>
-							<input type="file" id=type_file value=""><br>
-							<img class=admin_img_inform id=type_img >
-							
-							
-						</td>				
-					</tr>
-				</table>
-				<input type='button' id='yonolja_place_type_add' value=추가/수정>
-				<input type='button' id='yonolja_place_type_delete' value=삭제>
-				<input type="button" id=reset value="비우기">
-				
-				</td>
-			</tr>
-		</table>
-	</div>
-          <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
-      </div>
-    </div>
-  </div>
-</div>
 
-<div class="modal" id="option_model">
-  <div class="modal-dialog">
-    <div class="modal-content">
-          <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">place option test</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-	 <div id=yonolja_place_option_dig>
-	
-		<table>
-		<tr>
-			<td>
-				<select id='yonolja_place_option_list' size=6></select>
-			</td>
-			<td>
-				<table id='yonolja_place_option_table' border=1px;>
-					<tr>
-						<td>
-							<a>호텔옵션 이름</a>
-						</td>
-						<td>
-							<input type=hidden id=option_seq value="">
-							<input type=text id=option_name value="">
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<a>호텔옵션 이미지</a>
-						</td>
-						<td>
-							<input type="file" id=option_file value=""><br>
-							<img class=admin_img_inform id=option_img >
-							
-							
-						</td>				
-					</tr>
-				</table>
-				<input type='button' id='yonolja_place_option_add' value=추가/수정>
-				<input type='button' id='yonolja_place_option_delete' value=삭제>
-				<input type="button" id=reset_option value="비우기">
-				
-				</td>
-			</tr>
-		</table>
-	</div>
-          <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">닫기</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-	 
-</div>
-
+    
 </body>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="js/scripts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-
 <script>
 // model 사이즈 변경이 필수적 화면 출력 간 버튼 색상 변경 필요해 보임
 $(document)
@@ -293,12 +327,25 @@ $(document)
 .on('change','#type_file',function(event){
 
 	var file = event.target.files[0];
-	  
-	    var reader = new FileReader();
+	  console.log(file)
+	   /* var reader = new FileReader();
 	    reader.onload = function(event) {
 	      $('#type_img').attr('src', event.target.result);
 	    };
-	    reader.readAsDataURL(file);
+	    reader.readAsDataURL(file);*/
+	 if(file!=null){
+		    var reader = new FileReader();
+		    reader.onload = function(event) {
+		      $('#type_img').attr('src', event.target.result);
+		    };
+		    reader.readAsDataURL(file);		 
+	 }else{
+		 console.log("check img")
+		  $("#type_img").remove()
+		    
+		 $('#yonolja_place_type_table tr:eq(1) td:eq(1)').append("<img class=admin_img_inform id=type_img>")
+		    
+	 }
 	 
 })
 
@@ -336,7 +383,7 @@ $(document)
 							if(data=="ok"){
 								alert('추가되었습니다')
 									type_list()
-									reset()
+									type_reset()
 							}else {
 								alert('실패하였습니다')
 							}
@@ -403,7 +450,7 @@ $(document)
 									if(data=="ok"){
 										alert('변경되었습니다')
 											type_list()
-											reset()
+											type_reset()
 									}else {
 										alert('실패하였습니다')
 									}
@@ -432,7 +479,10 @@ $(document)
 		type:'post',
 		beforeSend:function(){
 			if(confirm('정말로 삭제하시겠습니까?')){
-				
+				if($('#type_seq').val()==""){
+					alert("목록을 선택해주세요")
+					return false;
+				}
 			}else{
 				alert('취소합니다')
 			}
@@ -441,15 +491,15 @@ $(document)
 			if(data=="ok"){
 				alert('삭제되었습니다')
 				type_list()
-				reset()
+				type_reset()
 			}else{
 				alert('데이터를 다시 확인해 주세요')
 			}
 		}
 	})
 })
-.on('click','#reset',function(){
-	reset()
+.on('click','#type_reset',function(){
+	type_reset()
 })
 
 // 호텔 옵션 관리 시작
@@ -488,11 +538,25 @@ $(document)
 
 	var file = event.target.files[0];
 	  
-	    var reader = new FileReader();
+/*	    var reader = new FileReader();
 	    reader.onload = function(event) {
 	      $('#option_img').attr('src', event.target.result);
 	    };
-	    reader.readAsDataURL(file);
+	    reader.readAsDataURL(file);*/
+		 if(file!=null){
+			    var reader = new FileReader();
+			    reader.onload = function(event) {
+			      $('#option_img').attr('src', event.target.result);
+			    };
+			    reader.readAsDataURL(file);		 
+		 }else{
+		
+			  $("#option_img").remove()
+			    
+			 $('#yonolja_place_option_table tr:eq(1) td:eq(1)').append("<img class=admin_img_inform id=option_img>")
+			    
+		 }
+	    
 	 
 })
 
@@ -626,7 +690,10 @@ $(document)
 		type:'post',
 		beforeSend:function(){
 			if(confirm('정말로 삭제하시겠습니까?')){
-				
+				if($('#option_seq').val()==""){
+					alert("목록을 선택해주세요")
+					return false;
+				}	
 			}else{
 				alert('취소합니다')
 			}
@@ -651,16 +718,16 @@ function reset_option(){
 	$("#option_name").val("")
 	$("#option_img").remove()
 	$("#option_file").val("")
-	$('#yonolja_place_option_table tr:eq(1) td:eq(1)').append("<img id=option_img>")
+	$('#yonolja_place_option_table tr:eq(1) td:eq(1)').append("<img class=admin_img_inform id=option_img>")
 }	
 
 
-function reset(){
+function type_reset(){
 	$("#type_seq").val("")
 	$("#type_name").val("")
 	$("#type_img").remove()
 	$("#type_file").val("")
-	$('#yonolja_place_type_table tr:eq(1) td:eq(1)').append("<img id=type_img>")
+	$('#yonolja_place_type_table tr:eq(1) td:eq(1)').append("<img class=admin_img_inform id=type_img>")
 }	
 
 function type_list(){
@@ -709,6 +776,19 @@ function option_list(){
 	
 	})
 }
+
+function scrollToSection(event, sectionId) {
+	  event.preventDefault(); // Prevent the default behavior of the anchor tag
+	  console.log('test')
+	  var targetElement = document.getElementById(sectionId);
+	  console.log(targetElement )
+	  if (targetElement) {
+		  console.log('check')
+	    targetElement.scrollIntoView({
+	      behavior: 'smooth'
+	    });
+	  }
+	}
 
 </script>
 </html>

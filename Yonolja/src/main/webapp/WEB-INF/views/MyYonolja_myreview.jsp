@@ -145,7 +145,10 @@ section {
 
 <div>
 	<h1 class="h1_review"><span>나의후기</span></h1>
-	<!-- <span class="r">호텔페이지로 이동하고 싶으면 해당하는 리뷰를 클릭하세요.</span> -->
+	
+	<span class="r" style="display: block; text-align: center;">호텔페이지로 이동하고 싶으면 리뷰를 클릭하세요.</span> 
+	<span><a href="#" id="mypage" style="float:right;">마이페이지</a></span>
+	
 	<div class="div_review">
 		<span>호텔명</span>
 		<span>객실타입</span>
@@ -303,6 +306,11 @@ section {
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
 $(document)
+
+// 마이페이지로 돌아가기
+.on('click', '#mypage', function() {
+	window.location.href = "/mypage";
+})
 
 // 수정 버튼 눌렀을 때 모달창 띄우기
 .on("click", "#btnUp", function() {

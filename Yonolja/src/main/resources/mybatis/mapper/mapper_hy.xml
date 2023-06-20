@@ -19,8 +19,9 @@
 	<insert id="addplace">
 		insert into yonolja_place values(
 			place_seq.nextval,#{param1}
-			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10},#{param11}
-		)
+			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10}
+		) 
+<!-- 		place opt관련 param 한개 삭제   -->
 	</insert>
 	
 
@@ -30,6 +31,7 @@
 	</select>
 	
 
+<!-- place option이 아니고 roomtype_option 가져와야함  -->
 	
 	<select id="getPlace" resultType="com.human.springboot.DTO_HY_placeDTO">
 		select * from yonolja_place where place_seq = #{param1}
@@ -45,66 +47,95 @@
         place_checkout_time = #{param6},
         place_address = #{param7},
         place_mobile = #{param8},
-        place_options = #{param9},
-        place_guide = #{param10},
-        place_environment = #{param11}
+<!--         place_options = #{param9}, -->
+        place_guide = #{param9},
+        place_environment = #{param10}
     WHERE place_seq = #{param1}
 	</update>
 	
-<!-- 	객실타입추가코드 -->
-<!-- 	<insert id="addRoomType"> -->
-<!--     insert into yonolja_roomtype values( -->
-<!--         roomtype_seq.nextval, -->
-<!--         #{param1}, -->
-<!--         #{param2}, -->
-<!--         #{param3}, -->
-<!--         #{param4} -->
-  
-<!--     ) -->
-<!-- 	</insert> -->
+<!-- 객실타입추가 part -->
+		<insert id="addRoomType">
+			    insert into yonolja_roomtype (
+			        ROOMTYPE_SEQ,
+			        ROOMTYPE_NAME,
+			        PLACE_SEQ,
+			        roomtype_imgs,
+			        ROOMTYPE_CAPACITY,
+			        ROOMTYPE_PRICE,
+			        roomtype_options,
+			        ROOMTYPE_GUIDE
+			    )
+			 
+			     values(
+			        roomtype_seq.nextval,
+			        #{param1},
+			        #{param2},
+			     	#{param3},
+			        #{param4},
+			  		#{param5},
+			  		#{param6},
+			  		#{param7}
+			    )
+		</insert>
+			
+	
+	
+<!-- 객실타입 사진관련 코드 -->
 
-	<insert id="addRoomType">
-	    insert into yonolja_roomtype (
-	        ROOMTYPE_SEQ,
-	        ROOMTYPE_NAME,
-	        PLACE_SEQ,
-	        ROOMTYPE_IMGS, 
-	        ROOMTYPE_CAPACITY,
-	        ROOMTYPE_PRICE,
-	        ROOMTYPE_GUIDE
-	    )
-	 
-	     values(
-	        roomtype_seq.nextval,
-	        #{param1},
-	        #{param2},
-	     	#{param3},
-	        #{param4},
-	  		#{param5},
-	  		#{param6}
-	    )
-	</insert>
+ 
+		
+		<select id="getImgAddress" resultType="Object">
+			select roomtype_imgs from yonolja_roomtype 
+			where roomtype_seq = #{param1}
+		</select>
+		
+		<update id="updateImg">
+			update yonolja_roomtype set roomtype_imgs=#{param1} where roomtype_seq=#{param2}
+		</update>
 
+	
+	
 
 
     <select id="getRoomtype" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
         SELECT * FROM yonolja_roomtype
         where place_seq = #{param1}
+        order by roomtype_seq asc
     </select>
+    
+ 
+    <select id="getroomtype2" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+select place_option_name
+from
+(SELECT 
+   REGEXP_SUBSTR(a.roomtype_options,'[^,]+', 1, LEVEL) AS num, place_seq,roomtype_seq
+FROM 
+   yonolja_roomtype a
+where roomtype_seq=#{param2}
+CONNECT BY 
+   REGEXP_SUBSTR(a.roomtype_options, '[^,]+', 1, LEVEL) IS NOT NULL
+   AND PRIOR SYS_GUID() IS NOT NULL
+   AND PRIOR a.roomtype_seq = a.roomtype_seq 
+   order by roomtype_seq asc) a,yonolja_place_option b,yonolja_place c
+   where  c.place_seq=a.place_seq and  a.num=b.place_option_seq and c.place_seq=#{param1}
+   
+    </select>
+    
     
     
 <!--     Roomtype update 코드 PART -->
 
- 	<update id="modifyRoomtype">
+	<update id="modifyRoomtype">
     	UPDATE yonolja_roomtype SET
 	        roomtype_name = #{param2},
 	        place_seq = #{param3},
-	        roomtype_imgs = #{param4},
-	        roomtype_capacity = #{param5},
-	        roomtype_price = #{param6},
+	        roomtype_capacity = #{param4},
+	        roomtype_price = #{param5},
+	        roomtype_options=#{param6},
 	        roomtype_guide = #{param7}
    		 WHERE roomtype_seq= #{param1}
-	</update>
+	 </update>
+ 
 	
 <!-- 	 Roomtype delete PART -->
 		 <delete id="deleteRoomtype" >
@@ -127,7 +158,8 @@
 <!-- 	room select part -->
 
 	<select id="showRooms" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
-    	select r.room_number, t.roomtype_name
+    	select r.room_number, t.roomtype_name, r.room_seq 
+<!--     	r.room_seq 추가//////////////////////////////////////////////// -->
     	from yonolja_room r,
     		 yonolja_roomtype t
     	where t.roomtype_seq=#{param1}
@@ -139,28 +171,40 @@
 <!-- room num Delete part -->
  		<delete id="deleteRoomNum" >
     		DELETE FROM yonolja_room 
-    		WHERE room_number = #{param1}
+    		WHERE room_seq = #{param1}
   		</delete>
   		
   		
 <!--   		room insert 시 동일객실존재하는지 체크 part -->
 
-		<select id="checkRoomExists" resultType="java.lang.Boolean">
-		  	SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END
-			FROM yonolja_room
-			WHERE roomtype_seq = #{roomTypeId} AND room_number = #{roomNumber}
-		</select>
+	<select id="checkRoomExists" resultType="java.lang.Integer">
+
+		    SELECT COUNT(*)
+		    FROM yonolja_roomtype a, yonolja_room b
+		    WHERE a.roomtype_seq = b.roomtype_seq
+		      AND a.place_seq = #{param1}
+		      AND b.room_number = #{param2}
+		    GROUP BY a.place_seq, b.room_number
+		    HAVING COUNT(*) >= 1
+	</select>
+
+		
+
+
+
 		
 <!-- place Delete part -->
- 		<delete id="deletePlace" >
+
+		<delete id="deletePlace" >
     		DELETE FROM yonolja_place
     		WHERE place_seq = #{param1}
   		</delete>
+  		
+  		
+<!--  객실타입 표시하는 select 코드(place_seq이용) -->
+
+
 		
-	
-
-
-
 
 
 </mapper>

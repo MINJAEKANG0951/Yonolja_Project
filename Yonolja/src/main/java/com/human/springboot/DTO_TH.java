@@ -34,8 +34,10 @@ public class DTO_TH {
 	
 	// 관리자 리뷰관리 
 	String review_content;
-	int review_seq_test;
+	int review_seq;
 	String review_date;
 	int review_star;
 	int book_seq;
+	String place_name;
+	
 }

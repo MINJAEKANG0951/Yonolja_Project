@@ -81,6 +81,8 @@ section {
 
 <div>
 	<h1 class=h1_post><span>나의문의</span></h1>
+	<span class="r" style="display: block; text-align: center;">문의페이지로 이동하고 싶으면 리뷰를 클릭하세요.</span> 
+	<span><a href="#" id="mypage" style="float:right;">마이페이지</a></span>
 	<div class="div_post">
 		<span>#</span>
 		<span>제목</span>
@@ -104,6 +106,91 @@ section {
 		</div>
 	</c:forEach>
 
+	<div class="page_nation">
+	<c:if test="${mypost.size() >= 1}">       	
+		<ul class="pagination">
+			<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_mypost?page=1&size=${size}">
+					처음
+				</a>
+			</li>
+			<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_mypost?page=${currentPage-1}&size=${size}">
+					이전
+				</a>
+			</li>
+			
+			<c:choose>
+				<c:when test="${totalPages <= 5}">
+					<c:forEach begin="1" end="${totalPages}" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+				</c:when>
+				
+				<c:when test="${currentPage <= 2}">
+					<c:forEach begin="1" end="5" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+					
+					<li class="page-item disabled">
+						<a class="page-link">...</a>
+					</li>
+				</c:when>
+				
+				<c:when test="${currentPage >= totalPages - 1}">
+					<li class="page-item disabled">
+						<a class="page-link">...</a>
+					</li>
+					<c:forEach begin="${totalPages-4}" end="${totalPages}" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+				</c:when>
+				
+				<c:otherwise>
+					<li class="page-item disabled">
+						<a class="page-link">...</a>
+					</li>
+					<c:forEach begin="${currentPage-1}" end="${currentPage+2}" var="i">
+						<li class="page-item ${currentPage == i ? 'active' : ''}">
+							<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
+								${i}
+							</a>
+						</li>
+					</c:forEach>
+					
+ 					<li class="page-item disabled">
+					  <a class="page-link">...</a>
+					</li> 
+				</c:otherwise>
+			</c:choose>
+			
+			<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_mypost?page=${currentPage+1}&size=${size}">
+					다음
+				</a>
+			</li>
+			
+			<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+				<a class="page-link" href="/MyYonolja_mypost?page=${totalPages}&size=${size}">
+					끝
+				</a>
+			</li>
+		</ul>
+	</c:if> 
+</div>
+
 		
 	</div>
 </div>
@@ -115,21 +202,14 @@ section {
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
 $(document)
+// 마이페이지로 돌아가기
+.on('click', '#mypage', function() {
+	window.location.href = "/mypage";
+})
 
-
-/* .on('click', '.post_link', function() {
-	var post_seq = $('#seq').val(); 
-	window.location.href = '/postview/' + post_seq;
-	}) */
-	
-/*  	.on('click', '.post_link', function() {
-	    var post_seq = $(this).prev().prev().prev().text();
-	    var seq_input = $(this).next();
-	    seq_input.val(post_seq);
-	    var seq_value = seq_input.val();
-	    window.location.href = '/postview/' + seq_value;
-	})  */
-	
+function redirectToPostView(postSeq) {
+  window.location.href = "/postview/" + postSeq;
+}
 	
 </script>
 </html>
