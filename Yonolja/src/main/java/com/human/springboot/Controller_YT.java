@@ -45,15 +45,17 @@ public class Controller_YT {
 	}
 	
 	@GetMapping("/postview/{post_seq}")
-	public String dopostview(@PathVariable("post_seq") int post_seq, Model model) {
+	public String dopostview(@PathVariable("post_seq") int post_seq, Model model,HttpServletRequest req) {
 		
 		DTO_YT_postDTO post = dao_yt.getPost(post_seq);
+		HttpSession session= req.getSession();
 		
 		
 //		System.out.println(post);
 
 		int postSeq = post.getPost_seq();
 		int postWriterSeq = post.getUser_seq();
+		String session_id=(String) session.getAttribute("user_id");
 		String postTitle = post.getPost_title();
 		String postContent = post.getPost_content();
 		String postComment = post.getPost_comment();
@@ -63,6 +65,7 @@ public class Controller_YT {
 		
 		
 //		model.addAttribute("post_seq",seq_text);
+		model.addAttribute("id",session_id);
 		model.addAttribute("post_seq",postSeq);
 		model.addAttribute("post_writer",writer_id);
 		model.addAttribute("post_title",postTitle);
@@ -116,11 +119,12 @@ public class Controller_YT {
 	@RequestMapping("/post_board")
 	public String dopostboard(Model model) {
 		ArrayList<DTO_YT> posts = dao_yt.selectPost();
-
+		
 	    int num = posts.size();
 	    for (int i = 0; i < posts.size(); i++) {
 	        posts.get(i).setNum(num);
 	        num--;
+	        
 	    }
 	    
 //		model.addAttribute("seq_hidden",seq_hidden);
@@ -132,6 +136,7 @@ public class Controller_YT {
 	
 	@PostMapping("/postview")
 		public String postview(HttpServletRequest req, Model model) {
+		
 		String post_title = req.getParameter("post_title");
 		String post_Content = req.getParameter("post_Content");
 		String post_date = req.getParameter("post_date");
@@ -164,7 +169,8 @@ public class Controller_YT {
 
     @PutMapping("/postview/{post_seq}")
     public String updatePost(@PathVariable("post_seq") int post_seq, HttpServletRequest req) {
-    	
+    	 
+    	 
     	System.out.println(req.getParameter("post_title"));
     	System.out.println(req.getParameter("post_content"));
         String updated_title = req.getParameter("post_title");
@@ -177,11 +183,11 @@ public class Controller_YT {
     
 //    @PostMapping("/postcomment")
 //    public String postComment(@RequestParam("user_id") String user_id, @RequestParam("post_comment") String post_comment, HttpServletRequest req) {
-//        HttpSession session = req.getSession();
+//       
 //        String userSeq= session.getAttribute("user_seq")+"";
 //        System.out.println(userSeq);
 //        int user_seq = Integer.parseInt(userSeq);
-//
+//		
 //        //Insert the comment into the database
 //        dao_yt.insertComment(user_id, post_comment);
 //
@@ -206,10 +212,20 @@ public class Controller_YT {
     @ResponseBody
     public ResponseEntity<List<DTO_YT>> searchPosts(@RequestParam("searchCategory") String searchCategory, @RequestParam("keyword") String keyword) {
         List<DTO_YT> searchResults = dao_yt.searchPosts(searchCategory, keyword);
+        System.out.println(searchResults );
         return new ResponseEntity<>(searchResults, HttpStatus.OK);
     }
 
 
+//grid post_image
+    
+    @GetMapping("/getPostImages")
+    @ResponseBody
+    public List<DTO_YT> getPostImages() {
+        List<DTO_YT> posts = dao_yt.getPostImages();
+
+        return posts;
+    }
 
 
     

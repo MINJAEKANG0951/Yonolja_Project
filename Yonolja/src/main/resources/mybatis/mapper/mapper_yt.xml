@@ -32,10 +32,12 @@
 <select id="searchPosts" resultType="com.human.springboot.DTO_YT">
     SELECT 
         ROW_NUMBER() OVER (ORDER BY a.post_date ASC) AS num, 
-        a.post_seq seq, 
+        a.post_seq, 
         a.post_category, 
         a.post_title, 
         a.post_date, 
+        a.user_seq,
+        a.post_comment,
         b.USER_ID
     FROM 
         yonolja_post a
@@ -100,15 +102,17 @@
 
 
 	<select id="selectPost" resultType="com.human.springboot.DTO_YT">
-select num,post_seq,post_category,post_title,post_date,user_id from
+select num,post_seq,post_category,post_title,post_date,post_comment,user_id,post_img from
     
     (select 
     ROW_NUMBER() OVER (ORDER BY a.post_date ASC) as num,
     a.post_seq , 
     a.post_category, 
     a.post_title, 
-    a.post_date, 
-    b.USER_ID
+    a.post_date,
+    a.post_comment, 
+    b.USER_ID,
+    a.post_img
 from 
     yonolja_post a
 join 
@@ -122,6 +126,13 @@ on
      
 </select>
 
+	
+
+<select id="getPostImages" resultType="com.human.springboot.DTO_YT">
+    select post_img from yonolja_post
+</select>
+	
+	
 	
 <!-- 	<insert id="insertComment"> -->
 <!--     insert INTO yonolja_post (user_seq, user_id, post_comment) -->

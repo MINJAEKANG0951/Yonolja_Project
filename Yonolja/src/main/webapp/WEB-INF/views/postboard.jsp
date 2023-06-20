@@ -9,6 +9,7 @@
     <meta charset="UTF-8">
     <title>main</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
     <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 </head>
 <style>
@@ -214,6 +215,38 @@ cursor:pointer;
     
   }
 
+#postCount {
+        font-family: "Arial", sans-serif;
+        font-size: 15px;
+/*         color: #3366ff; */
+        font-weight: bold;
+    }
+
+
+
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr; /* Or use a different value that fits your needs */
+    gap: 20px;
+}
+.card {
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+
+   button img {
+        border: none;
+        outline: none;
+    }
+
+#listViewButton,
+    #gridViewButton {
+        width: 50px;
+        height: 40px;
+    }
+
 
 
 
@@ -246,7 +279,36 @@ cursor:pointer;
 <section>
     <div class="container">
         <div class="heade"> 𝐁𝐨𝐚𝐫𝐝 </div>
-        
+           <p id="postCount">게시글 개수: </p>
+           
+           
+           <select id="rowsPerPage" style="margin-bottom:20px;" onchange="updateRowsPerPage(this.value);">
+    <option value="5">5개 보기</option>
+    <option value="10" selected>10개 보기</option>
+    <option value="15">15개 보기</option>
+    <option value="30">30개 보기</option>
+</select>
+           
+         <div style="display: flex; justify-content: flex-end;">
+    <button id="listViewButton">
+        <img src="/img/post_img/게시판 목록.jpg">list
+    </button>
+
+    <button id="gridViewButton">
+        <img src="/img/post_img/게시판목록2.jpg">grid
+    </button>
+</div>
+
+
+<!-- Grid View Container -->
+<div id="gridContainer" class="grid-container" style="display: none;">
+    <!-- Grid items will be populated here -->
+</div>
+
+           
+           
+           
+           
         <table class="table table-hover" id="postTable">
           <thead>
             <tr>
@@ -266,7 +328,13 @@ cursor:pointer;
                     <td>${post.post_title}</td>
                     <td>${post.user_id }</td> 
                     <td>${post.post_date}</td>
-                    <td class="text-success">답변 안함</td> 
+                    <td hidden>${post.post_img}</td>
+                    <c:if test="${post.post_comment!=null}">
+                    	<td class="text-success">답변완료</td> 
+                    </c:if>
+                    <c:if test="${post.post_comment==null}">
+                    	<td class="text-danger">답변대기</td> 
+                    </c:if>
                 </tr>
             </c:forEach>
             
@@ -276,10 +344,16 @@ cursor:pointer;
         
         
         
-        <div class="pagination" id="pagination" >
+<div class="pagination" id="pagination">
+
+</div>        
         
-       
-        </div>
+        
+        
+        
+        
+        
+        
         
  <div class="container">
     <div class="row">
@@ -288,7 +362,7 @@ cursor:pointer;
                 <div class="input-group">
                     <!-- Adding Dropdown Select for Search Category -->
                     <div class="col-2 pl-0">
-                        <select class="form-control" id="searchCategory" name="searchCategory" style="width:100px;">
+                        <select class="form-control" id="searchCategory" name="searchCategory" style="width:87px;">
                             <option value="title">Title</option>
                             <option value="author">Author</option>
                         </select>
@@ -355,58 +429,67 @@ $(document)
     
 })
 .on('click','.post_line',function(){
-	
+	console.log("test_post_line")
 	post_seq = $(this).find('th input').val();
+	console.log(post_seq)
+	
 	document.location = "/postview/" + post_seq;
 	return false;
 })
 // Pagination
-const table = document.getElementById('postTable');
-const rowsPerPage = 10;
-let currentPage = 0;
+ const table = document.getElementById('postTable');
+    let rowsPerPage = 10;
+    let currentPage = 0;
 
-function changePage(page) {
-    currentPage = page;
+    function updateRowsPerPage(value) {
+        rowsPerPage = parseInt(value);
+        currentPage = 0;
+        renderTable();
+    }
+
+    function changePage(page) {
+        currentPage = page;
+        renderTable();
+    }
+
+    function renderTable() {
+        const rows = table.getElementsByTagName('tbody')[0].rows;
+        const totalRows = rows.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage);
+        const startIndex = currentPage * rowsPerPage;
+        const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
+
+        for (let i = 0; i < totalRows; i++) {
+            if (i >= startIndex && i < endIndex) {
+                rows[i].style.display = 'table-row';
+            } else {
+                rows[i].style.display = 'none';
+            }
+        }
+
+        renderPagination(totalPages);
+    }
+
+    function renderPagination(totalPages) {
+        const paginationDiv = document.getElementById('pagination');
+        paginationDiv.innerHTML = '';
+
+        for (let i = 0; i < totalPages; i++) {
+            const pageNumber = i + 1;
+            const link = document.createElement('a');
+            link.href = '#';
+            link.textContent = pageNumber;
+
+            if (i === currentPage) {
+                link.className = 'active';
+            }
+
+            link.addEventListener('click', () => changePage(i));
+            paginationDiv.appendChild(link);
+        }
+    }
+
     renderTable();
-    highlightActivePage();
-}
-
-function renderTable() {
-    const rows = table.getElementsByTagName('tbody')[0].rows;
-    const totalRows = rows.length;
-    const totalPages = Math.ceil(totalRows / rowsPerPage);
-    const startIndex = currentPage * rowsPerPage;
-    const endIndex = Math.min(startIndex + rowsPerPage, totalRows);
-
-    for (let i = 0; i < totalRows; i++) {
-        if (i >= startIndex && i < endIndex) {
-            rows[i].style.display = 'table-row';
-        } else {
-            rows[i].style.display = 'none';
-        }
-    }
-
-    renderPagination(totalPages);
-}
-
-function renderPagination(totalPages) {
-    const paginationDiv = document.getElementById('pagination');
-    paginationDiv.innerHTML = '';
-
-    for (let i = 0; i < totalPages; i++) {
-        const pageNumber = i + 1;
-        const link = document.createElement('a');
-        link.href = '#';
-        link.textContent = pageNumber;
-
-        if (i === currentPage) {
-            link.className = 'active';
-        }
-
-        link.addEventListener('click', () => changePage(i));
-        paginationDiv.appendChild(link);
-    }
-}
 
 function highlightActivePage() {
     const paginationLinks = document.getElementById('pagination').getElementsByTagName('a');
@@ -428,7 +511,22 @@ function renderPagination(totalPages) {
     const paginationDiv = document.getElementById('pagination');
     paginationDiv.innerHTML = '';
 
-    for (let i = 0; i < totalPages; i++) {
+    const startPage = 5 * Math.floor(currentPage / 5);
+    const endPage = Math.min(startPage + 5, totalPages);
+
+    // 이전 버튼
+    if (startPage > 0) {
+        const prevButton = document.createElement('a');
+        prevButton.href = '#';
+        prevButton.textContent = 'Previous';
+        prevButton.addEventListener('click', () => {
+            changePage(startPage - 1);
+        });
+        paginationDiv.appendChild(prevButton);
+    }
+
+    // 페이지 링크
+    for (let i = startPage; i < endPage; i++) {
         const pageNumber = i + 1;
         const link = document.createElement('a');
         link.href = '#';
@@ -442,20 +540,34 @@ function renderPagination(totalPages) {
         paginationDiv.appendChild(link);
     }
 
-    // Add write post button
+    // 다음 버튼
+    if (endPage < totalPages) {
+        const nextButton = document.createElement('a');
+        nextButton.href = '#';
+        nextButton.textContent = 'Next';
+        nextButton.addEventListener('click', () => {
+            changePage(endPage);
+        });
+        paginationDiv.appendChild(nextButton);
+    }
+    
+    // 글쓰기 버튼 추가
     const writePostButton = document.createElement('a');
     writePostButton.textContent = '글쓰기';
     writePostButton.className = 'write-post-btn';
     writePostButton.href = 'http://localhost:8081/postwrite';
-    
-    paginationDiv.appendChild(writePostButton);
-    
-    // Align write-post-btn button to the right
     writePostButton.style.float = 'right';
-    
-//     writePostButton.style.marginRight = '10px';
-    
+    paginationDiv.appendChild(writePostButton);
 }
+
+
+// 페이지 변경 후 페이지네이션 렌더링 호출
+function changePage(page) {
+    currentPage = page;
+    renderTable();
+    renderPagination(Math.ceil(table.getElementsByTagName('tbody')[0].rows.length / rowsPerPage));
+}
+
 
 ////// 게시글 검색
 
@@ -463,7 +575,16 @@ function renderPagination(totalPages) {
 
 
 $(document).ready(function() {
-    $('#searchButton').click(function() {
+    $('#searchButton').click(search); // 검색 버튼 클릭 이벤트 핸들러
+
+    $('#searchTerm').keypress(function(e) {
+        if (e.which === 13) { // Enter 키를 눌렀을 때
+            e.preventDefault(); // 기본 동작 (폼 제출) 방지
+            search(); // 검색 동작 수행
+        }
+    });
+
+    function search() {
         var searchCategory = $('#searchCategory').val();
         var searchTerm = $('#searchTerm').val();
 
@@ -482,24 +603,136 @@ $(document).ready(function() {
 				
                 for (var i = 0; i < response.length; i++) {
                     var post = response[i];
-                    var row = '<tr>' +
+                    if (post.post_comment != null) {
+                        comment = '<td class="text-success">' + '답변완료' + '</td>';
+                    } else {
+                        comment = '<td class="text-success">' + '답변안함' + '</td>';
+                    }
+                    var row = '<tr class=post_line>' +
                         '<th scope="row">' + post.num + '<input type="hidden" value="' + post.post_seq + '"></th>' +
                         '<td>' + post.post_category + '</td>' +
                         '<td>' + post.post_title + '</td>' +
                         '<td>' + post.user_id + '</td>' +
-                        '<td>' + post.post_date + '</td>' +
-                        '<td class="text-success">답변 안함</td>' +
-                        '</tr>';
+                        '<td>' + post.post_date + '</td>' + comment + '</tr>';
+
                     tableBody.append(row);
                 }
+                changePage(0);
             },
             error: function(xhr, status, error) {
                 // 에러 처리
                 console.error(xhr.responseText);
             }
         });
-    });
+    }
 });
+
+// 게시글 개수 몇개인지 뜨는거
+
+var postCount = document.getElementById("postTable").getElementsByTagName("tbody")[0].getElementsByTagName("tr").length;
+document.getElementById("postCount").innerHTML += postCount;
+
+// // // // // // // // // // // // // // // // // 
+
+document.getElementById('listViewButton').addEventListener('click', function() {
+    document.getElementById('postTable').style.display = '';
+    document.getElementById('gridContainer').style.display = 'none';
+});
+
+document.getElementById('gridViewButton').addEventListener('click', function() {
+	
+    document.getElementById('postTable').style.display = 'none';
+    document.getElementById('gridContainer').style.display = '';
+
+    // Clear the grid container
+    const gridContainer = document.getElementById('gridContainer');
+    gridContainer.innerHTML = '';
+
+    // Loop through all the posts and create grid items
+    const rows = document.getElementById('postTable').getElementsByTagName('tbody')[0].rows;
+    
+    for (let i = 0; i < rows.length; i++) {
+    	console.log('로오즈' + rows[i]);
+        const gridItem = document.createElement('div');
+        gridItem.className = 'grid-item';
+        gridItem.innerHTML = rows[i].innerText; // You might want to format this differently
+        gridItem.addEventListener('click', function() {
+            // Navigate to the post view when the grid item is clicked
+            document.location = "/postview/" + rows[i].getElementsByTagName('input')[0].value;
+        });
+        gridContainer.appendChild(gridItem);
+    }
+});
+
+document.getElementById('gridViewButton').addEventListener('click', function() {
+    const gridContainer = document.getElementById('gridContainer');
+    gridContainer.innerHTML = '';
+
+    const posts = document.querySelectorAll('#postTable tbody tr');
+
+    posts.forEach(function(postRow) {
+        const cells = postRow.querySelectorAll('td');
+
+        const card = document.createElement('div');
+        card.classList.add('card');
+
+        const postImg = cells[0].querySelector('.post_img')?.getAttribute('src');
+
+        const imgContainer = document.createElement('div');
+        imgContainer.classList.add('image-container');
+
+        if (postImg) {
+            const imgElement = document.createElement('post_img');
+            imgElement.src = postImg;
+            imgElement.alt = 'Post Image';
+            imgContainer.appendChild(imgElement);
+        } else {
+            const placeholderElement = document.createElement('span');
+            placeholderElement.innerHTML = '<img src="' + cells[4].innerText + '" alt="사진이 안떠" style="max-width: 100%; height: 200px;;">';
+            imgContainer.appendChild(placeholderElement);
+        }
+
+        console.log("post_img");
+        console.log(cells[4].innerText);
+        const contentContainer = document.createElement('div');
+        contentContainer.classList.add('content-container');
+
+        /* const titleElement = document.createElement('h2');
+        titleElement.textContent = cells[2].innerText;
+        contentContainer.appendChild(titleElement); */
+	
+        const categoryElement = document.createElement('h6');
+        categoryElement.textContent = 'Category: ' + cells[1].innerText;
+        contentContainer.appendChild(categoryElement);
+
+        const authorElement = document.createElement('p');
+        authorElement.textContent = 'Author: ' + cells[2].innerText;
+        contentContainer.appendChild(authorElement);
+
+        const dateElement = document.createElement('p');
+        dateElement.textContent = 'Date: ' + cells[3].innerText;
+        contentContainer.appendChild(dateElement);
+
+        card.appendChild(imgContainer);
+        card.appendChild(contentContainer);
+
+        card.addEventListener('click', function() {
+            const postSeq = postRow.querySelector('input').value;
+            document.location = "/postview/" + postSeq;
+        });
+
+        // Insert the imgContainer at the top of the card
+        card.insertBefore(imgContainer, card.firstChild);
+
+        gridContainer.appendChild(card);
+    });
+
+    document.getElementById('postTable').style.display = 'none';
+    gridContainer.style.display = 'grid';
+});
+
+
+
 
 
 

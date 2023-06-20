@@ -1,6 +1,7 @@
 package com.human.springboot;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -30,4 +31,7 @@ public interface DAO_YT {
 //	ArrayList<DTO_YT> searchPosts(String searchCategory, String keyword);
 
 	ArrayList<DTO_YT> searchPosts(@Param("searchCategory") String searchCategory, @Param("keyword") String keyword);
+
+
+	 List<DTO_YT> getPostImages();
 } 

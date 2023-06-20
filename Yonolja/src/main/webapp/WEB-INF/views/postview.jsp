@@ -13,6 +13,39 @@
  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
+
+<!-- jQuery 라이브러리 -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<!-- Bootstrap JS -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Bootstrap CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+<!-- Viewer.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.10.1/viewer.min.css" integrity="sha512-XnpluuAvTDDNbO7K7y4az27Pe8/5gn3uoFJgAtpDF3bn3l5P4YnbxREE7VxTG5mDf6r+/N4NOu1XcSVxaD/LFg==" crossorigin="anonymous" />
+
+<!-- Viewer.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.10.1/viewer.min.js" integrity="sha512-UzjHMb3W6cF3DBPrRho7dCpV/GeeVGN9Rl2OHxEEesxfSPjky/1Jyy1RJQjkn3FHIzU7fJFRIHOf7FILSMhOxg==" crossorigin="anonymous"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-zoom/1.7.21/jquery.zoom.min.js"></script>
+
+
+<!-- Viewer.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.5.0/viewer.min.css" />
+
+<!-- Viewer.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.5.0/viewer.min.js"></script>
+
+<!-- Viewer.js CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.6.0/viewer.min.css" />
+
+<!-- Viewer.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.6.0/viewer.min.js"></script>
+
+
+
 </head>
 
 <style>
@@ -284,7 +317,33 @@ label {
         <div class="text-content">
             ${post_content}
         </div>
-        <img src="${post_img}" alt="" style="max-height: 100%; max-width: 100%;">
+        
+        
+        
+        
+<!-- 이미지 -->
+<img src="${post_img}" alt="" style="width: 100%; height: 100%; object-fit: contain; display: none;" data-toggle="modal" data-target="#myModal" id="postImage">
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-body">
+                <img src="" id="imgModal" style="width: 100%;">
+            </div>
+        </div>
+    </div>
+</div>
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
     </div>
 </div>
 
@@ -301,16 +360,22 @@ label {
     </div>
 
     <input type="hidden" id="board_num" value="${board_num}" name="board_num">
-
+	
     <br>
 
     <div class="button5">
       <div style="margin-left: auto; margin-right: auto;">
-        <input class="btn btn-danger" type="button" value="삭제" id="btnDelete" data-post_seq="${post_seq}">
-        <input class="btn btn-success" data-toggle="modal" data-target="#modifyModal" type="button" value="수정" id="btnModify">
-        <input class="btn btn-primary" type="button" value="목록" id="btnShow">
-      </div>
+      
+  <c:if test="${id == post_writer || id == 'admin'}">
+  	
+    <input class="btn btn-danger" type="button" value="삭제" id="btnDelete" data-post_seq="${post_seq}">
+    <input class="btn btn-success" data-toggle="modal" data-target="#modifyModal" type="button" value="수정" id="btnModify">
+  </c:if>
+  <input class="btn btn-primary" type="button" value="목록" id="btnShow">
+</div>
     </div>
+    
+    
     <br><br>
 <!-- 댓글창   -->
 
@@ -334,8 +399,8 @@ label {
         <ul class="list-group">
             <!-- Single comment item -->
             <li class="list-group-item" style=width:720px;>
-                <h6 class="mb-1" style="font-weight: bold;">kytghy123456</h6><br>
-                <p class="mb-1">안녕하세요 맞는 말씀이십니다</p><br>
+                <h6 class="mb-1" style="font-weight: bold;">ghy123456</h6><br>
+                <p class="mb-1">안녕하세요 </p><br>
                 <input type="button" class="btn btn-secondary btn-sm" value="Edit">
 				<input type="button" class="btn btn-danger btn-sm" value="Delete">
 
@@ -350,7 +415,7 @@ label {
             <!-- Single comment item -->
             <li class="list-group-item" style=width:720px;>
                 <h6 class="mb-1" style="font-weight: bold;">zzzzzz</h6><br>
-                <p class="mb-1">ㅋㅋㅋㅋ  끼 </p><br>
+                <p class="mb-1">zzzz </p><br>
                 <button type="button" class="btn btn-secondary btn-sm">Edit</button>
                 <button type="button" class="btn btn-danger btn-sm">Delete</button>
             </li>
@@ -427,12 +492,14 @@ label {
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 $(document)
+
 .on('click','#mypage_button',function(){
 	
 })
+
 .on("click","#btnSave",function(){
 	
-	update()
+	//update()
 })
 //목록보기
 document.getElementById("btnShow").addEventListener("click", function() {
@@ -574,7 +641,28 @@ modifyBtn.addEventListener("click", ()=>{
         modifyModal.classList.add("show");
     },200)
 });
+//////// 사진 모달
+$(document).ready(function() {
+    $('img[data-toggle="modal"]').click(function(){
+        let imgSource = $(this).attr('src');
+        $('#imgModal').attr('src', imgSource);
+    });
 
+    $('#imgModal').click(function(){
+        window.open(this.src);
+    });
+});
+
+//post_img 사진 안들어가도 사진이 떠서 넣음//////////////////////
+const postImage = document.getElementById('postImage');
+const postImgValue = "${post_img}";
+if (postImgValue && postImgValue.trim() !== "") {
+    postImage.onload = function() {
+        postImage.style.display = 'block';
+    };
+    postImage.src = postImgValue;
+}
+////////////////////////////////////////////
 
 </script>
 </html>
