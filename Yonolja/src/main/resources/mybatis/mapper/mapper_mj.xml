@@ -53,6 +53,77 @@
 		select*from yonolja_place where place_seq = #{param1}
 	</select>
 	
+	<select id="countReviews" resultType="int">
+		select count(review_seq) from
+		(select p.place_seq, p.place_name, rv.review_seq, rv.review_content  
+		from yonolja_review rv,yonolja_book b, yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+		where rv.book_seq = b.book_seq and b.room_seq = rm.room_seq and rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq
+		and p.place_seq = #{param1})
+	</select>
+	
+	
+	<select id="placeAlloptions" resultType="String">
+		select rt.roomtype_options
+		from yonolja_place p, yonolja_roomtype rt
+		where p.place_seq = rt.place_seq 
+		and p.place_seq = #{param1}
+	</select>	
+	
+	
+	
+	<select id="getRoomTypeOption" resultType="com.human.springboot.DTO_MJ_roomTypeOptionDTO">
+		select * from yonolja_place_option where place_option_seq = #{param1}
+	</select>
+	
+	
+	<select id="getRoomTypes" resultType="com.human.springboot.DTO_MJ_placeRoomTypeDTO">
+		select row_num, roomtype_seq, roomtype_name, roomtype_capacity, roomtype_price, roomtype_imgs from
+		    (
+		    select rownum as row_num, roomtype_seq, roomtype_name, roomtype_capacity, roomtype_price, roomtype_imgs from
+		        (
+		        select roomtype_seq, roomtype_name, roomtype_capacity, roomtype_price ,roomtype_imgs from
+		            (
+		                select p.place_seq, p.place_name, rt.roomtype_seq, rt.roomtype_name, rt.roomtype_capacity, rt.roomtype_price, rt.roomtype_imgs, rm.room_seq
+		                from yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+		                where rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq 
+		                and p.place_seq = #{param1} ${param2}
+		            )
+				group by roomtype_seq, roomtype_name, roomtype_capacity, roomtype_price ,roomtype_imgs
+				order by roomtype_capacity
+		        )
+		    )
+		where #{param4}>=row_num and row_num>=#{param3}
+	</select>
+	
+	
+	
+	<select id="getReviews" resultType="com.human.springboot.DTO_MJ_reviewDTO">
+		select row_num, review_seq, user_id, place_name, roomtype_name, review_star, review_content, review_date
+	    from
+	    (select rownum as row_num, review_seq, user_id, place_name, roomtype_name, review_star, review_content, review_date from
+	       (  
+	        select rv.review_seq, u.user_id, p.place_name ,rt.roomtype_name, rv.review_star, rv.review_content, rv.review_date
+	        from yonolja_review rv, yonolja_book b, yonolja_room rm, yonolja_roomtype rt, yonolja_place p, yonolja_user u
+	        where rv.book_seq=b.book_seq and b.user_seq=u.user_seq and b.room_seq = rm.room_seq and rm.roomtype_seq = rt.roomtype_seq
+	        and rt.place_seq = p.place_seq
+	        and p.place_seq = #{param1}
+	        ${param2}
+	       ) 
+	     )
+   		where #{param4}>=row_num and row_num>=#{param3}
+	</select>
+	
+	
+	<select id="getRoomType" resultType="com.human.springboot.DTO_MJ_roomTypeDTO">
+		select p.place_seq, p.place_name, rt.roomtype_seq, 
+		rt.roomtype_name, rt.roomtype_imgs, rt.roomtype_capacity, 
+		rt.roomtype_price, rt.roomtype_options, rt.roomtype_guide
+		from yonolja_roomtype rt, yonolja_place p
+		where rt.place_seq = p.place_seq
+		and roomtype_seq = #{param1}
+	</select>
+	
+	
 	
 </mapper>
 

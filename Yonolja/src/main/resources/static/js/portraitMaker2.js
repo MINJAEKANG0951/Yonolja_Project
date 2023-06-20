@@ -1,5 +1,3 @@
-
-
 function makeStructure(){
 
     uuid = self.crypto.randomUUID();
@@ -8,11 +6,8 @@ function makeStructure(){
     portraitStructure = {
 		
         test:function(){console.log('makeStructure for portrait')},
-        clickFunction:function(){alert('test')},
-        
-        moveToUrl:null,
-        setMoveToUrl:function(data){this.moveToUrl=data;},
-
+		place_seq:null,
+		
         portrait_code:uuid+ "-portrait",
         portrait_style:'text-align:center;width:250px;height:400px;',
         // portrait_width:'300px',
@@ -56,7 +51,8 @@ function makeStructure(){
         body_element_address:null,
         body_element_price:null,
 
-        setBody:function(name,review,address,price){
+        setBody:function(seq,name,review,address,price){
+			this.place_seq = seq;
             this.body_element_name = name;
             this.body_element_review = review;
             this.body_element_address = address;
@@ -115,7 +111,7 @@ function makeStructure(){
 
                 portraitStr += '<div class=' + this.head_code + ' style="' + this.head_style + '">'
                     
-                    portraitStr += '<ul class=' + this.pictureList_code + ' style="' + this.pictureList_style + '">' 
+                    portraitStr += '<ul class=' + this.pictureList_code + ' style="' + this.pictureList_style + '" name='+ this.place_seq +'>' 
                         portraitStr += imgstr;
                     portraitStr += '</ul>'
                     
@@ -125,7 +121,7 @@ function makeStructure(){
 
                 portraitStr += '</div>';
 
-                portraitStr += '<div class=' + this.body_code + ' style="'+ this.body_style + '">' 
+                portraitStr += '<div class=' + this.body_code + ' style="'+ this.body_style + '" name='+ this.place_seq +'>' 
                     portraitStr += '<div></div> <div></div>'
                     portraitStr += '<div style="text-align:left;font-weight:bold;font-size:20px;">' + this.body_element_name + '</div>'
                     portraitStr += '<div style="text-align:right;font-weight:bold;font-size:15px;">' + this.body_element_review + '</div>'
@@ -172,21 +168,9 @@ function makeStructure(){
 
             return portraitCssStr;
         }
+    
 
-    },
-    
-    
-    
-    function setClickFunction(fun){
-		portraitStructure.clickFunction = fun;
-	}
-    
-    
-    $(document)
-    .on('click','.'+portraitStructure.pictureList_code,function(){
-		portraitStructure.clickFunction();
-	})
-    
+    }
     
     
     return portraitStructure;

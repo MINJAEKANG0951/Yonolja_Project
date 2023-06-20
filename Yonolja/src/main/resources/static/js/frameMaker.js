@@ -5,9 +5,9 @@ function makeFrame(){
     uuid = "f" + uuid.substring(0,10);
 
     frame = {
-
+		
         frameCode:uuid + "-frame",
-        frameSize:'width:100%;height:99%',
+        frameSize:'width:100%;height:100%',
         
         radio_code:uuid + "-slide", 
         radio_id:uuid + "-radio", 

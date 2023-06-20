@@ -19,8 +19,14 @@
 </style>
 <body>
 
+<div>
+	<div>
+		<div>
+		<div id="map"></div>
+		</div>
+	</div>
+</div>
 
-<div id="map"></div>
 <button id=setMap>setMap</button>
 
 </body>

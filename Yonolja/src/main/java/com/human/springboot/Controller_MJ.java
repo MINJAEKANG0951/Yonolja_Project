@@ -3,9 +3,16 @@ package com.human.springboot;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +24,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
+
+
+
+
 
 @Controller
 public class Controller_MJ {
@@ -212,9 +223,6 @@ public class Controller_MJ {
 		return ja.toString();
 	}
 	
-	
-	
-	
 	// main page 에 places 가져오기
 	@PostMapping("/getPlaces")
 	@ResponseBody
@@ -257,7 +265,7 @@ public class Controller_MJ {
 			!req.getParameter("placeTypes").equals("")) 
 		{	
 			String []placeTypes = req.getParameter("placeTypes").split(",");
-			System.out.println(Arrays.toString(placeTypes));
+			
 			sql += "and (";
 			for(int i=0;i<placeTypes.length;i++) {
 				if(i==0) {sql += "place_type_seq=" + placeTypes[i];}
@@ -283,14 +291,14 @@ public class Controller_MJ {
 		if( (req.getParameter("checkin")!=null && req.getParameter("checkout")!=null) && 
 			(!req.getParameter("checkin").equals("") && !req.getParameter("checkout").equals(""))) 
 		{
-			String checkin = req.getParameter("checkin");
-			String checkout = req.getParameter("checkout");
+			String userCheckin = req.getParameter("checkin");
+			String userCheckout = req.getParameter("checkout");
 			
-			sql += "and rm.room_seq not in ";
+			sql += " and rm.room_seq not in ";
 			sql += "(select room_seq from yonolja_book where ";
-			sql += "( to_date('" + checkin + "')>=to_date(checkin_date) and to_date(checkout_date) > to_date('" + checkin + "') )";
+			sql += "( to_date('"+ userCheckin +"')<=to_date(checkin_date) and to_date(checkin_date)<to_date('"+ userCheckout +"') )";
 			sql += " or ";
-			sql += "( to_date('" + checkout + "')>to_date(checkin_date) and to_date(checkout_date) >= to_date('" + checkout + "') )";
+			sql += "( to_date('"+ userCheckin +"')< to_date(checkout_date) and to_date(checkout_date)<=to_date('"+ userCheckout +"') )";			
 			sql += ") order by rm.room_seq";
 			
 		}
@@ -323,11 +331,9 @@ public class Controller_MJ {
 	}
 
 	
-	
 	// place (숙소/숙박업소 상세페이지 보여주기)
-	
 	@GetMapping("/place/{place_seq}")
-	public String showPlace(Model model, @PathVariable("place_seq") int seq) {
+	public String showPlace(@PathVariable("place_seq") int seq) {
 		/* 
 		  main.jsp 에서 place/place_seq url을 보낼때
 		  만약에 searchbar keyword 에 대한 global variable 값이 null 이 아니라면,
@@ -346,7 +352,7 @@ public class Controller_MJ {
 	}
 	
 	
-	
+	// place page 에서 load 되자마자 그 place 에 대한 내용들을 page 에 입력함
 	@PostMapping("/getPlace")
 	@ResponseBody
 	public String getPlaceInfo(HttpServletRequest req) {
@@ -363,12 +369,200 @@ public class Controller_MJ {
 		jo.put("checkout_time", place.getPlace_checkout_time());
 		jo.put("guide", place.getPlace_guide());
 		jo.put("mobile", place.getPlace_mobile());
-
+		jo.put("reviewRate", mjdao.getReviewRate(place_seq));
+		jo.put("reviewCount",mjdao.countReviews(place_seq));
+		
 		return jo.toString();
 	}
 	
 	
 	
+	// 특정 place 의 모든 room의 options 종합
+	@PostMapping("/getAlloptions") // place 의 모든 roomtype options 가져오기
+	@ResponseBody
+	public String getAlloptions(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt(req.getParameter("place_seq"));
+		ArrayList<String> alloptions = mjdao.placeAlloptions(place_seq);
+		ArrayList<Integer> sortedAlloptions = new ArrayList<Integer>();
+		
+		for(int i=0;i<alloptions.size();i++) {
+			if(alloptions.get(i)!=null) {
+				String[]roomtypeOptions = alloptions.get(i).split(",");
+				for(int j=0;j<roomtypeOptions.length;j++) {
+					if(!sortedAlloptions.contains(Integer.parseInt(roomtypeOptions[j]))) {
+						sortedAlloptions.add( Integer.parseInt(roomtypeOptions[j]) );
+					}
+				}
+			}
+		}
+		sortedAlloptions.sort(null);
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<sortedAlloptions.size();i++) {
+			
+			DTO_MJ_roomTypeOptionDTO roomtype_option
+			= mjdao.getRoomTypeOption(sortedAlloptions.get(i));
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", roomtype_option.getPlace_option_seq());
+			jo.put("name", roomtype_option.getPlace_option_name());
+			jo.put("img", roomtype_option.getPlace_option_img());
+
+			ja.put(jo);
+			
+		}
+		
+		return ja.toString();
+	}
+	
+	
+	// 특정 place 의 모든 roomtype 가져오기(keyword 별로)
+	@PostMapping("/getRoomTypes")
+	@ResponseBody
+	public String getRoomTypes(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt(req.getParameter("place_seq"));
+		int pageNum = Integer.parseInt( req.getParameter("pageNum") );
+		
+		int howmanyUnits = 4;
+		int start = ( (pageNum-1)*howmanyUnits ) + 1; 
+		int end = (pageNum)*howmanyUnits;
+		
+		ArrayList<DTO_MJ_placeRoomTypeDTO> roomtypes = null;
+		
+		
+		String sql = " ";
+		
+
+		
+		if( req.getParameter("howmanypeople")!=null && 
+		   !req.getParameter("howmanypeople").equals("")) 
+		{	
+			String howmanypeople = req.getParameter("howmanypeople");
+			sql += " and (rt.roomtype_capacity>=" + howmanypeople + ")";
+		}
+		
+		if( (req.getParameter("checkin")!=null && !req.getParameter("checkin").equals("")) &&
+			(req.getParameter("checkout")!=null && !req.getParameter("checkout").equals(""))) 
+		{
+			String userCheckin = req.getParameter("checkin");
+			String userCheckout = req.getParameter("checkout");
+			
+			sql += " and rm.room_seq not in ";
+			sql += "(select room_seq from yonolja_book where ";
+			sql += "( to_date('"+ userCheckin +"')<=to_date(checkin_date) and to_date(checkin_date)<to_date('"+ userCheckout +"') )";
+			sql += " or ";
+			sql += "( to_date('"+ userCheckin +"')< to_date(checkout_date) and to_date(checkout_date)<=to_date('"+ userCheckout +"') )";			
+			sql += ") order by rm.room_seq";
+		}
+		
+		roomtypes = mjdao.getRoomTypes(place_seq, sql, start, end);	
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<roomtypes.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			jo.put("seq", roomtypes.get(i).getRoomtype_seq());
+			jo.put("name", roomtypes.get(i).getRoomtype_name());
+			jo.put("capacity", roomtypes.get(i).getRoomtype_capacity());
+			jo.put("price", roomtypes.get(i).getRoomtype_price());
+			jo.put("imgs", roomtypes.get(i).getRoomtype_imgs());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	
+	// 주소를받아서 좌표로 나타내주는 method(새로배운거니 잘 간직)
+	@GetMapping("/coordinates")
+	@ResponseBody
+    public String getCoordinates(@RequestParam("address") String address) {
+        try {
+            // Construct the API request URL
+            URIBuilder uriBuilder = new URIBuilder("https://dapi.kakao.com/v2/local/search/address.json");
+            uriBuilder.setParameter("query", address);
+
+            // Create an HttpClient instance
+            HttpClient httpClient = HttpClientBuilder.create().build();
+
+            // Create an HTTP GET request with the constructed URL
+            HttpGet httpGet = new HttpGet(uriBuilder.build());
+
+            // Set the API key in the request header
+            httpGet.setHeader(HttpHeaders.AUTHORIZATION, "KakaoAK 59b3853d621bd06f62c23ee5afade345");
+
+            // Execute the request and obtain the response
+            HttpResponse response = httpClient.execute(httpGet);
+
+            // Parse the response JSON
+            String jsonResponse = EntityUtils.toString(response.getEntity());
+
+            // Process the JSON and extract the coordinates as needed
+            // ...
+            return jsonResponse;
+        } catch (Exception e) {
+            // Handle any errors that may occur during the request
+            e.printStackTrace();
+            return "Error occurred: " + e.getMessage();
+        }
+    }
+
+	
+	@PostMapping("/getReviews")
+	@ResponseBody
+	public String getReviews(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		String keyword = req.getParameter("keyword");
+		int pageNum = Integer.parseInt( req.getParameter("pageNum") );
+		
+		
+		int howmanyUnits = 10;
+		
+		/*
+			한 페이지당 10 개씩 표시한다고 쳐보자.
+			pageNum 이 1이면
+			1~10 까지 표시
+			pageNum 이 2면
+			11~20 까지 표시
+			pageNum 이 3이면
+			21~30 까지 표시
+			
+			start = (pageNum-1)*(10) + 1
+			end = (pageNum)*10
+		*/
+		
+		
+		int start = ( (pageNum-1)*howmanyUnits ) + 1; 
+		int end = (pageNum)*howmanyUnits;
+		
+		
+		ArrayList<DTO_MJ_reviewDTO> reviews = mjdao.getReviews(place_seq, keyword, start, end);
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<reviews.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", reviews.get(i).getReview_seq());
+			jo.put("user_id", reviews.get(i).getUser_id());
+			jo.put("roomtype_name", reviews.get(i).getRoomtype_name());
+			jo.put("star", reviews.get(i).getReview_star());
+			jo.put("content", reviews.get(i).getReview_content());
+			jo.put("date", reviews.get(i).getReview_date());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
 	
 	
 	/*
@@ -387,9 +581,38 @@ public class Controller_MJ {
 	*/
 	
 	
+	@GetMapping("/roomtype/{roomtype_seq}")
+	public String showRoomType(@PathVariable("roomtype_seq") int roomtype_seq) {
+		
+		// 굳이 model 로 안실어도, jsp 에서 ${roomtype_seq} 하면 roomtype 사용가능함.
+		return "roomtype";
+	}
 	
 	
-	
+	@PostMapping("/getRoomType")
+	@ResponseBody
+	public String getRoomType(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		
+		DTO_MJ_roomTypeDTO roomtype = mjdao.getRoomType(roomtype_seq);
+		
+		
+		JSONObject jo = new JSONObject();
+		
+		jo.put("place_seq", roomtype.getPlace_seq());
+		jo.put("place_name", roomtype.getPlace_name());
+		jo.put("seq", roomtype.getRoomtype_seq());
+		jo.put("name", roomtype.getRoomtype_name());
+		jo.put("imgs", roomtype.getRoomtype_imgs());
+		jo.put("capacity", roomtype.getRoomtype_capacity());
+		jo.put("price", roomtype.getRoomtype_price());
+		jo.put("options", roomtype.getRoomtype_options());
+		jo.put("guide", roomtype.getRoomtype_guide());
+		
+		
+		return jo.toString();
+	}
 	
 	
 	
@@ -464,5 +687,17 @@ public class Controller_MJ {
 	public void getImg(@RequestParam(value="img") MultipartFile img) {
 		System.out.println(img);
 	}
+	
+	@GetMapping("/mapTest/{seq}")
+	public String TestMap(@PathVariable("seq") int seq) {
+		System.out.println(seq);
+		return "/test/testmap";
+	}
+	
+	
+	
+	
+	
+	
 	
 }

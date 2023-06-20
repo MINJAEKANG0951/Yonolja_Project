@@ -650,12 +650,14 @@ div[class*=portrait]:hover{
 
 .place_customOverlay{
 	background-color:white;
-	border:2px solid black;
+	border:0.3px solid black;
 	color:black;
 	font-weight:bold;
 	font-size:14px;
 	text-decoration:none;
 	border-radius:15% 15% 15% 15% / 50% 50% 50% 50%;
+	box-shadow: 0px 0px 5px #444;
+	cursor:pointer;
 }
 .place_customOverlay:hover{
 	background-color:#ddd;
@@ -813,6 +815,11 @@ div[class*=portrait]:hover{
 	font-size:23px;
 	transition:0.2s;
 }
+
+.bak{
+	color:gray;
+	font-size:12px;
+}
 </style>
 <div id=modal_background></div>
 <body>
@@ -934,7 +941,7 @@ div[class*=portrait]:hover{
 						<div><span>어른</span></div>
 						<div>
 							<button class=minus_guest>-</button>
-							<input type=number class=howmanyGuest id=howmanyAdults value=0 min=0 readonly>
+							<input type=number class=howmanyGuest id=howmanyAdults value=1 min=1 readonly>
 							<span>명</span>
 							<button class=plus_guest>+</button>	
 						</div>
@@ -1049,9 +1056,28 @@ div[class*=portrait]:hover{
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script type="text/javascript" src="/js/calendarMaker.js"></script>
-<script type="text/javascript" src="/js/portraitMaker.js"></script>
+<script type="text/javascript" src="/js/portraitMaker2.js"></script>
 <script>
+
+
+/////////////////////////////////////////// cookie ////////////////////////////////////////////////////
+// 쿠키 삭제
+
+document.cookie = "checkin= ; expires=Tue, 19 Jan 2000 03:14:07 GMT;"
+document.cookie = "checkout= ; expires=Tue, 19 Jan 2000 03:14:07 GMT;"
+document.cookie = "howmanyChildren= ; expires=Tue, 19 Jan 2000 03:14:07 GMT;"
+document.cookie = "howmanyAdults= ; expires=Tue, 19 Jan 2000 03:14:07 GMT;"
+
+
+
+
+
+
+
+
 ////////////////////////////////////  javascript /////////////////////////////////////////
+
+
 
 searchbar =  document.getElementById('searchbar');
 modal = document.getElementById('modal');
@@ -1214,7 +1240,12 @@ $(document)
 })
 .on('click','.minus_guest',function(){
 	formerNumber = $(this).parent().find('input').val()
-	if(parseInt(formerNumber-1)<0){return false;}
+	
+	if($(this).parent().find('input').attr('id')=='howmanyAdults'){
+		if(parseInt(formerNumber-1)<1){return false;}
+	}
+	else if(parseInt(formerNumber-1)<0){return false;}
+	
 	$(this).parent().find('input').val( (parseInt(formerNumber)-1 ));
 	if( $('#howmanyAdults').val()==0 && $('#howmanyChildren').val()!=0){
 		$('#howmanyAdults').val(1);
@@ -1241,7 +1272,8 @@ $(document)
 	destination_decided = $('#where').val()
 	checkin_decided = $('#when_checkin').val();
 	checkout_decided = $('#when_checkout').val();
-	howmanypeople_decided = $('#howmanypeople').val();
+	howmanyAdults_decided = parseInt( $('#howmanyAdults').val() );
+	howmanyChildren_decided = parseInt( $('#howmanyChildren').val() );
 	
 	$('#modal_background').trigger('click');
 	getPlaces();
@@ -1357,6 +1389,71 @@ $(document)
 })
 
 
+/////////////////////////////////// 여기서 roomtype url 처리 /////////////////////////////////////////////////////
+
+// url 은 roomtype/checkin/checkout/howmanypeople 로 하자.
+
+.on('click','.place_customOverlay',function(){
+	placeSeq = $(this).attr('id');
+	
+	if(checkin_decided!=null && checkout_decided!=null){
+		document.cookie = "checkin=" + checkin_decided;
+		document.cookie = "checkout=" + checkout_decided;
+	}
+	
+	if(howmanyAdults_decided!=null){
+		document.cookie = "howmanyAdults=" + howmanyAdults_decided;
+	}
+	if(howmanyChildren_decided!=null){
+		document.cookie = "howmanyChildren=" + howmanyChildren_decided;
+	}
+	
+	document.location = "/place/" + placeSeq;
+	return false;
+})
+
+.on('click','ul[class*=pictureList]',function(){
+	
+	placeSeq = $(this).attr('name') 
+	
+	if(checkin_decided!=null && checkout_decided!=null){
+		document.cookie = "checkin=" + checkin_decided;
+		document.cookie = "checkout=" + checkout_decided;
+	}
+	
+	if(howmanyAdults_decided!=null){
+		document.cookie = "howmanyAdults=" + howmanyAdults_decided;
+	}
+	if(howmanyChildren_decided!=null){
+		document.cookie = "howmanyChildren=" + howmanyChildren_decided;
+	}
+	
+	document.location = "/place/" + placeSeq;
+	return false;
+})
+.on('click','div[class*=portrait] div[class*=body]',function(){
+	
+	placeSeq = $(this).attr('name') 
+		
+	if(checkin_decided!=null && checkout_decided!=null){
+		document.cookie = "checkin=" + checkin_decided;
+		document.cookie = "checkout=" + checkout_decided;
+	}
+	
+	if(howmanyAdults_decided!=null){
+		document.cookie = "howmanyAdults=" + howmanyAdults_decided;
+	}
+	if(howmanyChildren_decided!=null){
+		document.cookie = "howmanyChildren=" + howmanyChildren_decided;
+	}
+	
+	document.location = "/place/" + placeSeq;
+	return false;
+})
+
+
+
+
 
 // 윈도우창을 늘이거나 줄일때 지도의 사이즈를 재설정하기 
 window.addEventListener('resize',function(){
@@ -1407,7 +1504,8 @@ let selected_environment = null;
 let destination_decided = null;
 let checkin_decided = null;
 let checkout_decided = null;
-let howmanypeople_decided = null;
+let howmanyAdults_decided = null;
+let howmanyChildren_decided = null;
 let price_decided = null;
 let placeTypes_decided = null;
 let roomtypeOptions_decided = null;
@@ -1467,9 +1565,9 @@ function getPlaces(){
 	{ $('#searchbar_when').text('언제든지') }
 	else { $('#searchbar_when').text(checkin_decided + "-" + checkout_decided);}
 	
-	if(howmanypeople_decided==null || howmanypeople_decided=='')
+	if(howmanyAdults_decided==null || howmanyAdults_decided==0)
 	{ $('#searchbar_howmanypeople').text('게스트추가') }
-	else{ $('#searchbar_howmanypeople').text(howmanypeople_decided) }
+	else{ $('#searchbar_howmanypeople').text( (howmanyAdults_decided + howmanyChildren_decided)+'명' ) }
 	
 	$.ajax({url:'/getPlaces', type:'post', dataType:'json', 
 		data:{
@@ -1478,7 +1576,7 @@ function getPlaces(){
 			destination_around:destination_decided,
 			checkin:checkin_decided,
 			checkout:checkout_decided,
-			howmanypeople:howmanypeople_decided,
+			howmanypeople:(howmanyAdults_decided + howmanyChildren_decided),
 			price:price_decided,
 			placeTypes:placeTypes_decided,
 			roomtype_options:roomtypeOptions_decided
@@ -1512,6 +1610,12 @@ function getPlaces(){
 	})		
 }
 
+
+
+
+
+
+
 function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만들어 section 에 표시하는 함수
 	$('section').empty();
 	if(!$('section').hasClass('forList')){$('section').addClass('forList');}
@@ -1521,8 +1625,7 @@ function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만�
 		place = placesToShow[j];
 		
 		portrait = makeStructure();
-		portrait.setMoveToUrl("/place/"+ place.seq);
-		portrait.setBody(place.name , "★ " + place.reviewRate.toFixed(1) , place.address, place.price.toLocaleString() + ' \\ / 박');
+		portrait.setBody(place.seq ,place.name , "★ " + place.reviewRate.toFixed(1) , place.address, place.price.toLocaleString() + '원 <span class=bak>(1박)</span>');
 		
 		imgsArray = place.imgs.split(",");
 		for(b=0;b<imgsArray.length;b++){
@@ -1564,7 +1667,7 @@ function showPlaceMap(){	// placeToShow 에 담긴 places 들을 kakao map 에 �
 				var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
 				var customOverlay = new kakao.maps.CustomOverlay({
 					position:coords,
-					content:'<a href="/place/'+ place.seq +'" class=place_customOverlay>&nbsp;'+ place.name +'&nbsp;</a>'
+					content:'<div id='+ place.seq +' class=place_customOverlay>&nbsp;&nbsp;'+ place.name +'&nbsp;&nbsp;</div>'
 				});
 				customOverlay.setMap(map); // customOverlay 를 지도에 찍음
 				bounds.extend(coords);
@@ -1686,6 +1789,9 @@ function fill_placeOption_checkBoxes(){
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
 
 

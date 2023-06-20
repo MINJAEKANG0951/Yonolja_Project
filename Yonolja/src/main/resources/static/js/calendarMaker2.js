@@ -1,5 +1,4 @@
 
-
 function calendarMaker(){
 	
 	today = new Date();
@@ -19,6 +18,7 @@ function calendarMaker(){
 		rightButton_id:'calendar_right',
         decideButton_id:'calendar_decide',
         resetButton_id:'calendar_reset',
+        closeButton_id:'calendar_close',
         calendarInputId_year:'calendar_year',
         calendarInputId_month:'calendar_month',
 		
@@ -43,16 +43,19 @@ function calendarMaker(){
 		
 		decided_checkin:null,
 		decided_checkout:null,
+		
+		finishCode:null,
+		closeCode:null,
 
         getTag:function(){
             // 초기생성 tag는 완성. 
             tag_str = '<table id=' + this.calendarTable_id + '>'
             tag_str += '<thead>'
-			
-            tag_str += '<tr> <th colspan=3>'
-            tag_str += '<h4 id=guide>  </h4>'
-            tag_str += '</th>'
-            tag_str += '<th colspan=4>'
+			tag_str += '<tr><th colspan=7 align="right"> <span id='+ this.closeButton_id +'>&times;&nbsp;</span> </th></tr>'
+            tag_str += '<tr> <th colspan=7>'
+            tag_str += '<span id=guide>  </span>'
+            tag_str += '</th></tr><tr>'
+            tag_str += '<th colspan=7>'
             tag_str += '<input id=' + this.checkinInput_id + ' type=text placeholder=checkin readonly> -' + ' <input id=' + this.checkoutInput_id + ' type=text placeholder=checkout readonly>'
             tag_str += '</th> </tr>'
             tag_str += '<tr><th><button id='+ this.leftButton_id +'> < </button></th>'
@@ -72,7 +75,7 @@ function calendarMaker(){
             tag_str += '<tfoot>'
             tag_str += '<tr>'
             tag_str += '<td colspan=7>'
-            tag_str += '<button id='+ this.decideButton_id +'> 결정하기 </button>'
+            tag_str += '<button id='+ this.decideButton_id +'> 확인 </button>'
             tag_str += '<button id='+ this.resetButton_id + '> 다시 정하기 </button>'
             tag_str += '</td>'
             tag_str += '</tr>'
@@ -96,15 +99,18 @@ function calendarMaker(){
         getCss:function(){
 
             css_str = '<style>';
-            css_str += '#' + this.calendarTable_id + '{border-collapse:collapse;border:0px solid black;}'
-            css_str += '#' + this.calendarTable_id + ' th #guide{text-align:center;}'
+            css_str += '#' + this.calendarTable_id + '{width:100%;height:100%;border-collapse:collapse;border:0px solid black;}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(1) th span{font-size:30px;font-weight:bold;color:#ddd;cursor:pointer}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(1) th span:hover{color:black;}'
+            css_str += '#' + this.calendarTable_id + ' th #guide{text-align:center;font-size:25px;font-weight:bold;}'
             css_str += '#' + this.calendarTable_id + ' th{width:75px;height:37px;}'
-            css_str += '#' + this.calendarTable_id + ' tr:nth-child(1) th input{width:110px;font-size:15px;text-align:center;border:0px}'
-            css_str += '#' + this.calendarTable_id + ' tr:nth-child(2) th input:nth-child(1){width:45px;font-size:18px;text-align:right;border:0px}'
-            css_str += '#' + this.calendarTable_id + ' tr:nth-child(2) th input:nth-child(2){width:20px;font-size:18px;text-align:right;border:0px}'
-            css_str += '#' + this.calendarTable_id + ' tr:nth-child(2) th button{width:35px;height:35px;cursor:pointer;background-color:black;color:white;border:0px;border-radius:10px 10px 10px 10px;font-size:10px;}'
-            css_str += '#' + this.calendarTable_id + ' tr:nth-child(2) th button:hover{background-color:#ddd;transition:0.3s;}'
             css_str += '#' + this.calendarTable_id + ' thead tr:nth-child(3){border-bottom:1px solid #ddd;}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(3) th input{width:130px;font-size:20px;text-align:center;border:0px;color:gray;}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(4) th input:nth-child(1){width:45px;font-size:18px;text-align:right;border:0px}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(4) th input:nth-child(2){width:20px;font-size:18px;text-align:right;border:0px}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(4) th button{width:35px;height:35px;cursor:pointer;background-color:black;color:white;border:0px;border-radius:10px 10px 10px 10px;font-size:10px;}'
+            css_str += '#' + this.calendarTable_id + ' tr:nth-child(4) th button:hover{background-color:#ddd;transition:0.3s;}'
+            css_str += '#' + this.calendarTable_id + ' thead tr:nth-child(5){border-bottom:0px solid #ddd;}'
             css_str += '#' + this.calendarTable_id + ' tbody tr td{width:75px; height:37px; cursor:pointer; font-weight:bold;text-align:center}'
             css_str += '#' + this.calendarTable_id + ' tbody tr td:hover{background-color:#ddd;transition:0.5s;}'
             css_str += '#' + this.calendarTable_id + ' .unavailable{color:#ddd;}'
@@ -113,7 +119,7 @@ function calendarMaker(){
             css_str += '#' + this.calendarTable_id + ' .checkouted{background-color:black;color:white;box-shadow: 0 0 0 1px black inset;}'
             css_str += '#' + this.calendarTable_id + ' tfoot {text-align:right}'
             css_str += '#' + this.calendarTable_id + ' tfoot button{width:115px;height:40px;background-color:black;color:white;font-size:15px;border-radius:15% 15% 15% 15% / 50% 50% 50% 50%;border:0px;margin:10px;cursor:pointer;}'
-            css_str += '#' + this.calendarTable_id + ' tfoot button:hover{width:118px;height:45px;font-size:17px;transition:0.3s;}'
+            css_str += '#' + this.calendarTable_id + ' tfoot button:hover{background-color:gray;transition:0.3s;}'
             css_str += '</style>'
 			
             return css_str;
@@ -160,11 +166,11 @@ function calendarMaker(){
            });
            
            if(this.checkin_selected==null){
-        	   $('#'+ this.calendarTable_id + ' #guide').text('체크인 날짜를 선택해주세요')
+        	   $('#'+ this.calendarTable_id + ' #guide').text('체크인 날짜를 선택')
            } else if(this.checkin_selected!=null && this.checkout_selected==null){
-        	   $('#'+ this.calendarTable_id + ' #guide').text('체크아웃 날짜를 선택해주세요')
+        	   $('#'+ this.calendarTable_id + ' #guide').text('체크아웃 날짜를 선택')
            } else {
-        	   $('#'+ this.calendarTable_id + ' #guide').text('결정하시겠습니까?')
+        	   $('#'+ this.calendarTable_id + ' #guide').text("날짜를 선택하려면 '확인'버튼을 눌러주세요")
            }
            
            $('#'+ this.calendarTable_id + ' #guide').fadeOut(0, function(){
@@ -319,6 +325,7 @@ function calendarMaker(){
    		},
    		
    		
+   		
    		setAim:function(aim1,aim2){
 			   
 			   this.aimFor_checkin=aim1;
@@ -332,8 +339,16 @@ function calendarMaker(){
 		
 		getCheckout:function(){
 			return this.decided_checkout;
-		}
+		},
         
+        
+        setFinishCode:function(fun){
+			this.finishCode = fun;
+		},
+		
+		 setCloseCode:function(fun){
+			this.closeCode = fun;
+		}
 		
 	}
 	
@@ -368,9 +383,17 @@ function calendarMaker(){
 			
 			$('#' + calendar.aimFor_checkin).val(calendar.checkin_selected);
 			$('#' + calendar.aimFor_checkout).val(calendar.checkout_selected);
-			this.decided_checkin = calendar.checkin_selected;
-	 		this.decided_checkout = calendar.checkout_selected;
+			calendar.decided_checkin = calendar.checkin_selected;
+	 		calendar.decided_checkout = calendar.checkout_selected;
+		} else { 
+			$('#' + calendar.aimFor_checkin).val(null);
+			$('#' + calendar.aimFor_checkout).val(null);
+			calendar.decided_checkin = null;
+	 		calendar.decided_checkout = null;
 		}
+		
+		
+		calendar.finishCode();
 
 	})
 	.on('click','#' + calendar.resetButton_id, function(){
@@ -384,6 +407,13 @@ function calendarMaker(){
 	   
 	   this.decided_checkin = null;
 	   this.decided_checkout = null;
+	})
+	
+	
+	.on('click', '#' + calendar.closeButton_id, function(){
+		
+		calendar.closeCode();
+		
 	})
 	
 	/*
