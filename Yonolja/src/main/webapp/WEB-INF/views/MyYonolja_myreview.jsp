@@ -32,14 +32,19 @@ if (session.getAttribute("user_id") == null) {
 	margin: auto; 
 	padding: 20px; 
 	position: relative;
-	
 	text-align: center;
+	
+	font-size: 28px;
+	font-weight: bold;
+	margin-bottom: 20px;
 }
 
 section {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+
+    margin-bottom: 40px;
 }
 
 .div_review {
@@ -52,6 +57,9 @@ section {
 	align-items: center;
 	padding: 15px;
 	border-bottom: 1px solid black;
+	
+	font-weight: bold;
+    background-color: #e9e9e9;
 }
 
 .div_review2 {
@@ -71,7 +79,14 @@ section {
 	padding: 4px;
 	display: grid;
 	align-items: center;
+
+    justify-content: center;
 } 
+
+.review_link {
+  cursor: pointer;
+
+}
 
 /* 모달창 띄우기 */
 #review_modal {
@@ -83,8 +98,9 @@ section {
     width: 100%; 
     height: 100%; 
     overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
+	background-color: rgba(0, 0, 0, 0.4);
+	
+	text-align: center;
 }
 
 /* Modal Content/Box */
@@ -94,6 +110,14 @@ section {
     padding: 20px;
     border: 1px solid #888;
     width: 40%; 
+    
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
+}
+
+#modal-header {
+  margin-top: 0;
+  font-weight: bold;
 }
 
 #review_content {
@@ -137,9 +161,33 @@ section {
 } 
 
 /* 페이지네이션 */
-.page_nation {
+ .page_nation {
     display: flex;
     justify-content: center;
+    
+    margin-top: 20px;
+} 
+
+.page-item {
+  margin: 0 5px;
+}
+
+.page-link {
+  color: black;
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-link:hover {
+  background-color: #f2f2f2;
+}
+
+.active .page-link {
+  background-color: #555;
+  color: white;
 }
 
 </style>
@@ -206,7 +254,8 @@ section {
 			</li>
 			
 			<c:choose>
-				<c:when test="${totalPages <= 5}">
+				<c:when test="${totalPages <= groupSize}">
+					<!-- 전체 페이지 수가 그룹 크기보다 작거나 같을 경우, 모든 페이지 번호를 출력 -->
 					<c:forEach begin="1" end="${totalPages}" var="i">
 						<li class="page-item ${currentPage == i ? 'active' : ''}">
 							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
@@ -215,39 +264,22 @@ section {
 						</li>
 					</c:forEach>
 				</c:when>
-				
-				<c:when test="${currentPage <= 2}">
-					<c:forEach begin="1" end="5" var="i">
-						<li class="page-item ${currentPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
-								${i}
-							</a>
-						</li>
-					</c:forEach>
-					
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-				</c:when>
-				
-				<c:when test="${currentPage >= totalPages - 1}">
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-					<c:forEach begin="${totalPages-4}" end="${totalPages}" var="i">
-						<li class="page-item ${currentPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
-								${i}
-							</a>
-						</li>
-					</c:forEach>
-				</c:when>
-				
 				<c:otherwise>
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-					<c:forEach begin="${currentPage-1}" end="${currentPage+2}" var="i">
+					<!-- 그룹의 첫 페이지 번호와 마지막 페이지 번호를 계산 -->
+					<c:set var="groupStartPage" value="${currentGroup * groupSize + 1}" />
+					<c:set var="groupEndPage" value="${Math.min((currentGroup + 1) * groupSize, totalPages.longValue())}" />
+					
+					<c:if test="${currentGroup > 0}">
+						<!-- 현재 그룹이 첫번째 그룹이 아니라면 이전 그룹으로 가는 링크를 출력 -->
+						<li class="page-item">
+							<a class="page-link" href="/MyYonolja_myreview?page=${groupStartPage - 1}&size=${size}">
+								...
+							</a>
+						</li>
+					</c:if>
+					
+					<!-- 현재 그룹의 페이지 번호를 출력 -->
+					<c:forEach begin="${groupStartPage}" end="${groupEndPage}" var="i">
 						<li class="page-item ${currentPage == i ? 'active' : ''}">
 							<a class="page-link" href="/MyYonolja_myreview?page=${i}&size=${size}">
 								${i}
@@ -255,9 +287,14 @@ section {
 						</li>
 					</c:forEach>
 					
-					<li class="page-item disabled">
-					  <a class="page-link">...</a>
-					</li>
+					<c:if test="${groupEndPage < totalPages}">
+						<!-- 현재 그룹이 마지막 그룹이 아니라면 다음 그룹으로 가는 링크를 출력 -->
+						<li class="page-item">
+							<a class="page-link" href="/MyYonolja_myreview?page=${groupEndPage + 1}&size=${size}">
+								...
+							</a>
+						</li>
+					</c:if>
 				</c:otherwise>
 			</c:choose>
 			
@@ -289,7 +326,7 @@ section {
         <label>리뷰 내용을 입력해주세요.</label><br>
         <!-- <input type="text" id="review_content"><br> -->
         <textarea id="review_content"></textarea><br>
-        <input type="hidden" id="review_seq"><br>
+        <input type="hidden" id="review_seq">
         <div id="stars">
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
@@ -297,6 +334,7 @@ section {
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
         </div>
+        <br>
         <button id="review_up">수정</button>
         <button id="review_c">취소</button>       
     </div>

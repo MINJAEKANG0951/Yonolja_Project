@@ -236,9 +236,33 @@ a {
 }
 
 /* 페이지네이션 */
-.page_nation {
+ .page_nation {
     display: flex;
     justify-content: center;
+    
+    margin-top: 20px;
+} 
+
+.page-item {
+  margin: 0 5px;
+}
+
+.page-link {
+  color: black;
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-link:hover {
+  background-color: #f2f2f2;
+}
+
+.active .page-link {
+  background-color: #555;
+  color: white;
 }
 
 
@@ -303,18 +327,14 @@ a {
 									<div class="place_s">
 										<div class="image_container">
 										
-										                <c:choose>
-                    <c:when test="${empty imagePaths[0] or imagePaths[0].equals('')}">
-                        <!-- 여기에 이미지가 없을 경우를 대비한 텍스트 또는 이미지를 추가하세요 -->
-                        <img src="/img/place_img/이미지없음.png" alt="No image available" class="place_img">
-                    </c:when>
-                    <c:otherwise>
-										
-											<img src="${imagePaths[0]}" alt="Image" class="place_img">
-											
-											</c:otherwise>
-											</c:choose>
-											
+											<c:choose>
+												<c:when test="${empty imagePaths[0] or imagePaths[0].equals('')}">
+													<img src="/img/place_img/이미지없음.png" alt="No image available" class="place_img">
+												</c:when>
+												<c:otherwise>
+													<img src="${imagePaths[0]}" alt="Image" class="place_img">											
+												</c:otherwise>
+											</c:choose>				
 										</div>
 										<div>
 										<span class="place_name">${place.place_name}</span>
@@ -607,7 +627,12 @@ $(document)
 .on("click", "#confirmButton", function() {
     var password = $("#passwordInput").val();
     var user_ps = $(".user_ps").val();
-
+	
+    if(password == '') {
+    	alert('비밀번호를 입력해주세요.');
+    	return false;
+    }
+    
     if (password === user_ps) {
         window.location.href = '/MyYonolja_myinfo';
     } else {
@@ -616,7 +641,7 @@ $(document)
         return false;
     }
     $("#passwordModal").hide();
-    $("#passwordInput").val(''); // 추가된 부분: 비밀번호 입력 필드 초기화
+    $("#passwordInput").val(''); 
 })
 
 

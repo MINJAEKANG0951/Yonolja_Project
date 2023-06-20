@@ -132,11 +132,18 @@ public class Controller_HS {
     @GetMapping("/MyYonolja_mypost")
     public String MyYonolja_mypost(Model model, HttpServletRequest req,
     							   @RequestParam(defaultValue = "1") int page, 
-    							   @RequestParam(defaultValue = "10") int size) {
+    							   @RequestParam(defaultValue = "5") int size) {
         HttpSession session = req.getSession();
         int user_seq = (int) session.getAttribute("user_seq");
 
-        //페이지네이션
+        //페이지네이션    
+        int groupSize = 5;
+        int currentGroup = (page - 1) / groupSize;
+
+        model.addAttribute("groupSize", groupSize);
+        model.addAttribute("currentGroup", currentGroup);
+
+        
         int totalCount = hsdao.mypost_count(user_seq);
         int startIndex = (page - 1) * size + 1;
         int endIndex = Math.min(startIndex + size - 1, totalCount);
@@ -161,7 +168,7 @@ public class Controller_HS {
         return "MyYonolja_mypost";
     }
     
- // Controller
+ // 예약내역조회
     @GetMapping("/MyYonolja_mybooklist")
     public String MyYonolja_mybooklist(Model model, HttpServletRequest req,
                                        @RequestParam(defaultValue = "1") int waitingPage,
@@ -172,6 +179,12 @@ public class Controller_HS {
         int user_seq = (int) session.getAttribute("user_seq");
 
         // 예약대기 페이지네이션
+        int waiting_groupSize = 5;
+        int waiting_currentGroup = (waitingPage - 1) / waiting_groupSize;
+
+        model.addAttribute("waiting_groupSize", waiting_groupSize);
+        model.addAttribute("waiting_currentGroup", waiting_currentGroup);
+        
         int waitingTotalCount = hsdao.waiting_count(user_seq);
         int waitingStartIndex = (waitingPage - 1) * waitingSize + 1;
         int waitingEndIndex = Math.min(waitingStartIndex + waitingSize - 1, waitingTotalCount);
@@ -184,6 +197,12 @@ public class Controller_HS {
         model.addAttribute("waitingPage", waitingPage);
 
         // 예약확정 페이지네이션
+        int confirmed_groupSize = 5;
+        int confirmed_currentGroup = (confirmedPage - 1) / confirmed_groupSize;
+
+        model.addAttribute("confirmed_groupSize", confirmed_groupSize);
+        model.addAttribute("confirmed_currentGroup", confirmed_currentGroup);
+        
         int confirmedTotalCount = hsdao.con_count(user_seq);
         int confirmedStartIndex = (confirmedPage - 1) * confirmedSize + 1;
         int confirmedEndIndex = Math.min(confirmedStartIndex + confirmedSize - 1, confirmedTotalCount);
@@ -196,60 +215,7 @@ public class Controller_HS {
         model.addAttribute("confirmedPage", confirmedPage);
 
         return "MyYonolja_mybooklist";
-    }
-
-
-
-    
-    
-//    @GetMapping("/MyYonolja_mybooklist")
-//    public String MyYonolja_mybooklist(Model model, HttpServletRequest req,
-//							    	   @RequestParam(defaultValue = "1") int page, 
-//									   @RequestParam(defaultValue = "3") int size,
-//							    	   @RequestParam(defaultValue = "1") int page2, 
-//									   @RequestParam(defaultValue = "3") int size2) {
-//
-//        HttpSession session = req.getSession();
-//        int user_seq = (int) session.getAttribute("user_seq");
-//
-//        //페이지네이션 // 예약대기
-//        int totalCount = hsdao.waiting_count(user_seq);
-//        int startIndex = (page - 1) * size + 1;
-//        int endIndex = Math.min(startIndex + size - 1, totalCount);
-//        int totalPages = (int) Math.ceil((double) totalCount / size);
-//        List<DTO_HS_bookDTO> waitingList = hsdao.waiting_book(user_seq, startIndex, size);
-//
-//        model.addAttribute("waitingList", waitingList);
-//        model.addAttribute("totalPages", totalPages);
-//        model.addAttribute("currentPage", page);
-//        model.addAttribute("page", page);
-//        
-//	    System.out.println("waitingList"+waitingList);
-//	    System.out.println("totalPages= "+totalPages);
-//	    System.out.println("page= "+page);
-//	    System.out.println("size= "+size); 
-//        
-//        //페이지네이션 // 예약확정
-//        int totalCount2 = hsdao.con_count(user_seq);
-//        int startIndex2 = (page2 - 1) * size2 + 1;
-//        int endIndex2 = Math.min(startIndex2 + size2 - 1, totalCount2);
-//        int totalPages2 = (int) Math.ceil((double) totalCount2 / size2);
-//        List<DTO_HS_bookDTO> confirmedList = hsdao.con_book(user_seq, startIndex2, size2);
-//
-//        model.addAttribute("confirmedList", confirmedList);
-//        model.addAttribute("totalPages2", totalPages2);
-//        model.addAttribute("currentPage2", page2);
-//        model.addAttribute("page2", page2);
-//        
-//	    System.out.println("confirmedList= "+confirmedList);
-//	    System.out.println("totalPages2= "+totalPages2);
-//	    System.out.println("page2= "+page2);
-//	    System.out.println("size2= "+size2); 
-//        
-//        return "MyYonolja_mybooklist";
-//    }
-
-    
+    }    
     
     // 예약내역조회 페이지에서 리뷰(review) 등록하기insert
     @PostMapping("/book_review_insert")
@@ -294,7 +260,7 @@ public class Controller_HS {
     public String MyYonolja_myreview(Model model, 
     								 HttpServletRequest req,
     								 @RequestParam(defaultValue = "1") int page, 
-    								 @RequestParam(defaultValue = "3") int size) {
+    								 @RequestParam(defaultValue = "5") int size) {
     	
         HttpSession session = req.getSession();        
         int user_seq = (int) session.getAttribute("user_seq");
@@ -303,6 +269,13 @@ public class Controller_HS {
 
         
         //페이지네이션
+        int groupSize = 5;
+        int currentGroup = (page - 1) / groupSize;
+
+        model.addAttribute("groupSize", groupSize);
+        model.addAttribute("currentGroup", currentGroup);
+        
+        
         int totalCount = hsdao.myreview_count(user_seq);
         int startIndex = (page - 1) * size + 1;
         int endIndex = Math.min(startIndex + size - 1, totalCount);
@@ -321,19 +294,6 @@ public class Controller_HS {
         
     	return "MyYonolja_myreview";
     }
-    
-    
-//    @GetMapping("/MyYonolja_myreview")
-//    public String MyYonolja_myreview(Model model, HttpServletRequest req) {
-//    	
-//        HttpSession session = req.getSession();
-//        int user_seq = (int) session.getAttribute("user_seq");
-//
-//        List<DTO_HS_reviewDTO> myreview = hsdao.myReviewlist(user_seq);
-//        model.addAttribute("myreview", myreview);
-//        
-//    	return "MyYonolja_myreview";
-//    }
     
 	// 리뷰수정(업데이트)
     @PostMapping("/myReview_update")

@@ -34,6 +34,19 @@ if (session.getAttribute("user_id") == null) {
 
 /* 위까지 헤더, footer 설정 */
 
+h1 {
+  text-align: center;
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.book_h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 40px;
+} 
+
  .h1_book {
   border-radius: 15px;
   width: 800px;
@@ -47,7 +60,8 @@ if (session.getAttribute("user_id") == null) {
 section {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
+  margin-bottom: 40px;
 }
 
 .div_book {
@@ -60,7 +74,10 @@ section {
   align-items: center;
   padding: 15px;
   border-bottom: 1px solid black;
-}
+  
+  font-weight: bold;
+  background-color: #e9e9e9;
+} 
 
 .div_book2 {
   width: 800px;
@@ -72,13 +89,20 @@ section {
   align-items: center;
   padding: 15px; 
   border-bottom: 1px solid black;
-}
+} 
+
 
 .div_book > span {
-  padding: 4px;
-  display: grid;
   align-items: center;
-} 
+  
+  padding: 4px;
+  display: flex;
+  justify-content: center;
+}  
+
+.book_sp {
+  cursor: pointer;
+}
 
 
 /* 모달창 띄우기 */
@@ -91,8 +115,9 @@ section {
     width: 100%; 
     height: 100%; 
     overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
+	background-color: rgba(0, 0, 0, 0.4);
+	
+	text-align: center;
 }
 
 /* Modal Content/Box */
@@ -102,6 +127,14 @@ section {
     padding: 20px;
     border: 1px solid #888;
     width: 40%; 
+    
+    border-radius: 10px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19); 
+}
+
+#modal_title {
+  margin-top: 0;
+  font-weight: bold;
 }
 
 #content {
@@ -137,9 +170,33 @@ section {
 }
 
 /* 페이지네이션 */
-.page_nation {
+ .page_nation {
     display: flex;
     justify-content: center;
+    
+    margin-top: 20px;
+} 
+
+.page-item {
+  margin: 0 5px;
+}
+
+.page-link {
+  color: black;
+  text-decoration: none;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.page-link:hover {
+  background-color: #f2f2f2;
+}
+
+.active .page-link {
+  background-color: #555;
+  color: white;
 }
 
 </style>
@@ -152,7 +209,7 @@ section {
 	<span><a href="#" id="mypage" style="float:right;">마이페이지</a></span>
 	<div>		
 	<!-- '예약대기' 섹션 -->
-		<h2>예약대기</h2>
+		<h2 class="book_h2">예약대기</h2>
 		<span>숙박 1일 전까지 취소 가능합니다.</span>
 		<div class="div_book">
 			<span>호텔명</span>
@@ -188,7 +245,7 @@ section {
 						</c:choose>
 						</span>
 						<button class="btnX">예약취소</button>
-						<input type="hidden" value="${book.book_seq}" id="seq_${book.book_seq}">
+						<input type="text" value="${book.book_seq}" id="seq_${book.book_seq}">
 					</div> 
 				</c:if>
 			</c:forEach>
@@ -208,7 +265,8 @@ section {
 						</li>
 						
 						<c:choose>
-							<c:when test="${waitingTotalPages <= 5}">
+							<c:when test="${waitingTotalPages <= waiting_groupSize}">
+								<!-- 전체 페이지 수가 그룹 크기보다 작거나 같을 경우, 모든 페이지 번호를 출력 -->
 								<c:forEach begin="1" end="${waitingTotalPages}" var="i">
 									<li class="page-item ${waitingPage == i ? 'active' : ''}">
 										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
@@ -217,49 +275,37 @@ section {
 									</li>
 								</c:forEach>
 							</c:when>
-							
-							<c:when test="${waitingPage <= 2}">
-								<c:forEach begin="1" end="5" var="i">
-									<li class="page-item ${waitingPage == i ? 'active' : ''}">
-										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-											${i}
-										</a>
-									</li>
-								</c:forEach>
-								
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
-							</c:when>
-							
-							<c:when test="${waitingPage >= waitingTotalPages - 1}">
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
-								<c:forEach begin="${waitingTotalPages-4}" end="${waitingTotalPages}" var="i">
-									<li class="page-item ${waitingPage == i ? 'active' : ''}">
-										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-											${i}
-										</a>
-									</li>
-								</c:forEach>
-							</c:when>
-							
 							<c:otherwise>
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
-								<c:forEach begin="${waitingPage-1}" end="${waitingPage+2}" var="i">
+								<!-- 그룹의 첫 페이지 번호와 마지막 페이지 번호를 계산 -->
+								<c:set var="groupStartPage1" value="${waiting_currentGroup * waiting_groupSize + 1}" />
+								<c:set var="groupEndPage1" value="${Math.min((waiting_currentGroup + 1) * waiting_groupSize, waitingTotalPages.longValue())}" />
+								
+								<c:if test="${waiting_currentGroup > 0}">
+									<!-- 현재 그룹이 첫번째 그룹이 아니라면 이전 그룹으로 가는 링크를 출력 -->
+									<li class="page-item">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${groupStartPage1 - 1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+											...
+										</a>
+									</li>
+								</c:if>
+								
+								<!-- 현재 그룹의 페이지 번호를 출력 -->
+								<c:forEach begin="${groupStartPage1}" end="${groupEndPage1}" var="i">
 									<li class="page-item ${waitingPage == i ? 'active' : ''}">
-										<a class="page-link" href="//MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
 											${i}
 										</a>
 									</li>
 								</c:forEach>
 								
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
+								<c:if test="${groupEndPage1 < waitingTotalPages}">
+									<!-- 현재 그룹이 마지막 그룹이 아니라면 다음 그룹으로 가는 링크를 출력 -->
+									<li class="page-item">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${groupEndPage1 + 1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+											...
+										</a>
+									</li>
+								</c:if>
 							</c:otherwise>
 						</c:choose>
 						
@@ -281,7 +327,7 @@ section {
 		
 		
 		<!-- '예약확정' 섹션 -->
-		<h2>예약확정</h2>
+		<h2 class="book_h2">예약확정</h2>
 		<span>리뷰작성을 원하시는 경우, 해당하는 예약내역을 클릭하세요.</span>
 		<div class="div_book">
 			<span>호텔명</span>
@@ -323,7 +369,7 @@ section {
 						</c:choose>
 						</span>
 						<span class="book_sp" onclick="redirectToBookView(${book.book_seq}, '${book.review_status}', '${book.place_name}', '${book.roomtype_name}')">${book.review_status}</span>
-						<input type="hidden" value="${book.book_seq}" id="seq_${book.book_seq}">
+						<input type="text" value="${book.book_seq}" id="seq_${book.book_seq}">
 					</div> 
 				</c:if>
 			</c:forEach>
@@ -343,7 +389,8 @@ section {
 						</li>
 						
 						<c:choose>
-							<c:when test="${confirmedTotalPages <= 5}">
+							<c:when test="${confirmedTotalPages <= confirmed__groupSize}">
+								<!-- 전체 페이지 수가 그룹 크기보다 작거나 같을 경우, 모든 페이지 번호를 출력 -->
 								<c:forEach begin="1" end="${confirmedTotalPages}" var="i">
 									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
 										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
@@ -352,39 +399,22 @@ section {
 									</li>
 								</c:forEach>
 							</c:when>
-							
-							<c:when test="${confirmedPage <= 2}">
-								<c:forEach begin="1" end="5" var="i">
-									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
-										<a class="page-link" href="MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
-											${i}
-										</a>
-									</li>
-								</c:forEach>
-								
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
-							</c:when>
-							
-							<c:when test="${confirmedPage >= confirmedTotalPages - 1}">
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
-								<c:forEach begin="${confirmedTotalPages-4}" end="${confirmedTotalPages}" var="i">
-									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
-										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
-											${i}
-										</a>
-									</li>
-								</c:forEach>
-							</c:when>
-							
 							<c:otherwise>
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
-								<c:forEach begin="${confirmedPage-1}" end="${currentPage2+2}" var="i">
+								<!-- 그룹의 첫 페이지 번호와 마지막 페이지 번호를 계산 -->
+								<c:set var="groupStartPage2" value="${confirmed_currentGroup * confirmed_groupSize + 1}" />
+								<c:set var="groupEndPage2" value="${Math.min((confirmed_currentGroup + 1) * confirmed_groupSize, confirmedTotalPages.longValue())}" />
+								
+								<c:if test="${confirmed_currentGroup > 0}">
+									<!-- 현재 그룹이 첫번째 그룹이 아니라면 이전 그룹으로 가는 링크를 출력 -->
+									<li class="page-item">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${groupStartPage2 - 1}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
+											...
+										</a>
+									</li>
+								</c:if>
+								
+								<!-- 현재 그룹의 페이지 번호를 출력 -->
+								<c:forEach begin="${groupStartPage2}" end="${groupEndPage2}" var="i">
 									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
 										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
 											${i}
@@ -392,9 +422,14 @@ section {
 									</li>
 								</c:forEach>
 								
-								<li class="page-item disabled">
-									<a class="page-link">...</a>
-								</li>
+								<c:if test="${groupEndPage2 <confirmedTotalPages}">
+									<!-- 현재 그룹이 마지막 그룹이 아니라면 다음 그룹으로 가는 링크를 출력 -->
+									<li class="page-item">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${groupEndPage2 + 1}&confirmedSize=${confirmedSize}">
+											...
+										</a>
+									</li>
+								</c:if>
 							</c:otherwise>
 						</c:choose>
 						
@@ -422,13 +457,13 @@ section {
     <div id="review">
         <span class="close">&times;</span>
         
-        <h2 id="modal_title" style="font-weight:bold;"></h2>
+        <h2 id="modal_title"></h2>
         <hr>
         
         <label>리뷰 내용을 입력해주세요.</label><br>
         <!-- <input type="text" id="content"><br> -->
         <textarea id="content"></textarea><br>
-        <input type="hidden" id="book_seq"><br>
+        <input type="hidden" id="book_seq">
         <div id="stars">
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
@@ -436,6 +471,7 @@ section {
             <span class="fa fa-star"></span>
             <span class="fa fa-star"></span>
         </div>
+        <br>
         <button id="review_ok">확인</button>
         <button id="review_c">취소</button>       
     </div>
