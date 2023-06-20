@@ -100,7 +100,7 @@ public class Controller_HY {
 	}
 
 
-	@PostMapping("/addImg")
+	@PostMapping("/addImg") //객실타입사진 추가 
 	@ResponseBody
 	public void getData(@RequestParam("img") MultipartFile img,
 			   @RequestParam("roomtype_seq") Integer roomtype_seq) {
@@ -134,10 +134,47 @@ public class Controller_HY {
 		
 		
 	}
+	
+	///////////////jsp 에서 pimg 수정해야함 !!!!!!!!!!!!!
 
-	@PostMapping("/deleteImg")
+	@PostMapping("/addPImg") //업장사진 추가 
 	@ResponseBody
-	public void getData(@RequestParam("src") String src,
+	public void getpData(@RequestParam("pimg") MultipartFile pimg,
+			   @RequestParam("place_seq") Integer place_seq) {
+
+		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
+		String DBpath = "/files/";
+
+		UUID uuid = UUID.randomUUID();
+		String randomStr = (uuid + "").substring(0, 5);
+
+		String fileName = randomStr + "-" + pimg.getOriginalFilename();
+
+		File file = new File(testPath, fileName);
+		try {
+			pimg.transferTo(file);
+		} catch (Exception e) {
+			System.out.println("fail");
+		}
+
+		
+		
+		if(hydao.getPlaceImgPath(place_seq)==null) {
+			String dbAddress = (DBpath + fileName);
+			hydao.updatePlaceImg(dbAddress,place_seq);
+		} else {
+			String dbAddress = (String) hydao.getPlaceImgPath(place_seq);
+			dbAddress += ("," + DBpath + fileName);
+			hydao.updatePlaceImg(dbAddress,place_seq);
+
+		}
+		
+		
+	}
+
+	@PostMapping("/deleteImg") // 객실 타입 사진 삭제 
+	@ResponseBody
+	public void DelData(@RequestParam("src") String src,
 			@RequestParam("roomtype_seq") int roomtype_seq) {
 
 		System.out.println("delete Img");
@@ -196,8 +233,73 @@ public class Controller_HY {
 		hydao.updateImg(addressStr,roomtype_seq);
 
 	}
+	
+	
+	@PostMapping("/deletePImg") // 업장 사진 삭제 
+	@ResponseBody
+	public void delPData(@RequestParam("src") String src, // 민재한테물어보기
+			@RequestParam("place_seq") int place_seq) {
 
-	@PostMapping("/getImgs")
+		System.out.println("delete Img");
+		System.out.println("toom"+place_seq);
+		
+		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
+		String DBpath = "/files/";
+		/*
+		 * UUID uuid = UUID.randomUUID(); String randomStr = (uuid + "").substring(0,5);
+		 * 
+		 * String fileName = randomStr + "-" + img.getOriginalFilename();
+		 * 
+		 * File file = new File(testPath,fileName); try{ img.transferTo(file); }
+		 * catch(Exception e) {System.out.println("fail");}
+		 */
+		String name = src.replace("/files/", "");
+	
+		File file = new File(path + "/" + name);
+		System.out.println(path + "/" + name);
+
+		String dbAddress = (String) hydao.getPlaceImgPath(place_seq);
+
+		String[]Alladdresses = dbAddress.split(",");
+		
+		String addressStr = "";
+		
+		for(int i=0;i<Alladdresses.length;i++) {
+			if(Alladdresses[i].equals(src)) {
+				// ignore
+			} else {
+				addressStr += "," + Alladdresses[i];
+			}
+		}
+		// files/abc.jpg , files/add.jpg, files/acc.jpg
+		// ===> [files/abc.jpg, files/add.jpg, files/acc.jpg]
+		// files/add.jpg
+		
+		// str = '' 
+		// str ==> ,files/abc.jpg
+		// str ==> 
+		// str ==> files/abc.jpg,files/acc.jpg
+		
+		
+		
+		addressStr = addressStr.replaceFirst(",", "");
+
+		if (file.exists()) {
+			if (file.delete()) {
+				System.out.println("deleted");
+			} else {
+				System.out.println("failed");
+			}
+		} else {
+			System.out.println("no file");
+		}
+
+		hydao.updatePlaceImg(addressStr,place_seq);
+
+	}
+
+
+	@PostMapping("/getImgs")//객실타입사진 프리뷰 
 	@ResponseBody
 	public String getImgs(@RequestParam("roomtype_seq") int roomtype_seq) {
 
@@ -212,6 +314,20 @@ public class Controller_HY {
 		}
 
 		return result;
+	}
+	
+	@PostMapping("/getPlaceImgs")// 업장사진 프리뷰 
+	@ResponseBody
+	public String getPlaceImgs(@RequestParam("place_seq") int place_seq) {
+	    String result = "";
+	    Object dbAddress = hydao.getPlaceImgPath(place_seq);
+	    if (dbAddress == null) {
+	        System.out.println("no photo");
+	        return "-";
+	    } else {
+	        result = (String) hydao.getPlaceImgPath(place_seq);
+	    }
+	    return result;
 	}
 
 	@GetMapping("/host_addPlace")
@@ -311,29 +427,7 @@ public class Controller_HY {
 		model.addAttribute("place_seq", place_Seq);
 
 		///////////////// 객실타입 게시하는 코드시작/////////////
-//		ArrayList<DTO_HY_roomtypeDTO> roomTypes_select =null;
-//		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
-//		for(int i=0;i<roomTypes.size();i++) {
-//			System.out.println(roomTypes.get(i).roomtype_seq);
-//			roomTypes_select = hydao.getroomtype2(place_Seq,roomTypes.get(0).roomtype_seq);
-//			
-//			}
-//		roomTypes_select = hydao.getroomtype2(place_Seq,roomTypes.get(0).roomtype_seq);
-//		model.addAttribute("roomTypes_select", roomTypes_select);
-//		model.addAttribute("roomTypes", roomTypes);
-//		
-		
-//		ArrayList<DTO_HY_roomtypeDTO> roomTypes_select = new ArrayList<>();
-//		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
-//
-//		for(DTO_HY_roomtypeDTO roomType : roomTypes) {
-//		    int roomtype_seq = roomType.roomtype_seq;
-//		    ArrayList<DTO_HY_roomtypeDTO> result = hydao.getroomtype2(place_Seq, roomtype_seq);
-//		    roomTypes_select.addAll(result);
-//		}
-//
-//		model.addAttribute("roomTypes_select", roomTypes_select);
-//		model.addAttribute("roomTypes", roomTypes);
+
 		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
 
 		for(int i = 0; i < roomTypes.size(); i++) {
@@ -345,9 +439,30 @@ public class Controller_HY {
 
 		model.addAttribute("roomTypes", roomTypes);
 
-		
-
-		
+		int number=hydao.pagingcount(place_Seq);
+		System.out.println(number);
+//		int end;
+//		int start;
+//		int paging;
+//		if(number%5==0) {
+//			paging=hydao.pagingcount(place_Seq);
+//			
+//		}
+		//
+		int pageend=hydao.pagingcount(place_Seq);
+        int pageval=pageend%5;
+        
+        
+        if(pageval==0) {
+           
+           pageend=pageend/5;
+        } else {
+           pageend=(pageend/5)+1;
+        }
+        model.addAttribute("startPage",1);
+        model.addAttribute("endPage",pageend);
+        model.addAttribute("curpage",1);
+	   
 		return "host_managePlace";
 
 	}

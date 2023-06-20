@@ -11,7 +11,7 @@
 <%@ include file ="./structure/header.jsp" %>
 <!-- 이미지관련 스타일태그 -->
 <style>
- #pictures {
+ #pictures, #placePic {
       border: 1px solid black;
       min-width: 300px;
       min-height: 300px;
@@ -45,7 +45,7 @@
       width: 100%;
       height: 100%;
     }
-    .xButton {
+    .xButton, .bButton  {
       position: absolute;
       top: 3px;
       right: 3px;
@@ -53,7 +53,7 @@
       height: 20%;
       cursor: pointer;
     }
-    .xButton:hover {
+    .xButton:hover, .bButton:hover {
       transition: 0.5s;
       width: 23%;
       height: 23%;
@@ -287,13 +287,13 @@
           <h2>업장 사진입력</h2>
             <input type="text" id="place_seq" name="place_seq" value="" readonly><br>
 			<hr>
-				<button id=addFile> 파일추가하기 </button><br><br>
-				<button id=reset> 비우기 </button><br><br>
-				<input type="file" id=imgInput name="img" accept="image/*" ><br><br>
+				<button id=addPic> 파일추가하기 </button><br><br>
+				<button id=erase> 비우기 </button><br><br>
+				<input type="file" id=picInput name="img" accept="image/*" ><br><br>
 			<hr>
 				
 			<h1>미리보기</h1>
-			<div id=pictures>
+			<div id=placePic>
 			
 			
 			</div>
@@ -350,7 +350,12 @@
       </tbody>
     </table>
   </div>
-
+  <div>
+  		<c:forEach var="i" begin="${startPage }" end="${endPage }">
+             <li class="page-item "><a id="paging${i }" class="page-link" onclick='roomtypelist(${i })'>${i }</a></li>
+        </c:forEach>
+  </div>
+             
   <!-- 객실 조회 -->
   <div>
     <h2>객실 조회</h2>
@@ -838,30 +843,29 @@ $(document).ready(function() {
       refreshImgs();
     });
 
+	// 객실타입사진관리모달
     $(document).on('click', '#addFile', function() {
       $('#imgInput').trigger('click');
     }).on('click', '#reset', function() {
       $('#imgInput').val(null);
     }).on('input', '#imgInput', function() {
-      /*var imgfile = $(this)[0].files[0];
-      var formData = new FormData();
-      formData.append('img', imgfile);
-      formData.append('roomtype_seq', $('#picRoomType_seq').val());  // 객실 타입 ID 추가
-
-      $.ajax({
-        url: '/addImg',
-        type: 'post',
-        processData: false,
-        contentType: false,
-        data: formData,
-        success: function() {
-          refreshImgs();
-          
-        }
-      });*/
       addPhoto($(this),'roomtype_seq','picRoomType_seq')
       
     })
+    
+    
+    // 업장사진관리모달 
+    $(document).on('click', '#addPic', function() {
+      $('#picInput').trigger('click');
+    }).on('click', '#erase', function() {
+      $('#picInput').val(null);
+    }).on('input', '#picInput', function() {
+      addPhoto($(this),'place_seq','place_seq')
+      
+    })
+    
+    
+    
     
 	.on('click', '.xButton', function() {
 
@@ -869,11 +873,18 @@ $(document).ready(function() {
 			btnDelete($(this),'roomtype_seq','picRoomType_seq')
   		}
 	});
+	
+    .on('click', '.bButton', function() {
+    	place_seq
+  		if(confirm('해당 사진이 실제로 삭제됩니다. 계속하시겠습니까?')) {  
+			btnDelete($(this),'place_seq','place_seq')
+  		}
+	});
 
 
   
 
-    function refreshImgs() { //업장용만들기 
+    function refreshImgs() { //객실타입사진관리 새로고침 
       $('#pictures').empty();
       $.ajax({
         url: '/getImgs',
@@ -894,6 +905,38 @@ $(document).ready(function() {
 			
 				   str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="xButton" ></div>';
 	               $('#pictures').append(str);
+	               
+				}
+
+			}
+
+          }
+        }
+      });
+    }
+
+
+    function refreshPlaceImgs() { //업장사진관리 새로고침코드 
+      $('#placePic').empty();
+      $.ajax({
+        url: '/getPlaceImgs',
+        type: 'post',
+//         여기수정함
+        data: { place_seq: $('#place_seq').val() },
+        dataType: 'text',
+        success: function(data) {
+          $('#placePic').empty();
+          if (data != '-') {
+            imgs = data.split(",");
+
+            for(i=0;i<imgs.length;i++){
+				if(i==0){
+				    str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="bButton"></div>';
+					$('#placePic').append(str);
+				} else {
+			
+				   str = '<div class="img"><img class="photo" src="' + imgs[i] + '"><img src="/img/website/xButton.png" class="bButton" ></div>';
+	               $('#placePic').append(str);
 	               
 				}
 
@@ -926,15 +969,15 @@ function addPhoto(a,b,c){
 function btnDelete(a,b,c){
 	 
 		    var imgContainer = a.closest('.img');
-		    console.log(imgContainer)
+		    console.log(imgContainer);
 		    var src = imgContainer.find('img.photo').attr('src');
-			console.log(src)
+			console.log(src);
 		    var data = {
 		      src: src,
 		     }; 
 		      data[b] = $('#'+c).val()  // 객실 타입 ID 추가
 		    
-		console.log(data)
+		console.log(data);
 		    $.ajax({
 		      url:'/deleteImg', 
 		      type:'post', 
@@ -1043,6 +1086,48 @@ $(document).ready(function() {
 // 	alert(number.length)
 // 	console.log(number)
 // }		 
+function roomtypelist(page) {
+   $('.page-item').removeClass("active");
+   $('#paging'+ page).parent().addClass("active");
+   var place_seq=$('#place_seq').val();
+   console.log(page, place_seq); 
+   $.ajax({
+      url: "/roomtypeList",
+      data: { page: page,
+    	      place_Seq:place_seq},
+      dataType: "json",
+      type: "post",
+      success: function(data) {
+         let str = "";
+
+         $('#tblRoomtype tbody tr').remove();
+         for (var i = 0; i < data.length; i++) {
+            str += "<tr><td>"
+               + data[i]["ROOMTYPE_SEQ"] + "</td><td>"
+               + data[i]["ROOMTYPE_NAME"] + "</td><td>";
+               
+            var images = data[i]["ROOMTYPE_IMGS"].split(",");
+            for (var j = 0; j < images.length; j++) {
+               str += "<img src='" + images[j] + "' alt='객실타입 이미지' style='max-width: 100%; height: 100px;'>";
+            }
+               
+            str += "</td><td>"
+               + data[i]["ROOMTYPE_CAPACITY"] + "</td><td>"
+               + data[i]["ROOMTYPE_PRICE"] + "</td><td>";
+               
+            var options = data[i]["ROOMTYPE_OPTIONS"];
+            for (var k = 0; k < options.length; k++) {
+               str += options[k]["PLACE_OPTION_NAME"];
+            }
+               
+            str += "</td><td>"
+               + data[i]["ROOMTYPE_GUIDE"] + "</td></tr>";
+         }
+         $('#tblRoomtype tbody').append(str);
+      }
+   });
+}
+
 		
 		
 		

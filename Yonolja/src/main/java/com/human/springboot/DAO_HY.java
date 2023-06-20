@@ -33,7 +33,9 @@ public interface DAO_HY {
 	
 	// RoomType select
 	
+	
 	ArrayList<DTO_HY_roomtypeDTO> getRoomtype(int place_seq);
+	int pagingcount(int place_seq);
 	
 	//Roomtype update
 	
@@ -79,6 +81,10 @@ public interface DAO_HY {
 	Object getImgAddress(int img_seq);
 	void updateImg(String img_address, int roomtype_seq);
 	void insertimg(String img_address);
+	
+	// 업장관리 
+	Object getPlaceImgPath(int place_seq);
+	void updatePlaceImg(String img_address, int place_seq);
 	
 	
 }

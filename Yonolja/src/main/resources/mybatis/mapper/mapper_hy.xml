@@ -80,45 +80,68 @@
 			
 	
 	
-<!-- 객실타입 사진관련 코드 -->
+<!-- 객실타입 프리뷰관련 -->
 
- 
-		
 		<select id="getImgAddress" resultType="Object">
 			select roomtype_imgs from yonolja_roomtype 
 			where roomtype_seq = #{param1}
 		</select>
 		
+		
 		<update id="updateImg">
 			update yonolja_roomtype set roomtype_imgs=#{param1} where roomtype_seq=#{param2}
 		</update>
 
-	
+<!-- 업장 사진 프리뷰관련  -->
+		<select id="getPlaceImgPath" resultType="Object">
+			select place_imgs from yonolja_place
+			where place_seq = #{param1}
+		</select>
+		
+		<update id="updatePlaceImg">
+			update yonolja_place set place_imgs=#{param1} where place_seq=#{param2}
+		</update>
 	
 
-
+<!-- 객실타입게시코드 -->
     <select id="getRoomtype" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
-        SELECT * FROM yonolja_roomtype
+	   SELECT
+	        ROOMTYPE_SEQ,ROOMTYPE_NAME,PLACE_SEQ,ROOMTYPE_IMGS,ROOMTYPE_CAPACITY,
+	        ROOMTYPE_PRICE,ROOMTYPE_OPTIONS,ROOMTYPE_GUIDE,num FROM
+	   (SELECT
+	        ROOMTYPE_SEQ,ROOMTYPE_NAME,PLACE_SEQ,ROOMTYPE_IMGS,ROOMTYPE_CAPACITY,
+	        ROOMTYPE_PRICE,ROOMTYPE_OPTIONS,ROOMTYPE_GUIDE, rownum as num FROM
+	        (SELECT
+	        ROOMTYPE_SEQ,ROOMTYPE_NAME,PLACE_SEQ,ROOMTYPE_IMGS,ROOMTYPE_CAPACITY,
+	        ROOMTYPE_PRICE,ROOMTYPE_OPTIONS,ROOMTYPE_GUIDE
+	        FROM yonolja_roomtype
+	        where place_seq = #{param1}
+	        order by roomtype_seq asc)) where num between 1 and 5
+    </select>
+    
+    <select id="pagingcount" resultType="int">
+        SELECT
+        count(*)
+        FROM yonolja_roomtype
         where place_seq = #{param1}
         order by roomtype_seq asc
     </select>
-    
  
     <select id="getroomtype2" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
-select place_option_name
-from
-(SELECT 
-   REGEXP_SUBSTR(a.roomtype_options,'[^,]+', 1, LEVEL) AS num, place_seq,roomtype_seq
-FROM 
-   yonolja_roomtype a
-where roomtype_seq=#{param2}
-CONNECT BY 
-   REGEXP_SUBSTR(a.roomtype_options, '[^,]+', 1, LEVEL) IS NOT NULL
-   AND PRIOR SYS_GUID() IS NOT NULL
-   AND PRIOR a.roomtype_seq = a.roomtype_seq 
-   order by roomtype_seq asc) a,yonolja_place_option b,yonolja_place c
-   where  c.place_seq=a.place_seq and  a.num=b.place_option_seq and c.place_seq=#{param1}
-   
+		select place_option_name
+		from
+		(SELECT 
+		   REGEXP_SUBSTR(a.roomtype_options,'[^,]+', 1, LEVEL) AS num, place_seq,roomtype_seq
+		FROM 
+		   yonolja_roomtype a
+		where roomtype_seq=#{param2}
+		CONNECT BY 
+		   REGEXP_SUBSTR(a.roomtype_options, '[^,]+', 1, LEVEL) IS NOT NULL
+		   AND PRIOR SYS_GUID() IS NOT NULL
+		   AND PRIOR a.roomtype_seq = a.roomtype_seq 
+		   order by roomtype_seq asc) a,yonolja_place_option b,yonolja_place c
+		   where  c.place_seq=a.place_seq and  a.num=b.place_option_seq and c.place_seq=#{param1}
+		   
     </select>
     
     
@@ -201,7 +224,10 @@ CONNECT BY
   		</delete>
   		
   		
-<!--  객실타입 표시하는 select 코드(place_seq이용) -->
+
+
+
+
 
 
 		
