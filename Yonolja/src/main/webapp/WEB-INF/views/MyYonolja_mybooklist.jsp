@@ -221,7 +221,7 @@ section {
 		
 		<div>
 		 	<c:if test="${empty waitingList}">
-	  			<p>예약내역이 없습니다</p>
+	  			<p style="text-align: center; font-size:20px;"><b>예약내역이 없습니다</b></p>
 			</c:if> 
 		
 			<c:forEach items="${waitingList}" var="book" varStatus="status">
@@ -245,7 +245,7 @@ section {
 						</c:choose>
 						</span>
 						<button class="btnX">예약취소</button>
-						<input type="text" value="${book.book_seq}" id="seq_${book.book_seq}">
+						<input type="hidden" value="${book.book_seq}" id="seq_${book.book_seq}">
 					</div> 
 				</c:if>
 			</c:forEach>
@@ -339,7 +339,7 @@ section {
 		
 		<div>	
 			<c:if test="${empty confirmedList}">
-	  			<p>예약내역이 없습니다</p>
+	  			<p style="text-align: center; font-size:20px;"><b>예약내역이 없습니다</b></p>
 			</c:if> 
 		
 			<c:forEach items="${confirmedList}" var="book" varStatus="status">
@@ -369,7 +369,7 @@ section {
 						</c:choose>
 						</span>
 						<span class="book_sp" onclick="redirectToBookView(${book.book_seq}, '${book.review_status}', '${book.place_name}', '${book.roomtype_name}')">${book.review_status}</span>
-						<input type="text" value="${book.book_seq}" id="seq_${book.book_seq}">
+						<input type="hidden" value="${book.book_seq}" id="seq_${book.book_seq}">
 					</div> 
 				</c:if>
 			</c:forEach>

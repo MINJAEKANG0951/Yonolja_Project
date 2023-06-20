@@ -132,97 +132,98 @@ section {
 		<span>답변여부</span>		
 	</div>
 	<div class="post_click">
-	
-	<c:forEach items="${mypost}" var="post" varStatus="status">
-		<div class="div_post2">
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_seq}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_title}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_date}</span>
-			<span class="post_link" onclick="redirectToPostView(${post.post_seq})">
-				<c:choose>
-	                <c:when test="${post.post_comment == null}">답변 안함</c:when>
-	                <c:otherwise>답변 완료</c:otherwise>
-            	</c:choose>
-			</span>
-			<input type="hidden" value="${post.post_seq}" id="seq_${post.post_seq}">
-		</div>
-	</c:forEach>
-
-	<div class="page_nation">
-	<c:if test="${mypost.size() >= 1}">       	
-		<ul class="pagination">
-			<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mypost?page=1&size=${size}">
-					처음
-				</a>
-			</li>
-			<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mypost?page=${currentPage-1}&size=${size}">
-					이전
-				</a>
-			</li>
-			
-			<c:choose>
-				<c:when test="${totalPages <= groupSize}">
-					<!-- 전체 페이지 수가 그룹 크기보다 작거나 같을 경우, 모든 페이지 번호를 출력 -->
-					<c:forEach begin="1" end="${totalPages}" var="i">
-						<li class="page-item ${currentPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
-								${i}
-							</a>
-						</li>
-					</c:forEach>
-				</c:when>
-				<c:otherwise>
-					<!-- 그룹의 첫 페이지 번호와 마지막 페이지 번호를 계산 -->
-					<c:set var="groupStartPage" value="${currentGroup * groupSize + 1}" />
-					<c:set var="groupEndPage" value="${Math.min((currentGroup + 1) * groupSize, totalPages.longValue())}" />
-					
-					<c:if test="${currentGroup > 0}">
-						<!-- 현재 그룹이 첫번째 그룹이 아니라면 이전 그룹으로 가는 링크를 출력 -->
-						<li class="page-item">
-							<a class="page-link" href="/MyYonolja_mypost?page=${groupStartPage - 1}&size=${size}">
-								...
-							</a>
-						</li>
-					</c:if>
-					
-					<!-- 현재 그룹의 페이지 번호를 출력 -->
-					<c:forEach begin="${groupStartPage}" end="${groupEndPage}" var="i">
-						<li class="page-item ${currentPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
-								${i}
-							</a>
-						</li>
-					</c:forEach>
-					
-					<c:if test="${groupEndPage < totalPages}">
-						<!-- 현재 그룹이 마지막 그룹이 아니라면 다음 그룹으로 가는 링크를 출력 -->
-						<li class="page-item">
-							<a class="page-link" href="/MyYonolja_mypost?page=${groupEndPage + 1}&size=${size}">
-								...
-							</a>
-						</li>
-					</c:if>
-				</c:otherwise>
-			</c:choose>
-			
-			<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mypost?page=${currentPage+1}&size=${size}">
-					다음
-				</a>
-			</li>
-			
-			<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mypost?page=${totalPages}&size=${size}">
-					끝
-				</a>
-			</li>
-		</ul>
-	</c:if> 
-</div>
-
+		<c:if test="${empty mypost}">
+	    	<p style="text-align: center; font-size:20px;"><b>문의한 내역이 없습니다.</b></p>
+		</c:if>
 		
+		<c:forEach items="${mypost}" var="post" varStatus="status">
+			<div class="div_post2">
+				<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_seq}</span>
+				<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_title}</span>
+				<span class="post_link" onclick="redirectToPostView(${post.post_seq})">${post.post_date}</span>
+				<span class="post_link" onclick="redirectToPostView(${post.post_seq})">
+					<c:choose>
+		                <c:when test="${post.post_comment == null}">답변 안함</c:when>
+		                <c:otherwise>답변 완료</c:otherwise>
+	            	</c:choose>
+				</span>
+				<input type="hidden" value="${post.post_seq}" id="seq_${post.post_seq}">
+			</div>
+		</c:forEach>
+	
+		<div class="page_nation">
+		<c:if test="${mypost.size() >= 1}">       	
+			<ul class="pagination">
+				<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+					<a class="page-link" href="/MyYonolja_mypost?page=1&size=${size}">
+						처음
+					</a>
+				</li>
+				<li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
+					<a class="page-link" href="/MyYonolja_mypost?page=${currentPage-1}&size=${size}">
+						이전
+					</a>
+				</li>
+				
+				<c:choose>
+					<c:when test="${totalPages <= groupSize}">
+						<!-- 전체 페이지 수가 그룹 크기보다 작거나 같을 경우, 모든 페이지 번호를 출력 -->
+						<c:forEach begin="1" end="${totalPages}" var="i">
+							<li class="page-item ${currentPage == i ? 'active' : ''}">
+								<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
+									${i}
+								</a>
+							</li>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<!-- 그룹의 첫 페이지 번호와 마지막 페이지 번호를 계산 -->
+						<c:set var="groupStartPage" value="${currentGroup * groupSize + 1}" />
+						<c:set var="groupEndPage" value="${Math.min((currentGroup + 1) * groupSize, totalPages.longValue())}" />
+						
+						<c:if test="${currentGroup > 0}">
+							<!-- 현재 그룹이 첫번째 그룹이 아니라면 이전 그룹으로 가는 링크를 출력 -->
+							<li class="page-item">
+								<a class="page-link" href="/MyYonolja_mypost?page=${groupStartPage - 1}&size=${size}">
+									...
+								</a>
+							</li>
+						</c:if>
+						
+						<!-- 현재 그룹의 페이지 번호를 출력 -->
+						<c:forEach begin="${groupStartPage}" end="${groupEndPage}" var="i">
+							<li class="page-item ${currentPage == i ? 'active' : ''}">
+								<a class="page-link" href="/MyYonolja_mypost?page=${i}&size=${size}">
+									${i}
+								</a>
+							</li>
+						</c:forEach>
+						
+						<c:if test="${groupEndPage < totalPages}">
+							<!-- 현재 그룹이 마지막 그룹이 아니라면 다음 그룹으로 가는 링크를 출력 -->
+							<li class="page-item">
+								<a class="page-link" href="/MyYonolja_mypost?page=${groupEndPage + 1}&size=${size}">
+									...
+								</a>
+							</li>
+						</c:if>
+					</c:otherwise>
+				</c:choose>
+				
+				<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+					<a class="page-link" href="/MyYonolja_mypost?page=${currentPage+1}&size=${size}">
+						다음
+					</a>
+				</li>
+				
+				<li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
+					<a class="page-link" href="/MyYonolja_mypost?page=${totalPages}&size=${size}">
+						끝
+					</a>
+				</li>
+			</ul>
+		</c:if> 
+		</div>	
 	</div>
 </div>
 

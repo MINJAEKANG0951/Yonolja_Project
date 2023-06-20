@@ -277,7 +277,7 @@ a {
 <div class="nolja">
 	<div class="myname">		
 	<span style="font-size:30px;"><b>${user_name}</b></span> 
-	<span style="font-size:20px;">(
+	<span style="font-size:22px;">(
 		<b>
 		<c:choose>
 			<c:when test="${user_type eq 'owner'}">
@@ -298,10 +298,10 @@ a {
 	</div><br>
 	
 	<div class="mylist">
-		<span><b>후기</b></span><br>
+		<span><b style="font-size:20px;">후기</b></span><br>
 		<a href="#" id="myreviews">나의후기</a><br>
 		
-		<span><b>예약</b></span><br>
+		<span><b style="font-size:20px;">예약</b></span><br>
 		<a href="#" id="mybooks">예약내역조회</a><br>
 		
 <!-- 		<span><b>찜</b></span><br>
@@ -311,7 +311,7 @@ a {
 	
 	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
 		<div class="myhotel">
-		   <span class="myB"><b>My Business</b>&nbsp;<a href="#" id="newHotel" style="float:right;">업장추가</a></span><br><br>  		   
+		   <span class="myB"><b style="font-size:25px;">My Business</b>&nbsp;<a href="#" id="newHotel" style="float:right;">업장추가</a></span><br><br>  		   
 		
 			<div class="s_con">
 				<div class="slider">
@@ -466,7 +466,7 @@ a {
 		</div><br>
 	</c:if>	
 	<div class="mypost">
-		<span><b>고객센터</b></span><br>
+		<span><b style="font-size:20px;">고객센터</b></span><br>
 		<a href="#" id="post">문의하러가기</a><br>
 		<a href="#" id="mypostlist">나의문의</a><br>
 	</div>

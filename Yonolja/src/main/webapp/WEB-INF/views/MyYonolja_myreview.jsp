@@ -196,8 +196,7 @@ section {
 <section>
 
 <div>
-	<h1 class="h1_review"><span>나의후기</span></h1>
-	
+	<span><h1 class="h1_review">나의후기</h1></span>	
 	<span class="r" style="display: block; text-align: center;">호텔페이지로 이동하고 싶으면 리뷰를 클릭하세요.</span> 
 	<span><a href="#" id="mypage" style="float:right;">마이페이지</a></span>
 	
@@ -211,7 +210,7 @@ section {
  	<div>
 
  	<c:if test="${empty myreview}">
-	  <p>작성된 리뷰가 없습니다</p>
+		<p style="text-align: center; font-size:20px;"><b>작성된 리뷰가 없습니다</b></p>
 	</c:if> 
 	
    	<c:forEach items="${myreview}" var="review" varStatus="status">
