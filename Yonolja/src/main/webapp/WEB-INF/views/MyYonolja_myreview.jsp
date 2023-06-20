@@ -136,7 +136,11 @@ section {
 	text-overflow: ellipsis;
 } 
 
-
+/* 페이지네이션 */
+.page_nation {
+    display: flex;
+    justify-content: center;
+}
 
 </style>
 <body>

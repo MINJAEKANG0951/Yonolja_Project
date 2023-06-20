@@ -72,6 +72,11 @@ section {
   align-items: center;
 }
 
+/* 페이지네이션 */
+.page_nation {
+    display: flex;
+    justify-content: center;
+}
 
 </style>
 

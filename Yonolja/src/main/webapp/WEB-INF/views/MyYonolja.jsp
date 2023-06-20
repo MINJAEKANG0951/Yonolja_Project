@@ -33,58 +33,37 @@ a {
 .mynolja {
     width: 800px; /* .nolja의 width와 동일하게 설정 */
     margin: auto; /* 가운데 정렬 */
-    text-align: left; /* 텍스트를 왼쪽 정렬 */
-    padding-top: 150px; /* 헤더의 높이와 동일한 값으로 설정 */
+    text-align: left; 
+    padding-top: 30px; /* 헤더와의 간격 */
     position: relative;
     z-index: 1;
 }
 
 .nolja {
-  border: 1px solid black; /* 외부에 네모난 선 추가 */
-  /*width: fit-content;  요소의 너비를 내용에 맞춤 */
-  border-radius: 15px;
-  width: 800px;
-  margin: auto; /* 가운데 정렬 */
-  padding: 20px; /* 내부 패딩 추가 for better appearance */
-  position: relative;
+	border: 1px solid #ccc; /* 외부에 네모난 선 추가 */
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+	border-radius: 15px;
+	width: 800px;
+	margin: auto; /* 가운데 정렬 */
+	padding: 20px; /* 내부 패딩 추가 for better appearance */
+	background-color: #lightblue;
+	position: relative;
 }
 
-.myname {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.mylist {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.mypost {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
-}
-
-.myhotel {
-  border: 1px solid black;
-  border-radius: 15px; /* 테두리를 둥글게 */
-  width: 700px;
-  margin: auto;
-  padding: 20px;
+.myname, .mylist, .mypost, .myhotel {
+    border: 1px solid #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px; 
+    width: 700px;
+    margin: auto;
+    padding: 20px;
+    background-color: #lightblue;
 }
 
 .myhotel img, .place_img {
-    width: 205px; /* 너비 조절. */
-    height: 205px; /* 높이 조절. */
-    padding: 0px;
+	width: 205px; /* 너비 조절. */
+	height: 205px; /* 높이 조절. */
+	padding: 0px;
 }
 
 .myB {
@@ -96,6 +75,8 @@ a {
     position: relative;
     overflow: hidden;
     width: 100%;
+    border-radius: 15px;
+    background-color: #f9f9f9; 
 }
 
 .slider {
@@ -116,6 +97,7 @@ a {
     margin-top: 10px;
     display: flex;
     justify-content: center;
+    background-color: #f9f9f9; 
 }
 
 .s_prev,
@@ -138,10 +120,22 @@ a {
     top: 50%;
     transform: translateY(-50%);
     font-size: 1em;
+    transition: background-color 0.3s;
     color: white;
     background-color: rgba(0, 0, 0, 0.5);
     padding: 0.5em;
     cursor: pointer;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: none; /* 기본적으로 숨김 처리 */
+    align-items: center;
+    justify-content: center;
+}
+
+.arrow_prev:hover,
+.arrow_next:hover {
+    background-color: rgba(0, 0, 0, 0.7); 
 }
 
 .arrow_prev {
@@ -153,6 +147,7 @@ a {
 }
 
 /* 모달창 비밀번호확인창 */
+
 #passwordModal {
     display: none; 
     position: fixed; 
@@ -162,17 +157,38 @@ a {
     width: 100%; 
     height: 100%; 
     overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
+    background-color: rgba(240, 240, 240, 0.5);
+    border: 1px solid #ccc;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+#passwordInput {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#confirmButton {
+    display: block;
+    width: 100%;
+    padding: 5px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
 }
 
 /* Modal Content/Box */
 #passwordModalContent {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 30%; /* Could be more or less, depending on screen size */
+    width: 30%;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
 }
 
 /* The Close Button */
@@ -190,6 +206,13 @@ a {
     cursor: pointer;
 }
 
+/* 페이지네이션 */
+.page_nation {
+    display: flex;
+    justify-content: center;
+}
+
+
 </style>
 <body>
 <section>
@@ -201,7 +224,7 @@ a {
 	<div class="myname">
 		<span>${user_name}</span><br>
 		<span>${user_type}</span><br>
-		<a href="#" id="myinfo">내정보 관리</a>
+		<a href="#" id="myinfo">내정보관리</a>
 		<input type="hidden" value="${user_password}" class="user_ps">
 <%-- 		<span>${user_email}</span> --%>
 	</div><br>
@@ -383,7 +406,7 @@ a {
 <div id="passwordModal">
     <div id="passwordModalContent">
         <span class="close">&times;</span>
-        <label for="passwordInput">비밀번호를 입력해주세요:</label>
+        <label for="passwordInput">비밀번호를 입력해주세요</label>
         <input type="password" id="passwordInput">
         <button id="confirmButton">확인</button>
     </div>
@@ -395,7 +418,7 @@ a {
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
-$(document).ready(function() {
+/* $(document).ready(function() {
 	  var slider = $(".slider");
 	  var scrollAmount = $(".place_s").outerWidth(true);
 	  var totalSlides = slider.find(".place_s").length;
@@ -428,9 +451,132 @@ $(document).ready(function() {
 	  })
 
 	  showSlides();
-	})
+	}) */
+
+/* 	$(document).ready(function() {
+	    var slider = $(".slider");
+	    var scrollAmount = $(".place_s").outerWidth(true);
+	    var totalSlides = slider.find(".place_s").length;
+	    var currentSlide = 0;
+
+	    function updateSlider() {
+	        slider.animate({ scrollLeft: scrollAmount * currentSlide }, 500);
+	    }
+
+	    function showSlides() {
+	        var start = currentSlide * 3;
+	        var end = start + 3;
+	        slider.find(".place_s").hide().slice(start, end).show();
+	    }
+
+	    function updateArrowButtons() {
+	        var currentPlaceSeq = slider.find(".place_s").eq(currentSlide * 3).find(".place_seq").val();
+	        var isFirstImage = slider.find(".place_s").eq(currentSlide * 3).find(".place_img").first().hasClass("active");
+	        var isSingleImage = slider.find(".place_s").eq(currentSlide * 3).find(".place_img").length === 1;
+
+	        slider.find(".arrow_prev").toggle(!isSingleImage && !isFirstImage);
+	        slider.find(".arrow_next").toggle(!isSingleImage);
+	    }
+
+	    $(".s_prev").click(function() {
+	        if (currentSlide > 0) {
+	            currentSlide--;
+	            updateSlider();
+	            showSlides();
+	            updateArrowButtons();
+	        }
+	    })
+
+	    $(".s_next").click(function() {
+	        if (currentSlide < Math.ceil(totalSlides / 3) - 1) {
+	            currentSlide++;
+	            updateSlider();
+	            showSlides();
+	            updateArrowButtons();
+	        }
+	    })
+
+	    $(".place_s").mouseenter(function() {
+	        var isFirstImage = $(this).find(".place_img").first().hasClass("active");
+	        $(this).find(".arrow_prev").toggle(!isFirstImage);
+	        $(this).find(".arrow_next").toggle(true);
+	    });
+
+	    $(".place_s").mouseleave(function() {
+	        $(this).find(".arrow_prev").hide();
+	        $(this).find(".arrow_next").hide();
+	    });
+	}); */
+	
+	$(document).ready(function() {
+	    var slider = $(".slider");
+	    var scrollAmount = $(".place_s").outerWidth(true);
+	    var totalSlides = slider.find(".place_s").length;
+	    var currentSlide = 0;
+
+	    function updateSlider() {
+	        slider.animate({ scrollLeft: scrollAmount * currentSlide }, 500);
+	    }
+
+	    function showSlides() {
+	        var start = currentSlide * 3;
+	        var end = start + 3;
+	        slider.find(".place_s").hide().slice(start, end).show();
+	    }
+
+	    function updateArrowButtons() {
+	        var currentPlaceSeq = slider.find(".place_s").eq(currentSlide * 3).find(".place_seq").val();
+	        var isFirstImage = slider.find(".place_s").eq(currentSlide * 3).find(".place_img").first().hasClass("active");
+	        var isSingleImage = slider.find(".place_s").eq(currentSlide * 3).find(".place_img").length === 1;
+
+	        slider.find(".arrow_prev").toggle(!isSingleImage && !isFirstImage);
+	        slider.find(".arrow_next").toggle(!isSingleImage);
+	    }
+
+	    $(".s_prev").click(function() {
+	        if (currentSlide > 0) {
+	            currentSlide--;
+	            updateSlider();
+	            showSlides();
+	            updateArrowButtons();
+	        }
+	    })
+
+	    $(".s_next").click(function() {
+	        if (currentSlide < Math.ceil(totalSlides / 3) - 1) {
+	            currentSlide++;
+	            updateSlider();
+	            showSlides();
+	            updateArrowButtons();
+	        }
+	    })
+
+	    showSlides();
+	    updateArrowButtons();
+
+	    $(".place_s").mouseenter(function() {
+	        var isFirstImage = $(this).find(".place_img").first().hasClass("active");
+	        $(this).find(".arrow_prev").toggle(!isFirstImage);
+	        $(this).find(".arrow_next").toggle(true);
+	    });
+
+	    $(".place_s").mouseleave(function() {
+	        $(this).find(".arrow_prev").hide();
+	        $(this).find(".arrow_next").hide();
+	    });
+	});
+	
 
 $(document)
+
+    .on("mouseenter", ".place_s", function() {
+        var isFirstImage = $(this).find(".place_img").first().hasClass("active");
+        $(this).find(".arrow_prev").toggle(!isFirstImage);
+    })
+    .on("mouseleave", ".place_s", function() {
+        $(this).find(".arrow_prev").hide();
+    })
+
 .on("click", "#myinfo", function() {
     $("#passwordModal").show();
 })
@@ -466,7 +612,7 @@ $(document)
 
 .on("click", "#post", function() {
 	console.log("post click!");
-	window.location.href="/postboard";
+	window.location.href="/post_board";
 })
 
 .on("click", "#mypostlist", function() {
@@ -504,9 +650,6 @@ $(document)
 
     activeImage.removeClass("active").hide();
     prevImage.addClass("active").show();
-    // 이미지의 크기를 조정합니다.
-/*     prevImage.css('width', '150px');
-    prevImage.css('height', '150px'); */
 })
 
 .on("click", ".arrow_next", function(e) {
@@ -522,9 +665,6 @@ $(document)
 
     activeImage.removeClass("active").hide();
     nextImage.addClass("active").show();
-    // 이미지의 크기를 조정합니다.
-/*     nextImage.css('width', '150px');
-    nextImage.css('height', '150px'); */
 })
  
 

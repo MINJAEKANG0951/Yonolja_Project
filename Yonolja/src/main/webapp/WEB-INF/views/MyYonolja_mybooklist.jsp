@@ -136,6 +136,11 @@ section {
   color: orange;
 }
 
+/* 페이지네이션 */
+.page_nation {
+    display: flex;
+    justify-content: center;
+}
 
 </style>
 <body>
@@ -188,92 +193,90 @@ section {
 				</c:if>
 			</c:forEach>
 			
-				<div class="page_nation">
-	<c:if test="${waitingList.size() >= 1}">      	
-		<ul class="pagination">
-			<li class="page-item ${waitingPage == 1 ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=1&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-					처음
-				</a>
-			</li>
-			<li class="page-item ${waitingPage == 1 ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage-1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-					이전
-				</a>
-			</li>
-			
-			<c:choose>
-				<c:when test="${waitingTotalPages <= 5}">
-					<c:forEach begin="1" end="${waitingTotalPages}" var="i">
-						<li class="page-item ${waitingPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-								${i}
+			<div class="page_nation">
+				<c:if test="${waitingList.size() >= 1}">      	
+					<ul class="pagination">
+						<li class="page-item ${waitingPage == 1 ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=1&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+								처음
 							</a>
 						</li>
-					</c:forEach>
-				</c:when>
-				
-				<c:when test="${waitingPage <= 2}">
-					<c:forEach begin="1" end="5" var="i">
-						<li class="page-item ${waitingPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-								${i}
+						<li class="page-item ${waitingPage == 1 ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage-1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+								이전
 							</a>
 						</li>
-					</c:forEach>
-					
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-				</c:when>
-				
-				<c:when test="${waitingPage >= waitingTotalPages - 1}">
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-					<c:forEach begin="${waitingTotalPages-4}" end="${waitingTotalPages}" var="i">
-						<li class="page-item ${waitingPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-								${i}
+						
+						<c:choose>
+							<c:when test="${waitingTotalPages <= 5}">
+								<c:forEach begin="1" end="${waitingTotalPages}" var="i">
+									<li class="page-item ${waitingPage == i ? 'active' : ''}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+							</c:when>
+							
+							<c:when test="${waitingPage <= 2}">
+								<c:forEach begin="1" end="5" var="i">
+									<li class="page-item ${waitingPage == i ? 'active' : ''}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+								
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+							</c:when>
+							
+							<c:when test="${waitingPage >= waitingTotalPages - 1}">
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+								<c:forEach begin="${waitingTotalPages-4}" end="${waitingTotalPages}" var="i">
+									<li class="page-item ${waitingPage == i ? 'active' : ''}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+							</c:when>
+							
+							<c:otherwise>
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+								<c:forEach begin="${waitingPage-1}" end="${waitingPage+2}" var="i">
+									<li class="page-item ${waitingPage == i ? 'active' : ''}">
+										<a class="page-link" href="//MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+								
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
+						
+						<li class="page-item ${waitingPage == waitingTotalPages ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage+1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+								다음
 							</a>
 						</li>
-					</c:forEach>
-				</c:when>
-				
-				<c:otherwise>
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-					<c:forEach begin="${waitingPage-1}" end="${waitingPage+2}" var="i">
-						<li class="page-item ${waitingPage == i ? 'active' : ''}">
-							<a class="page-link" href="//MyYonolja_mybooklist?waitingPage=${i}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-								${i}
+						
+						<li class="page-item ${waitingPage == waitingTotalPages ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingTotalPages}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
+								끝
 							</a>
 						</li>
-					</c:forEach>
-					
-					<li class="page-item disabled">
-					  <a class="page-link">...</a>
-					</li>
-				</c:otherwise>
-			</c:choose>
-			
-			<li class="page-item ${waitingPage == waitingTotalPages ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage+1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-					다음
-				</a>
-			</li>
-			
-			<li class="page-item ${waitingPage == waitingTotalPages ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingTotalPages}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}">
-					끝
-				</a>
-			</li>
-		</ul>
-	</c:if> 
-</div>
-			
-
+					</ul>
+				</c:if> 
+			</div>
 		</div><br>
 		
 		
@@ -325,92 +328,90 @@ section {
 				</c:if>
 			</c:forEach>
 			
-							<div class="page_nation">
-	<c:if test="${confirmedList.size() >= 1}">       	
-		<ul class="pagination">
-			 <li class="page-item ${confirmedPage == 1 ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=1&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
-                    처음
-				</a>
-			</li>
-			<li class="page-item ${confirmedPage == 1 ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=${confirmedPage-1}&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
-					이전
-				</a>
-			</li>
-			
-			<c:choose>
-				<c:when test="${confirmedTotalPages <= 5}">
-					<c:forEach begin="1" end="${confirmedTotalPages}" var="i">
-						<li class="page-item ${confirmedPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
-								${i}
+			<div class="page_nation">
+				<c:if test="${confirmedList.size() >= 1}">       	
+					<ul class="pagination">
+						<li class="page-item ${confirmedPage == 1 ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=1&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
+								처음
 							</a>
 						</li>
-					</c:forEach>
-				</c:when>
-				
-				<c:when test="${confirmedPage <= 2}">
-					<c:forEach begin="1" end="5" var="i">
-						<li class="page-item ${confirmedPage == i ? 'active' : ''}">
-							<a class="page-link" href="MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
-								${i}
+						<li class="page-item ${confirmedPage == 1 ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=${confirmedPage-1}&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
+								이전
 							</a>
 						</li>
-					</c:forEach>
-					
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-				</c:when>
-				
-				<c:when test="${confirmedPage >= confirmedTotalPages - 1}">
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-					<c:forEach begin="${confirmedTotalPages-4}" end="${confirmedTotalPages}" var="i">
-						<li class="page-item ${confirmedPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
-								${i}
+						
+						<c:choose>
+							<c:when test="${confirmedTotalPages <= 5}">
+								<c:forEach begin="1" end="${confirmedTotalPages}" var="i">
+									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+							</c:when>
+							
+							<c:when test="${confirmedPage <= 2}">
+								<c:forEach begin="1" end="5" var="i">
+									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
+										<a class="page-link" href="MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+								
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+							</c:when>
+							
+							<c:when test="${confirmedPage >= confirmedTotalPages - 1}">
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+								<c:forEach begin="${confirmedTotalPages-4}" end="${confirmedTotalPages}" var="i">
+									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+							</c:when>
+							
+							<c:otherwise>
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+								<c:forEach begin="${confirmedPage-1}" end="${currentPage2+2}" var="i">
+									<li class="page-item ${confirmedPage == i ? 'active' : ''}">
+										<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
+											${i}
+										</a>
+									</li>
+								</c:forEach>
+								
+								<li class="page-item disabled">
+									<a class="page-link">...</a>
+								</li>
+							</c:otherwise>
+						</c:choose>
+						
+						<li class="page-item ${confirmedPage == confirmedTotalPages ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=${confirmedPage+1}&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
+								다음
 							</a>
 						</li>
-					</c:forEach>
-				</c:when>
-				
-				<c:otherwise>
-					<li class="page-item disabled">
-						<a class="page-link">...</a>
-					</li>
-					<c:forEach begin="${confirmedPage-1}" end="${currentPage2+2}" var="i">
-						<li class="page-item ${confirmedPage == i ? 'active' : ''}">
-							<a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage}&waitingSize=${waitingSize}&confirmedPage=${i}&confirmedSize=${confirmedSize}">
-								${i}
+						
+						<li class="page-item ${confirmedPage == confirmedTotalPages ? 'disabled' : ''}">
+							<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=${confirmedTotalPages}&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
+								끝
 							</a>
 						</li>
-					</c:forEach>
-					
-					<li class="page-item disabled">
-					  <a class="page-link">...</a>
-					</li>
-				</c:otherwise>
-			</c:choose>
-			
-			<li class="page-item ${confirmedPage == confirmedTotalPages ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=${confirmedPage+1}&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
-				
-				<!-- <a class="page-link" href="/MyYonolja_mybooklist?waitingPage=${waitingPage+1}&waitingSize=${waitingSize}&confirmedPage=${confirmedPage}&confirmedSize=${confirmedSize}"> -->
-					다음
-				</a>
-			</li>
-			
-			<li class="page-item ${confirmedPage == confirmedTotalPages ? 'disabled' : ''}">
-				<a class="page-link" href="/MyYonolja_mybooklist?confirmedPage=${confirmedTotalPages}&confirmedSize=${confirmedSize}&waitingPage=${waitingPage}&waitingSize=${waitingSize}">
-					끝
-				</a>
-			</li>
-		</ul>
-	</c:if> 
-</div>
+					</ul>
+				</c:if> 
+			</div>
 		</div>
 
 	</div>		
