@@ -14,7 +14,7 @@ if (session.getAttribute("user_id") == null) {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MyPost</title>
+<title>나의문의</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>

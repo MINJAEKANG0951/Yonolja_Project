@@ -30,7 +30,11 @@ public class Controller_HS {
         String type = (String) session.getAttribute("user_type");  
         
         //페이지네이션
-        
+        int groupSize = 5;
+        int currentGroup = (page - 1) / groupSize;
+
+        model.addAttribute("groupSize", groupSize);
+        model.addAttribute("currentGroup", currentGroup);
         
         int totalCount = hsdao.img_count(user_seq);
         int startIndex = (page - 1) * size + 1;

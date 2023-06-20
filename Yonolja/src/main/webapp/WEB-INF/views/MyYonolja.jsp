@@ -82,6 +82,7 @@ a {
 	width: 205px; /* 너비 조절. */
 	height: 205px; /* 높이 조절. */
 	padding: 0px;
+	border-radius: 15%;
 }
 
 .myB {
@@ -274,9 +275,23 @@ a {
 </div><br>
 
 <div class="nolja">
-	<div class="myname">
-		<span>${user_name}</span><br>
-		<span>${user_type}</span><br>
+	<div class="myname">		
+	<span style="font-size:30px;"><b>${user_name}</b></span> 
+	<span style="font-size:20px;">(
+		<b>
+		<c:choose>
+			<c:when test="${user_type eq 'owner'}">
+				업주
+			</c:when>
+			<c:when test="${user_type eq 'customer'}">
+				고객
+			</c:when>
+			<c:otherwise>
+				${user_type}
+			</c:otherwise>
+		</c:choose>
+		</b>)
+	</span><br>
 		<a href="#" id="myinfo">내정보관리</a>
 		<input type="hidden" value="${user_password}" class="user_ps">
 <%-- 		<span>${user_email}</span> --%>
@@ -296,7 +311,7 @@ a {
 	
 	<c:if test="${user_type eq 'admin' or user_type eq 'owner'}">
 		<div class="myhotel">
-		   <span class="myB"><b>My Business</b>&nbsp;<a href="#" id="newHotel" style="float:right;">업장추가</a></span><br>  		   
+		   <span class="myB"><b>My Business</b>&nbsp;<a href="#" id="newHotel" style="float:right;">업장추가</a></span><br><br>  		   
 		
 			<div class="s_con">
 				<div class="slider">
@@ -384,7 +399,8 @@ a {
 										</li>
 										
 										<c:choose>
-											<c:when test="${totalPages <= 5}">
+											<c:when test="${totalPages <= groupSize}">
+												<!-- 전체 페이지 수가 그룹 크기보다 작거나 같을 경우, 모든 페이지 번호를 출력 -->
 												<c:forEach begin="1" end="${totalPages}" var="i">
 													<li class="page-item ${currentPage == i ? 'active' : ''}">
 														<a class="page-link" href="/mypage?page=${i}&size=${size}">
@@ -393,39 +409,22 @@ a {
 													</li>
 												</c:forEach>
 											</c:when>
-											
-											<c:when test="${currentPage <= 2}">
-												<c:forEach begin="1" end="5" var="i">
-													<li class="page-item ${currentPage == i ? 'active' : ''}">
-														<a class="page-link" href="/mypage?page=${i}&size=${size}">
-															${i}
-														</a>
-													</li>
-												</c:forEach>
-												
-												<li class="page-item disabled">
-													<a class="page-link">...</a>
-												</li>
-											</c:when>
-											
-											<c:when test="${currentPage >= totalPages - 1}">
-												<li class="page-item disabled">
-													<a class="page-link">...</a>
-												</li>
-												<c:forEach begin="${totalPages-4}" end="${totalPages}" var="i">
-													<li class="page-item ${currentPage == i ? 'active' : ''}">
-														<a class="page-link" href="/mypage?page=${i}&size=${size}">
-															${i}
-														</a>
-													</li>
-												</c:forEach>
-											</c:when>
-											
 											<c:otherwise>
-												<li class="page-item disabled">
-													<a class="page-link">...</a>
-												</li>
-												<c:forEach begin="${currentPage-1}" end="${currentPage+2}" var="i">
+												<!-- 그룹의 첫 페이지 번호와 마지막 페이지 번호를 계산 -->
+												<c:set var="groupStartPage" value="${currentGroup * groupSize + 1}" />
+												<c:set var="groupEndPage" value="${Math.min((currentGroup + 1) * groupSize, totalPages.longValue())}" />
+												
+												<c:if test="${currentGroup > 0}">
+													<!-- 현재 그룹이 첫번째 그룹이 아니라면 이전 그룹으로 가는 링크를 출력 -->
+													<li class="page-item">
+														<a class="page-link" href="/mypage?page=${groupStartPage - 1}&size=${size}">
+															...
+														</a>
+													</li>
+												</c:if>
+												
+												<!-- 현재 그룹의 페이지 번호를 출력 -->
+												<c:forEach begin="${groupStartPage}" end="${groupEndPage}" var="i">
 													<li class="page-item ${currentPage == i ? 'active' : ''}">
 														<a class="page-link" href="/mypage?page=${i}&size=${size}">
 															${i}
@@ -433,9 +432,14 @@ a {
 													</li>
 												</c:forEach>
 												
-												<li class="page-item disabled">
-												  <a class="page-link">...</a>
-												</li>
+												<c:if test="${groupEndPage < totalPages}">
+													<!-- 현재 그룹이 마지막 그룹이 아니라면 다음 그룹으로 가는 링크를 출력 -->
+													<li class="page-item">
+														<a class="page-link" href="/mypage?page=${groupEndPage + 1}&size=${size}">
+															...
+														</a>
+													</li>
+												</c:if>
 											</c:otherwise>
 										</c:choose>
 										
@@ -545,7 +549,6 @@ $(document).ready(function() {
 		$(this).find(".arrow_prev").toggle(!isFirstImage);
 		$(this).find(".arrow_next").toggle(true);
 	});
-
 	$(".place_s").mouseleave(function() {
 		resetArrowButtons();
 	});
@@ -607,13 +610,18 @@ $(document).ready(function() {
 });
 
 $(document)
-	.on("mouseenter", ".place_s", function() {
-		var isFirstImage = $(this).find(".place_img").first().hasClass("active");
-		$(this).find(".arrow_prev").toggle(!isFirstImage);
-	})
-	.on("mouseleave", ".place_s", function() {
-		$(this).find(".arrow_prev").hide();
-	})
+.on("mouseenter", ".place_s", function() {
+	var isFirstImage = $(this).find(".place_img").first().hasClass("active");
+	var isLastImage = $(this).find(".place_img").last().hasClass("active");
+	$(this).find(".arrow_prev").toggle(!isFirstImage);
+	$(this).find(".arrow_next").toggle(!isLastImage);
+})
+.on("mouseleave", ".place_s", function() {
+	var isFirstImage = $(this).find(".place_img").first().hasClass("active");
+	$(this).find(".arrow_prev").toggle(!isFirstImage);
+	$(this).find(".arrow_prev").hide();
+})
+
 
 .on("click", "#myinfo", function() {
     $("#passwordModal").show();

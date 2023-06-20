@@ -22,7 +22,7 @@ if (session.getAttribute("user_id") == null) {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MyBookList</title>
+<title>예약내역</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">

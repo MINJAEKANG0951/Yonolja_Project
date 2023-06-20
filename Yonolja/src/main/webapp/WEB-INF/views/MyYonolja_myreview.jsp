@@ -14,7 +14,7 @@ if (session.getAttribute("user_id") == null) {
 <html>
 <head>
 <meta charset="UTF-8">
-<title>MyReviews</title>
+<title>나의후기</title>
 <link rel="icon" href="/img/website/favicon-16x16.png" type="image/x-icon" sizes="16x16">
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
