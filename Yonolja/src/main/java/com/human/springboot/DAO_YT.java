@@ -34,4 +34,15 @@ public interface DAO_YT {
 
 
 	 List<DTO_YT> getPostImages();
+	 
+	 
+	 ArrayList<DTO_YT_boardPostDTO> getPosts(String keyword_select, String keyword, int start, int end);
+	 ArrayList<DTO_YT_boardPostDTO> getAdminPosts();
+
+	 int allPostCounts(String keyword_select, String keyword);
+	 
+	 
+	 ArrayList<DTO_YT> post_category();
+	
+
 } 

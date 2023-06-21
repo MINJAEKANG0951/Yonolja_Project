@@ -499,7 +499,7 @@ $(document)
 
 .on("click","#btnSave",function(){
 	
-	//update()
+	update()
 })
 //목록보기
 document.getElementById("btnShow").addEventListener("click", function() {
@@ -586,6 +586,8 @@ $('#btnModify').click(function() {
  $('#btnModify').removeAttr('id', 'btnModify');
  
  $('.btn-success').attr('id','btnSave');
+ 
+ 
 });
 
 function update(){

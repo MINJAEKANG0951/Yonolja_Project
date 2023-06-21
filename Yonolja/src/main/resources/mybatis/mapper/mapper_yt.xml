@@ -132,6 +132,11 @@ on
     select post_img from yonolja_post
 </select>
 	
+	<select id="notice" resultType="com.human.springboot.DTO_YT">
+	select * from yonolja_post 
+order by case when post_category = 1 then 0 
+    else 1 end, post_date desc;
+	</select> 
 	
 	
 <!-- 	<insert id="insertComment"> -->
@@ -186,6 +191,61 @@ on a.user_seq = b.user_seq
 <!-- 	ORDER BY post_seq DESC -->
 <!-- </select> -->
 
+	
+<select id="getAdminPosts" resultType="com.human.springboot.DTO_YT_boardPostDTO">
+	 select row_num,  post_seq, user_id, post_category, post_title, post_date, post_content, post_comment   
+	    from
+	    (
+	    select rownum as row_num, post_seq, user_id, post_category, post_title, post_date, post_content, post_comment    
+	        from
+	        (
+	        select p.post_seq, u.user_id ,p.post_category, p.post_title, p.post_date ,p.post_content, p.post_comment 
+	        from yonolja_post p, yonolja_user u
+	        where p.user_seq = u.user_seq 
+	        and p.post_category=1
+	        order by p.post_date desc
+	        )
+	    )
+	 where row_num between 1 and 3
+</select>
+	
+<select id="getPosts" resultType="com.human.springboot.DTO_YT_boardPostDTO">
+	select  row_num, post_seq, user_id, post_category ,post_title, post_date, post_content, post_comment
+		from 
+		    (
+		        select rownum as row_num, post_seq, user_id, post_category ,post_title, post_date, post_content, post_comment
+		        from
+		        (
+		            select p.post_seq, u.user_id ,p.post_category, p.post_title, p.post_date ,p.post_content, p.post_comment 
+		            from yonolja_post p, yonolja_user u
+		            where p.user_seq = u.user_seq 
+		        	and p.post_category=2
+		            and ${param1} like '%${param2}%'
+		            order by p.post_date desc
+		        )
+		    )  
+	where row_num between #{param3} and #{param4}
+</select>
+	
+
+<select id="allPostCounts" resultType="int">
+	select count(*) from
+	(
+	        select p.post_seq, u.user_id ,p.post_title, p.post_date ,p.post_content, p.post_comment 
+	        from yonolja_post p, yonolja_user u
+	        where p.user_seq = u.user_seq
+	    	and p.post_category=2
+	        and ${param1} like '%${param2}%' 
+	        order by p.post_date desc
+	)
+</select>
+	
+	<select id="post_category" resultType="com.human.springboot.DTO_YT_boardPostDTO">
+	
+	select *from yonolja_post where post_category = 1;
+	
+	</select>
+	
 	
 	
 </mapper>

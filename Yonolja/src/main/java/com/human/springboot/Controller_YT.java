@@ -5,13 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -228,7 +229,116 @@ public class Controller_YT {
     }
 
 
+    @PostMapping("getPosts")
+    @ResponseBody
+    public String getPosts(HttpServletRequest req) {
+    	
+    	
+    	System.out.println( req.getParameter("keyword_select") );
+    	System.out.println( req.getParameter("keyword") );
+    	System.out.println( req.getParameter("howmanyposts") );
+    	System.out.println( req.getParameter("pageNum") );
+		   	
+    	String keyword_select = req.getParameter("keyword_select");
+    	String keyword = req.getParameter("keyword");
+    	
+    	System.out.println(keyword);
+    	
+    	int howmanyposts = Integer.parseInt(req.getParameter("howmanyposts")); // 보여줄포스트수
+    	int pageNum = Integer.parseInt(req.getParameter("pageNum")); // 페이지번호
+    	
+    	int start = ( (pageNum-1)*howmanyposts ) + 1;
+    	int end = (pageNum)*howmanyposts;
+    	
+    	ArrayList<DTO_YT_boardPostDTO> adminPosts = dao_yt.getAdminPosts();
+    	ArrayList<DTO_YT_boardPostDTO> posts = dao_yt.getPosts(keyword_select, keyword, start, end);
+    	
+    	JSONArray ja = new JSONArray();
+    	
+    	for(int i=0;i<adminPosts.size();i++) {
+    		
+    		JSONObject jo = new JSONObject();
+    		jo.put("seq", adminPosts.get(i).getPost_seq());
+    		jo.put("category", adminPosts.get(i).getPost_category());
+    		jo.put("title", adminPosts.get(i).getPost_title());
+    		jo.put("user_id", adminPosts.get(i).getUser_id());
+    		jo.put("date", adminPosts.get(i).getPost_date());
+    		jo.put("comment", adminPosts.get(i).getPost_comment());
+    		jo.put("content", adminPosts.get(i).getPost_content());
+    		
+    		ja.put(jo);
+    	}
+    	
+ 
+    	
+    	for(int i=0;i<posts.size();i++) {
+    		
+    		JSONObject jo = new JSONObject();
+    		
+    		
+    		jo.put("seq", posts.get(i).getPost_seq());
+    		jo.put("category", posts.get(i).getPost_category());
+    		jo.put("title", posts.get(i).getPost_title());
+    		jo.put("user_id", posts.get(i).getUser_id());
+    		jo.put("date", posts.get(i).getPost_date());
+    		jo.put("comment", posts.get(i).getPost_comment());
+    		jo.put("content", posts.get(i).getPost_content());
+    		
+    		ja.put(jo);
+    	}
+    	
+    	return ja.toString();
+    }
     
+    
+    
+    
+    @PostMapping("getPageNums")
+    @ResponseBody
+    public String getPageNums(HttpServletRequest req) {
+    	
+    	System.out.println( req.getParameter("keyword_select") );
+    	System.out.println( req.getParameter("keyword") );
+    	System.out.println( req.getParameter("howmanyposts") );
+    	
+    	String keyword_select = req.getParameter("keyword_select");
+    	String keyword = req.getParameter("keyword");
+    	int howmanyposts = Integer.parseInt(req.getParameter("howmanyposts"));
+    	
+    	int allPostsAmount = dao_yt.allPostCounts(keyword_select, keyword);
+    		
+    	int howmanyPages = ( (allPostsAmount)/howmanyposts ) + 1;
+     	if( (allPostsAmount)%howmanyposts==0 ) {
+    		howmanyPages--;
+    	}
+    	
+    	// 페이지 개수 계산
+   /* 	
+    	keyword_select 와 keyword 에 의해 검색된 포스트 수가 16개
+    	5개씩 표시하고 싶음. (howmanyposts 는 5)
+    	
+    	이때 필요한 페이지 개수.
+    	
+    	1-5,6-10,11-15,16- 까지 표시해야하므로,
+    	총 4page 필요.
+    	
+    	즉, 필요한 page개수는 
+    	(총 포스트수/howmanypost) + 1임
+    	
+    	그런데, 만약에 (총 포스트수%howmanypost) == 0 이면
+    	필요한 page 개수는
+    	(총 포스트수/howmanypost)  개임.
+    	
+    	그리고, 예를들어서
+    	포스트가 5개라고 치자.
+    	
+    	포스트가 0개면, 
+    	0/5 + 1
+    	0%5 => page 수가 0 >>> 이때는 검색결과가 없습니다. 라고 표시. 
+    	
+   */ 	
+    	return howmanyPages+"";
+    }
     
    
 	
