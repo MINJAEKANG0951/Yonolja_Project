@@ -365,7 +365,7 @@ a {
 				<c:choose>
 					<c:when test="${empty placeList}">
 						<div class="s_control">
-							<h3>등록된 업장 정보가 없습니다.</h3>
+							<h3 style="font-size:20px;"><b>등록된 업장 정보가 없습니다.</b></h3>
 						</div> 
 					</c:when>
 					<c:otherwise>
@@ -379,7 +379,7 @@ a {
 						<c:choose>
 							<c:when test="${not userExists}">
 								<div class="s_control">
-									<h3>등록된 업장 정보가 없습니다.</h3>
+									<h3 style="font-size:20px;"><b>등록된 업장 정보가 없습니다.</b></h3>
 								</div>
 							</c:when>
 							<c:otherwise>
