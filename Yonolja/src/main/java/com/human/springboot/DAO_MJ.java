@@ -21,13 +21,15 @@ public interface DAO_MJ {
 	
 	DTO_MJ_placeDTO getPlace(int place_seq);
 	int countReviews(int place_seq);
+	int countRoomTypeReviews(int roomtype_seq);
 	ArrayList<String> placeAlloptions(int place_seq);
-	
+
 	
 	DTO_MJ_roomTypeOptionDTO getRoomTypeOption(int place_option_seq);
 	ArrayList<DTO_MJ_placeRoomTypeDTO> getRoomTypes(int place_seq, String sql, int start, int end);
 	
 	ArrayList<DTO_MJ_reviewDTO> getReviews(int place_seq, String sql, int start, int end);
+	ArrayList<DTO_MJ_reviewDTO> getRoomTypeReviews(int roomtype_seq, String sql, int start, int end);
 	
 	DTO_MJ_roomTypeDTO getRoomType(int roomtype_seq);
 	

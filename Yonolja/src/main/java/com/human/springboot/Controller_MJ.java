@@ -602,6 +602,8 @@ public class Controller_MJ {
 		
 		jo.put("place_seq", roomtype.getPlace_seq());
 		jo.put("place_name", roomtype.getPlace_name());
+		jo.put("checkin", roomtype.getPlace_checkin_time());
+		jo.put("checkout", roomtype.getPlace_checkout_time());
 		jo.put("seq", roomtype.getRoomtype_seq());
 		jo.put("name", roomtype.getRoomtype_name());
 		jo.put("imgs", roomtype.getRoomtype_imgs());
@@ -609,6 +611,7 @@ public class Controller_MJ {
 		jo.put("price", roomtype.getRoomtype_price());
 		jo.put("options", roomtype.getRoomtype_options());
 		jo.put("guide", roomtype.getRoomtype_guide());
+		jo.put("reviewCount", mjdao.countRoomTypeReviews(roomtype_seq));
 		
 		
 		return jo.toString();
@@ -616,7 +619,41 @@ public class Controller_MJ {
 	
 	
 	
-	
+	@PostMapping("/getRoomTypeReviews")
+	@ResponseBody
+	public String getRoomTypeReviews(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		String keyword = req.getParameter("keyword");
+		int pageNum = Integer.parseInt( req.getParameter("pageNum") );
+		
+		
+		int howmanyUnits = 10;
+		
+		
+		int start = ( (pageNum-1)*howmanyUnits ) + 1; 
+		int end = (pageNum)*howmanyUnits;
+		
+		ArrayList<DTO_MJ_reviewDTO> reviews = mjdao.getRoomTypeReviews(roomtype_seq, keyword, start, end);
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<reviews.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", reviews.get(i).getReview_seq());
+			jo.put("user_id", reviews.get(i).getUser_id());
+			jo.put("roomtype_name", reviews.get(i).getRoomtype_name());
+			jo.put("star", reviews.get(i).getReview_star());
+			jo.put("content", reviews.get(i).getReview_content());
+			jo.put("date", reviews.get(i).getReview_date());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
 	
 	
 	

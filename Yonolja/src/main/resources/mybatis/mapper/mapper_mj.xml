@@ -114,15 +114,41 @@
 	</select>
 	
 	
+	<select id="getRoomTypeReviews" resultType="com.human.springboot.DTO_MJ_reviewDTO">
+		select row_num,review_seq, user_id, roomtype_name, review_star, review_content, review_date
+	    from
+	    (
+	    select rownum as row_num, review_seq, user_id, roomtype_name, review_star, review_content, review_date
+	        from
+	        (
+	        select rv.review_seq, u.user_id, rt.roomtype_name, rv.review_star, rv.review_content, rv.review_date
+	        from yonolja_review rv, yonolja_book b, yonolja_user u,yonolja_room rm, yonolja_roomtype rt
+	        where rv.book_seq = b.book_seq and b.room_seq = rm.room_seq and rm.roomtype_seq = rt.roomtype_seq and b.user_seq = u.user_seq
+	        and rt.roomtype_seq = #{param1}
+	        ${param2}
+	        )
+	    )
+	    where row_num between #{param3} and #{param4}
+	</select>
+	
+	
 	<select id="getRoomType" resultType="com.human.springboot.DTO_MJ_roomTypeDTO">
-		select p.place_seq, p.place_name, rt.roomtype_seq, 
-		rt.roomtype_name, rt.roomtype_imgs, rt.roomtype_capacity, 
+		select p.place_seq, p.place_name, p.place_checkin_time, p.place_checkout_time, rt.roomtype_seq, 
+		rt.roomtype_name, rt.roomtype_imgs, rt.roomtype_capacity,  
 		rt.roomtype_price, rt.roomtype_options, rt.roomtype_guide
 		from yonolja_roomtype rt, yonolja_place p
 		where rt.place_seq = p.place_seq
 		and roomtype_seq = #{param1}
 	</select>
 	
+	
+	
+	<select id="countRoomTypeReviews" resultType="int">
+		select count(*) 
+		from yonolja_review rv, yonolja_book b, yonolja_room rm, yonolja_roomtype rt
+		where rv.book_seq = b.book_seq and b.room_seq = rm.room_seq and rm.roomtype_seq = rt.roomtype_seq
+		and rt.roomtype_seq = #{param1}
+	</select>
 	
 	
 </mapper>

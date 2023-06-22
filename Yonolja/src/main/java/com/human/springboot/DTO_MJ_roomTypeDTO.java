@@ -4,6 +4,8 @@ public class DTO_MJ_roomTypeDTO {
 	
 	int place_seq;
 	String place_name;
+	String place_checkin_time;
+	String place_checkout_time;
 	int roomtype_seq;
 	String roomtype_name;
 	String roomtype_imgs;
@@ -11,7 +13,6 @@ public class DTO_MJ_roomTypeDTO {
 	int roomtype_price;
 	String roomtype_options;
 	String roomtype_guide;
-	
 	
 	public int getPlace_seq() {
 		return place_seq;
@@ -24,6 +25,18 @@ public class DTO_MJ_roomTypeDTO {
 	}
 	public void setPlace_name(String place_name) {
 		this.place_name = place_name;
+	}
+	public String getPlace_checkin_time() {
+		return place_checkin_time;
+	}
+	public void setPlace_checkin_time(String place_checkin_time) {
+		this.place_checkin_time = place_checkin_time;
+	}
+	public String getPlace_checkout_time() {
+		return place_checkout_time;
+	}
+	public void setPlace_checkout_time(String place_checkout_time) {
+		this.place_checkout_time = place_checkout_time;
 	}
 	public int getRoomtype_seq() {
 		return roomtype_seq;
@@ -67,4 +80,6 @@ public class DTO_MJ_roomTypeDTO {
 	public void setRoomtype_guide(String roomtype_guide) {
 		this.roomtype_guide = roomtype_guide;
 	}
+	
+	
 }
