@@ -29,7 +29,7 @@ public interface DAO_HY {
 	
 	// RoomType insert 
 	
-	void addRoomType(String rname,int place_seq, String defalt_img, int maxCapacity, int nightRate, String roomtype_options, String roomGuide);
+	void addRoomType(String rname,int place_seq, int maxCapacity, int nightRate, String roomtype_options, String roomGuide);
 	
 	// RoomType select
 	

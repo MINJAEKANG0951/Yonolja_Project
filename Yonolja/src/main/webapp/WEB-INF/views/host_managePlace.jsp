@@ -293,7 +293,7 @@ div[class*=frame]{
 #guideBox textarea{
 	height:90%;
 	width: 90%;
-    border: 1px solid #ddd;
+    border: 1px solid gray;
     resize: none;
 }
 #placeUpdateButtons button{
@@ -423,10 +423,154 @@ div[class*=frame]{
 	transition:0.3s;
 }
 
+#roomtypeUpdate_background{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:4;
+	display:none;  
+}
+
+#roomtypeUpdate{
+	position:fixed;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	width:400px;
+	height:800px;
+	background-color:white;
+	border-radius:10px;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
+	
+	text-align:center;
+	border-collapse:collapse;
+}
+
+
+#roomtypeUpdate{
+	border-collapse:collapse;
+}
+#roomtypeUpdate tr{
+	border-bottom:1px solid #ddd;
+}
+#roomtypeUpdate textarea{
+	height:90%;
+	width: 90%;
+    border: 1px solid gray;
+    resize: none;
+}
+#roomtype_name{
+
+}
+#roomtype_capacity{
+
+}
+#roomtype_price{
+
+}
+#roomtype_capacity::-webkit-outer-spin-button,
+#roomtype_capacity::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#roomtype_price::-webkit-outer-spin-button,
+#roomtype_price::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+#roomtypeUpdate_buttons button{
+	width:120px;
+	height:30px;
+	font-size:18px;
+	background-color:rgb(0, 128, 255);
+	color:white;
+	border:0px solid white;
+	border-radius:5px;
+	cursor:pointer;
+}
+#roomtypeUpdate_buttons button:hover{
+background-color:blue;
+	transition:0.3s;
+}
+#roomtypeUpdate tr:nth-child(-n+5){
+	height:50px;
+}
+
+#roomtypeUpdate tr:nth-child(6){
+	height:150px;
+}
+#roomtypeUpdate tr:nth-child(7){
+	height:50px;
+}
+#roomtypeUpdate tr:nth-child(8){
+	height:200px;
+}
+#roomtypeUpdate tr:nth-child(8) td{
+	text-align:left;
+}
+#roomtype_name{
+	width:80%;
+}
+#roomtype_capacity{
+	width:80%;
+}
+#roomtype_price{
+	width:80%;
+}
+
+
 </style>
 <body>
 <%@ include file ="./structure/header.jsp" %>
 <input type=hidden id=place_seq value="${place_seq}" readonly>
+
+<div id=roomtypeUpdate_background>
+	<table id=roomtypeUpdate>
+		<tr> 
+			<td colspan=2> 
+				객실타입 추가 
+			</td> 
+		</tr>
+		<tr> 
+			<td>객실 이름<input type=text id=roomtype_seq readonly></td> 
+			<td><input type=text id=roomtype_name></td> 
+		</tr>
+		<tr> 
+			<td>수용인원</td> 
+			<td><input type=number id=roomtype_capacity></td> 
+		</tr>
+		<tr> 
+			<td>1박 요금</td> 
+			<td><input type=number id=roomtype_price></td> 
+		</tr>
+		<tr> <td colspan=2> 객실 안내사항 </td> </tr>
+		<tr> 
+			<td colspan=2>
+				<textarea id=roomtype_guide></textarea>
+			</td> 
+		</tr>
+		<tr> <td colspan=2> 객실 옵션 </td> </tr>
+		<tr> 
+			<td colspan=2>
+				<table id=roomtypeOptions>
+				
+				
+				
+				</table>
+		  	</td> 
+		</tr>
+		<tr> 
+			<td colspan=2 id=roomtypeUpdate_buttons>
+				<button id=InsertRoomType>등록</button> &nbsp;
+				<button id=closeRoomTypeModal>닫기</button>
+			</td> 
+		</tr>
+	</table>
+</div>
+
 
 <div id=placeImgUpdate_background>
 	<div id=placeImgUpdate>
@@ -445,7 +589,7 @@ div[class*=frame]{
 			</div>	
 			
 			<div id=placeImgBox_buttons>
-				<input type="file" id=placeImgInput accept="image/*">
+				<input type="file" id=placeImgInput accept="image/*" style="display:none;">
 				<button id=addPlacePhoto>사진추가</button> &nbsp;
 				<button id=closePlaceImgModal>닫기</button>
 			</div>
@@ -456,7 +600,7 @@ div[class*=frame]{
 
 <div id=placeUpdate_background>
 	<table id=placeUpdate>
-		<tr><td colspan=2>숙박업소 정보 수정</td></tr>
+		<tr><td colspan=2 id=placeNameTitle>숙박업소 정보 수정</td></tr>
 		<tr>
 			<td>숙박업소 이름</td> 
 			<td><input type=text id=place_name></td> 
@@ -678,10 +822,12 @@ document.addEventListener('click',function(event){
 	} else if(event.target.id==='placeImgUpdate_background'){
 		$('#placeImgUpdate_background').css('display','none');
 		$('html').css('overflow','auto');
-	}
-		
-		
+	} else if(event.target.id==='roomtypeUpdate_background'){
+		$('#roomtypeUpdate_background').css('display','none');
+		$('html').css('overflow','auto');
+	}	
 })
+
 document.addEventListener('scroll',function(event){
 	$('#addRoomModal_background').css('display','none');
 })
@@ -851,7 +997,7 @@ $(document)
 	    contentType: false,
 		data:formData,
 		success:function(result){
-			alert(result);
+			console.log(result);
 		}, 
 		complete:function(){
 			refresh_placeImg();
@@ -859,8 +1005,120 @@ $(document)
 		
 	})
 })
-
+.on('click','.deleteImg',function(){
+	
+	if(!confirm('정말로 이 사진을 삭제하시겠습니까?')){return false;}
+	
+	place_seq = parseInt($('#place_seq').val());
+	
+	src = $(this).parent().find('.placeImg').attr('src');
+	
+	$.ajax({url:'/deletePlaceImg', type:'post', dataType:'text', 
+		
+		data:{
+			place_seq:place_seq,
+			src:src
+		}, 
+		success:function(result){
+			console.log(result)
+		},
+		complete:function(){
+			refresh_placeImg();
+		}
+	
+	})
+})
+.on('click','#addRoomType',function(){
+	
+	refreshRoomTypeModal();
+	$('#roomtypeUpdate_background').css('display','block');
+	$('html').css('overflow','hidden');
+	
+})
+.on('click','#closeRoomTypeModal',function(){
+	
+	$('#roomtypeUpdate_background').css('display','none');
+	$('html').css('overflow','auto');
+	
+})
+.on('click','#InsertRoomType',function(){
+	
+	roomtype_options = '';
+	for(i=0;i<$('.roomtype_option').length;i++){
+		if ( $('.roomtype_option:eq('+i+')').prop('checked') ){
+			roomtype_options += "," + $('.roomtype_option:eq('+i+')').val();
+		} 
+	}
+	roomtype_options = roomtype_options.substring(1);
+	place_seq = parseInt($('#place_seq').val());
+	
+	$.ajax({url:'/add_update_RoomType', type:'post', dataType:'text',
+	
+		data:{
+			roomtype_seq:$('#roomtype_seq').val(),
+			place_seq:place_seq,
+			roomtype_name:$('#roomtype_name').val(),
+			roomtype_capacity:$('#roomtype_capacity').val(),
+			roomtype_price:$('#roomtype_price').val(),
+			roomtype_guide:$('#roomtype_guide').val(),
+			roomtype_options:roomtype_options
+		},
+		success:function(result){
+			alert(result);
+		},
+		complete:function(){
+			$('#roomtypeUpdate_background').css('display','none');
+			$('html').css('overflow','auto');
+		}
+	
+	})
+	
+})
 /////////////////////////////// functions ///////////////////////////////
+function refreshRoomTypeModal(roomtype_seq){
+	
+	if(roomtype_seq==null){
+		
+		// 다 비우기
+		$('#roomtype_seq').val(null);
+		$('#roomtype_name').val(null);
+		$('#roomtype_capacity').val(null);
+		$('#roomtype_price').val(null);
+		$('#roomtype_guide').val(null);
+		
+		for(i=0;i<$('.roomtype_option').length;i++){
+			$('.roomtype_option:eq('+i+')').prop('checked',false);
+		}
+		
+		
+	} else {
+		
+		// roomtype 에 해당하는 정보 채우기
+		
+		
+	}
+	
+	
+	
+	
+}
+
+
+function putRoomOptions(){
+	
+	$('#roomtypeOptions').empty();
+	
+	
+	str = '<table id=roomtypeOptionsTB>'
+	for(i=0;i<roomtype_options.length;i++){
+		option = roomtype_options[i];
+		str += '<td><input type=checkbox value=' + option.seq + ' class=roomtype_option>&nbsp;' + option.name + '</td>' 
+		if( (i+1)%4==0 ){str = "<tr>" + str + "</tr>"}
+	}
+	str += '</table>'	
+	$('#roomtypeOptions').append(str);
+}
+
 function refresh_placeImg(){
 	
 	
@@ -883,7 +1141,7 @@ function refresh_placeImg(){
 					$('#placeImgBox').append(str);
 				}	
 			} else {
-				$('#placeImgBox').append('<span>등록된 이미지가 업습니다</span>');
+				$('#placeImgBox').append('<span>등록된 이미지가 없습니다.</span>');
 			}
 		
 		},
@@ -929,7 +1187,7 @@ function updatePlace(){
 			
 		},
 		success:function(result){
-			alert(result);
+			console.log(result);
 			$('#placeUpdate_background').css('display','none');
 			$('html').css('overflow','auto');
 		},
@@ -1035,6 +1293,7 @@ function loadRoomTypeOptions(){
 		},
 		complete:function(){
 			console.log(roomtype_options);
+			putRoomOptions();
 		}
 	})
 }
@@ -1066,6 +1325,8 @@ function loadPlaceInfo(){
 		success:function(place){
 			// 1. placeName 띄우기
 			$('#placeName').text(place.name);
+			$('#placeNameTitle').empty();
+			$('#placeNameTitle').append('<b>' + place.name + " 정보 수정</b>")
 			$('#placeImgBox_title').text(place.name + " 사진관리")
 			
 			// modal 에 placeInfo load

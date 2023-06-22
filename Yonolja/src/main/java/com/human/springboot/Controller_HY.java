@@ -477,7 +477,7 @@ public class Controller_HY {
 	@PostMapping("/addPlaceImg")
 	@ResponseBody
 	public String addPlaceImg(
-			@RequestParam("place_seq") int place_Seq,
+			@RequestParam("place_seq") int place_seq,
 			@RequestParam("img") MultipartFile img ) 
 	{
 		
@@ -495,14 +495,83 @@ public class Controller_HY {
 		String DB = DBpath + FileName;
 		
 		
-		if(hydao.getPlaceImgPath(place_Seq)==null) {
-			System.out.println("null");
+		if(hydao.getPlaceImgPath(place_seq)==null) {
+			hydao.updatePlaceImg(DB, place_seq);
 		} else {
-			System.out.println("not null");
+			String newDBpath = hydao.getPlaceImgPath(place_seq) + "," + DB;
+			hydao.updatePlaceImg(newDBpath, place_seq);
 		}
 		
+		return "success";
+	}
+	
+	
+	@PostMapping("/deletePlaceImg")
+	@ResponseBody
+	public String deletePlaceImg(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		String src = req.getParameter("src");
+		
+		String[]placeImgs = (hydao.getPlaceImgPath(place_seq)+"").split(",");
 		
 		
+		String newImgs = "";
+		for(int i=0;i<placeImgs.length;i++) {
+			if(placeImgs[i].equals(src)) {
+				// ignore
+			} else {
+				newImgs += "," + placeImgs[i];
+			}
+		}
+		newImgs = newImgs.replaceFirst(",", "");
+		
+		hydao.updatePlaceImg(newImgs, place_seq);
+		
+		String fileName = src.replace("/placeImgs/", "");
+		
+		File file = new File(PlaceImgPath + "/" + fileName);
+		
+		try {
+			if(file.exists()) {
+				file.delete();
+			}
+		}
+		catch(Exception e) {return "fail";}
+		
+
+		return "success";
+	}
+	
+	@PostMapping("/add_update_RoomType")
+	@ResponseBody
+	public String add_update_RoomType(HttpServletRequest req) {
+		
+		String roomtype_name = req.getParameter("roomtype_name");
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		int roomtype_capacity = Integer.parseInt( req.getParameter("roomtype_capacity") );
+		int roomtype_price = Integer.parseInt( req.getParameter("roomtype_price") );
+		String roomtype_guide = req.getParameter("roomtype_guide");
+		String roomtype_options = req.getParameter("roomtype_options");
+			
+		System.out.println(roomtype_name);
+		System.out.println(place_seq);
+		System.out.println(roomtype_capacity);
+		System.out.println(roomtype_price);
+		System.out.println(roomtype_guide);
+		System.out.println(roomtype_options);
+		
+		if(req.getParameter("roomtype_seq")==null || 
+		   req.getParameter("roomtype_seq").equals("")) 
+		{	hydao.addRoomType(
+				roomtype_name, 
+				place_seq, 
+				roomtype_capacity, 
+				roomtype_price, 
+				roomtype_options, 
+				roomtype_guide );			/*	insert	*/					}
+		else {			/*  update  */					}
+			
 		
 		return "success";
 	}

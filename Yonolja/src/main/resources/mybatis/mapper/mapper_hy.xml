@@ -79,10 +79,9 @@
 <!-- 객실타입추가 part -->
 		<insert id="addRoomType">
 			    insert into yonolja_roomtype (
-			        ROOMTYPE_SEQ,
+			    	roomtype_seq,
 			        ROOMTYPE_NAME,
 			        PLACE_SEQ,
-			        roomtype_imgs,
 			        ROOMTYPE_CAPACITY,
 			        ROOMTYPE_PRICE,
 			        roomtype_options,
@@ -96,8 +95,8 @@
 			     	#{param3},
 			        #{param4},
 			  		#{param5},
-			  		#{param6},
-			  		#{param7}
+			  		#{param6}
+			  	
 			    )
 		</insert>
 			
