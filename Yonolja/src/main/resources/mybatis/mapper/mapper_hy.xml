@@ -17,10 +17,33 @@
 <!-- host_addPlace DB insert 관련  -->
 
 	<insert id="addplace">
-		insert into yonolja_place values(
-			place_seq.nextval,#{param1}
-			,#{param2},#{param3},#{param4},#{param5},#{param6},#{param7},#{param8},#{param9},#{param10}
-		) 
+	
+			    insert into yonolja_place (
+			        PLACE_SEQ,  
+			        PLACE_NAME,
+			        USER_SEQ,
+			        PLACE_TYPE_SEQ,
+			        PLACE_CHECKIN_TIME,
+			        PLACE_CHECKOUT_TIME,
+			        PLACE_ADDRESS,
+			        PLACE_MOBILE,
+			        PLACE_GUIDE,
+			        PLACE_ENVIRONMENT
+			        
+			    )
+			 
+			     values(
+			        place_seq.nextval,
+			        #{param1},
+			        #{param2},
+			     	#{param3},
+			        #{param4},
+			  		#{param5},
+			  		#{param6},
+			  		#{param7},
+			  		#{param8},
+			  		#{param9}
+			    )
 <!-- 		place opt관련 param 한개 삭제   -->
 	</insert>
 	
@@ -116,7 +139,7 @@
 	        ROOMTYPE_PRICE,ROOMTYPE_OPTIONS,ROOMTYPE_GUIDE
 	        FROM yonolja_roomtype
 	        where place_seq = #{param1}
-	        order by roomtype_seq asc)) where num between 1 and 5
+	        order by roomtype_seq asc)) where num between #{param2} and #{param3}
     </select>
     
     <select id="pagingcount" resultType="int">
@@ -154,7 +177,7 @@
 	        place_seq = #{param3},
 	        roomtype_capacity = #{param4},
 	        roomtype_price = #{param5},
-	        roomtype_options=#{param6},
+	        roomtype_options= #{param6},
 	        roomtype_guide = #{param7}
    		 WHERE roomtype_seq= #{param1}
 	 </update>
@@ -227,12 +250,105 @@
 
 
 
+<!-- 경계선 -->
 
-
-
+		<select id="getRoomTypes" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+			select row_num, roomtype_seq, roomtype_name, roomtype_capacity, roomtype_price, roomtype_imgs
+			    from
+			    (
+			    select rownum as row_num, roomtype_seq, roomtype_name, roomtype_capacity, roomtype_price, roomtype_imgs
+			    from
+			        (     
+			        select*from yonolja_roomtype 
+			        where place_seq = #{param1} 
+			        order by roomtype_seq desc
+			        )
+			    )
+			where row_num between #{param2} and #{param3}
+		</select>
 		
+		<select id="countAllRoomTypes" resultType="int">
+			select count(*) from yonolja_roomtype where place_seq = #{param1}
+		</select>
 
+		<select id="getRooms" resultType="com.human.springboot.DTO_HY_roomDTO">
+			select  row_num, room_seq, room_number, roomtype_seq, roomtype_name, place_name
+				from
+				(
+				    select rownum as row_num, room_seq, room_number, roomtype_seq, roomtype_name, place_name
+				    from
+				        (
+				        select rm.room_seq, rm.room_number, rt.roomtype_seq ,rt.roomtype_name, p.place_name
+				        from yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+				        where rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq
+				        and p.place_seq = #{param1}
+				        ${param2}
+				        order by rm.room_seq desc, rm.room_number
+				        )
+				)
+				where row_num between #{param3} and #{param4}
+		
+		</select>
 
+	
+		<select id="getPlaceRoomTypes" resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+			select * from yonolja_roomtype
+			where place_seq = #{param1}
+		</select>
+		
+		
+		<select id="countAllRooms" resultType="int">
+			select count(*)
+			from yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+			where rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq
+			and p.place_seq = #{param1} 
+			${param2}
+		</select>
+		
+		
+		<delete id="deleteRoom">
+			delete from yonolja_room where room_seq = #{param1}
+		</delete>
+		
+		<select id="roomNumberInvaildation" resultType="int">
+			select count(*)
+			from yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+			where rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq
+			and p.place_seq = #{param1} and rm.room_number=#{param2}
+		</select>
+		
+		
+		<select id="getPlaceTypes" resultType="com.human.springboot.DTO_HY_placeTypeDTO">
+			select*from yonolja_place_type
+		</select>
+		<select id="getPlaceEnvironments" resultType="com.human.springboot.DTO_HY_placeEnvironmentDTO">
+			select*from yonolja_place_environment
+		</select>
+		<select id="getRoomTypeOptions" resultType="com.human.springboot.DTO_HY_roomtypeOption">
+			select*from yonolja_place_option
+		</select>
+		
+	
+		<update id="updatePlace">
+			update yonolja_place set
+			place_name = #{param2},
+			place_type_seq = #{param3},
+			place_checkin_time = #{param4},
+			place_checkout_time = #{param5},
+			place_address = #{param6},
+			place_mobile = #{param7},
+			place_guide = #{param8},
+			place_environment = #{param9}
+			where place_seq = #{param1}
+		</update>
+		
+	
+		<select id="getPlaceImgs" resultType="String">
+			select place_imgs from yonolja_place where place_seq = #{param1}
+		</select>
+	
+	
+	
 </mapper>
 
 

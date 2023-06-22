@@ -75,17 +75,15 @@ height:100%;
          <label for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
        </c:forEach>
        
-      
-  
-        <input type="file" id="pimage" name="img" accept="image/*" multiple>
-     <!--    <button type="button" class="btn btn-secondary mb-2" onclick="document.getElementById('file-input').click()">파일 선택</button>
-        <div id="dropzone" class="dropzone" style=height:500px;>드래그 앤 드롭으로 이미지를 첨부하세요</div> -->
-  
-        
+ 
         
         <input type="submit" value="제출">
     </form>
+    
+    
+   
 </body>
+
 
  <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -96,8 +94,6 @@ $(document)
 .on('click','#mypage_button',function(){
    
 })
-
-
 var dropzone = document.getElementById('dropzone');
     var fileInput = document.getElementById('file-input');
 

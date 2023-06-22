@@ -15,7 +15,7 @@ public interface DAO_HY {
 	
 	// 업장추가페이지에서 db에 업장 insert
 	
-	void addplace(String pname, int user_seq, int ptype, String checkin, String checkout, String address, String img, String mobile, String options, String guide, String place_environments);
+	void addplace(String pname, int user_seq, int ptype, String checkin, String checkout, String address,  String mobile, String guide, String place_environments);
 	ArrayList<DTO_HY_P> getEnvironments();
 	
 	DTO_HY_placeDTO getPlace(int place_seq);
@@ -34,7 +34,7 @@ public interface DAO_HY {
 	// RoomType select
 	
 	
-	ArrayList<DTO_HY_roomtypeDTO> getRoomtype(int place_seq);
+	ArrayList<DTO_HY_roomtypeDTO> getRoomtype(int place_seq,int start, int end);
 	int pagingcount(int place_seq);
 	
 	//Roomtype update
@@ -64,6 +64,7 @@ public interface DAO_HY {
 	void deletePlace(int place_seq);	
 	
 	
+	
 	// roomtype_optin name 관련 
 	ArrayList<DTO_HY_roomtypeDTO> getroomtype2(int place_seq, int roomtype_seq);
 	
@@ -85,6 +86,42 @@ public interface DAO_HY {
 	// 업장관리 
 	Object getPlaceImgPath(int place_seq);
 	void updatePlaceImg(String img_address, int place_seq);
+	
+	
+	
+	//////////////////////////////////////////////////////////////////
+	
+	
+	
+	ArrayList<DTO_HY_roomtypeDTO> getRoomTypes(int place_seq, int start, int end);
+	
+	int countAllRoomTypes(int place_seq);
+	
+	
+	ArrayList<DTO_HY_roomDTO> getRooms(int place_seq, String sql, int start, int end);
+	
+	ArrayList<DTO_HY_roomtypeDTO> getPlaceRoomTypes(int place_seq);
+
+	int countAllRooms(int place_seq, String sql);
+	
+	void deleteRoom(int room_seq);
+	
+	int roomNumberInvaildation(int place_seq, int room_number);
+	
+	
+	
+	ArrayList<DTO_HY_placeTypeDTO> getPlaceTypes();
+	ArrayList<DTO_HY_placeEnvironmentDTO> getPlaceEnvironments();
+	ArrayList<DTO_HY_roomtypeOption> getRoomTypeOptions();
+	
+	void updatePlace(int place_seq, String place_name,
+			int place_type_seq, 
+			String place_checkin, String place_checkout, 
+			String place_address, String place_mobile, 
+			String place_guide, String place_environment);
+	
+	
+	String getPlaceImgs(int place_seq);
 	
 	
 }

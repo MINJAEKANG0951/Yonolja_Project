@@ -3,6 +3,7 @@ package com.human.springboot;
 //import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.http.protocol.HTTP;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,8 @@ public class Controller_HY {
 
 	// test path
 	private String path = "C:/Users/admin/Desktop/imgs";
+	private String PlaceImgPath = "C:/Users/admin/Desktop/placeImgs";
+	private String RoomTypeImgPath = "C:/Users/admin/Desktop/roomTypeImgs";
 
 	// 경로 나중에 변환해야함
 	String placeImgPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_img";
@@ -46,289 +50,6 @@ public class Controller_HY {
 	// 업장추가페이지
 	@Autowired
 	private DAO_HY hydao;
-
-//	@GetMapping("/imgTest")
-//	public String showTest() {
-//		return "imgSendingTest";
-//	}
-//	
-//	@PostMapping("/imgSending")
-//	public String TakingImg(
-//			@RequestParam(value="name") String name,
-//			@RequestParam(value="img") MultipartFile[] imgs
-//	) {
-//		
-//		
-//		String DBimgPaths = "";
-//		for(int i=0;i<imgs.length;i++) {
-//			
-//			MultipartFile img = imgs[i];
-//			
-//			String realName = img.getOriginalFilename();
-//			UUID randomStr = UUID.randomUUID();
-//			String rstr = (""+randomStr).substring(0,20);
-//			String saveName = rstr + "-" + realName;
-//			
-// 			File file = new File(placeImgPath, saveName);
-// 		
-// 			try { img.transferTo(file);}
-// 			catch(Exception e) {System.out.println("fail");}
-//
-// 			DBimgPaths += "," + "/img/place_img" + saveName;
-//			
-//		}
-//		
-//		DBimgPaths.replaceFirst(",", "");
-//		System.out.println(DBimgPaths);
-//		System.out.println(DBimgPaths.length());
-//		
-//		return "redirect:/imgTest";
-//	}
-//	
-//	
-
-//	
-
-	@GetMapping("/imgpreview")
-	public String imgpreview() {
-		return "/test/imgPreview";
-	}
-	
-	@GetMapping("/imgOriginal")
-	public String imgpreviewOriginal() {
-		return "/test/imgOriginal";
-	}
-
-
-	@PostMapping("/addImg") //객실타입사진 추가 
-	@ResponseBody
-	public void getData(@RequestParam("img") MultipartFile img,
-			   @RequestParam("roomtype_seq") Integer roomtype_seq) {
-
-		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
-		String DBpath = "/files/";
-
-		UUID uuid = UUID.randomUUID();
-		String randomStr = (uuid + "").substring(0, 5);
-
-		String fileName = randomStr + "-" + img.getOriginalFilename();
-
-		File file = new File(testPath, fileName);
-		try {
-			img.transferTo(file);
-		} catch (Exception e) {
-			System.out.println("fail");
-		}
-
-		
-		
-		if(hydao.getImgAddress(roomtype_seq)==null) {
-			String dbAddress = (DBpath + fileName);
-			hydao.updateImg(dbAddress,roomtype_seq);
-		} else {
-			String dbAddress = (String) hydao.getImgAddress(roomtype_seq);
-			dbAddress += ("," + DBpath + fileName);
-			hydao.updateImg(dbAddress,roomtype_seq);
-
-		}
-		
-		
-	}
-	
-	///////////////jsp 에서 pimg 수정해야함 !!!!!!!!!!!!!
-
-	@PostMapping("/addPImg") //업장사진 추가 
-	@ResponseBody
-	public void getpData(@RequestParam("pimg") MultipartFile pimg,
-			   @RequestParam("place_seq") Integer place_seq) {
-
-		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
-		String DBpath = "/files/";
-
-		UUID uuid = UUID.randomUUID();
-		String randomStr = (uuid + "").substring(0, 5);
-
-		String fileName = randomStr + "-" + pimg.getOriginalFilename();
-
-		File file = new File(testPath, fileName);
-		try {
-			pimg.transferTo(file);
-		} catch (Exception e) {
-			System.out.println("fail");
-		}
-
-		
-		
-		if(hydao.getPlaceImgPath(place_seq)==null) {
-			String dbAddress = (DBpath + fileName);
-			hydao.updatePlaceImg(dbAddress,place_seq);
-		} else {
-			String dbAddress = (String) hydao.getPlaceImgPath(place_seq);
-			dbAddress += ("," + DBpath + fileName);
-			hydao.updatePlaceImg(dbAddress,place_seq);
-
-		}
-		
-		
-	}
-
-	@PostMapping("/deleteImg") // 객실 타입 사진 삭제 
-	@ResponseBody
-	public void DelData(@RequestParam("src") String src,
-			@RequestParam("roomtype_seq") int roomtype_seq) {
-
-		System.out.println("delete Img");
-		System.out.println("toom"+roomtype_seq);
-		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
-		String DBpath = "/files/";
-		/*
-		 * UUID uuid = UUID.randomUUID(); String randomStr = (uuid + "").substring(0,5);
-		 * 
-		 * String fileName = randomStr + "-" + img.getOriginalFilename();
-		 * 
-		 * File file = new File(testPath,fileName); try{ img.transferTo(file); }
-		 * catch(Exception e) {System.out.println("fail");}
-		 */
-		String name = src.replace("/files/", "");
-	
-		File file = new File(path + "/" + name);
-		System.out.println(path + "/" + name);
-
-		String dbAddress = (String) hydao.getImgAddress(roomtype_seq);
-
-		String[]Alladdresses = dbAddress.split(",");
-		
-		String addressStr = "";
-		
-		for(int i=0;i<Alladdresses.length;i++) {
-			if(Alladdresses[i].equals(src)) {
-				// ignore
-			} else {
-				addressStr += "," + Alladdresses[i];
-			}
-		}
-		// files/abc.jpg , files/add.jpg, files/acc.jpg
-		// ===> [files/abc.jpg, files/add.jpg, files/acc.jpg]
-		// files/add.jpg
-		
-		// str = '' 
-		// str ==> ,files/abc.jpg
-		// str ==> 
-		// str ==> files/abc.jpg,files/acc.jpg
-		
-		
-		
-		addressStr = addressStr.replaceFirst(",", "");
-
-		if (file.exists()) {
-			if (file.delete()) {
-				System.out.println("deleted");
-			} else {
-				System.out.println("failed");
-			}
-		} else {
-			System.out.println("no file");
-		}
-
-		hydao.updateImg(addressStr,roomtype_seq);
-
-	}
-	
-	
-	@PostMapping("/deletePImg") // 업장 사진 삭제 
-	@ResponseBody
-	public void delPData(@RequestParam("src") String src, // 민재한테물어보기
-			@RequestParam("place_seq") int place_seq) {
-
-		System.out.println("delete Img");
-		System.out.println("toom"+place_seq);
-		
-		String testPath = "C:\\Users\\admin\\Desktop\\imgs";
-		String DBpath = "/files/";
-		/*
-		 * UUID uuid = UUID.randomUUID(); String randomStr = (uuid + "").substring(0,5);
-		 * 
-		 * String fileName = randomStr + "-" + img.getOriginalFilename();
-		 * 
-		 * File file = new File(testPath,fileName); try{ img.transferTo(file); }
-		 * catch(Exception e) {System.out.println("fail");}
-		 */
-		String name = src.replace("/files/", "");
-	
-		File file = new File(path + "/" + name);
-		System.out.println(path + "/" + name);
-
-		String dbAddress = (String) hydao.getPlaceImgPath(place_seq);
-
-		String[]Alladdresses = dbAddress.split(",");
-		
-		String addressStr = "";
-		
-		for(int i=0;i<Alladdresses.length;i++) {
-			if(Alladdresses[i].equals(src)) {
-				// ignore
-			} else {
-				addressStr += "," + Alladdresses[i];
-			}
-		}
-		// files/abc.jpg , files/add.jpg, files/acc.jpg
-		// ===> [files/abc.jpg, files/add.jpg, files/acc.jpg]
-		// files/add.jpg
-		
-		// str = '' 
-		// str ==> ,files/abc.jpg
-		// str ==> 
-		// str ==> files/abc.jpg,files/acc.jpg
-		
-		
-		
-		addressStr = addressStr.replaceFirst(",", "");
-
-		if (file.exists()) {
-			if (file.delete()) {
-				System.out.println("deleted");
-			} else {
-				System.out.println("failed");
-			}
-		} else {
-			System.out.println("no file");
-		}
-
-		hydao.updatePlaceImg(addressStr,place_seq);
-
-	}
-
-
-	@PostMapping("/getImgs")//객실타입사진 프리뷰 
-	@ResponseBody
-	public String getImgs(@RequestParam("roomtype_seq") int roomtype_seq) {
-
-		String result = "";
-		Object dbAddress = hydao.getImgAddress(roomtype_seq);
-		if (dbAddress == null) {
-			System.out.println("no photo");
-			return "-";
-		} else {
-
-			result = (String) hydao.getImgAddress(roomtype_seq);
-		}
-
-		return result;
-	}
-	
-	@PostMapping("/getPlaceImgs")// 업장사진 프리뷰 
-	@ResponseBody
-	public String getPlaceImgs(@RequestParam("place_seq") int place_seq) {
-	    String result = "";
-	    Object dbAddress = hydao.getPlaceImgPath(place_seq);
-	    if (dbAddress == null) {
-	        System.out.println("no photo");
-	        return "-";
-	    } else {
-	        result = (String) hydao.getPlaceImgPath(place_seq);
-	    }
-	    return result;
-	}
 
 	@GetMapping("/host_addPlace")
 	public String showAddplace(Model model) {
@@ -355,9 +76,9 @@ public class Controller_HY {
 			@RequestParam(value = "pcheckout") String pcheckout, @RequestParam(value = "pguide") String pguide,
 
 
-			@RequestParam(value = "environments") String[] selectedEnvironments,
+			@RequestParam(value = "environments") String[] selectedEnvironments)
 			/* 사진도 받아야함 나중에 */
-			@RequestParam(value = "img") MultipartFile[] imgs) {
+			 {
 
 		HttpSession session = req.getSession();
 		int user_seq = (int) session.getAttribute("user_seq");
@@ -369,290 +90,423 @@ public class Controller_HY {
 				"");
 		System.out.println(Arrays.toString(selectedEnvironments));
 		//////////////////////////////////////////////////////////////////////////
-
-//		String originalName = img.getOriginalFilename();
-//		UUID randomStr = UUID.randomUUID(); 
-//		String rstr = (""+randomStr).substring(0,8);
-//		String saveName = rstr + originalName;
-//	
-//		File file = new File(placeImgPath,saveName);
-//		
-//		String DBpath = "/img/place_img/" + saveName;
-
-//		hydao.addplace(pname, user_seq, place_type_seq, pcheckin, pcheckout, address, DBpath, pmobile, place_options, pguide);
-
-		String DBpath = "";
-		for (int i = 0; i < imgs.length; i++) {
-			MultipartFile img = imgs[i];
-
-			String realName = img.getOriginalFilename();
-			UUID randomStr = UUID.randomUUID();
-			String rstr = ("" + randomStr).substring(0, 8);
-
-			String saveName = rstr + "-" + realName;
-
-			File file = new File(placeImgPath, saveName);
-			try {
-				img.transferTo(file);
-			} catch (Exception e) {;
-				System.out.println("fail");
-			}
-
-			DBpath += "," + "/img/place_img/" + saveName;
-		}
-		DBpath = DBpath.replaceFirst(",", "");
-
-		hydao.addplace(pname, user_seq, place_type_seq, pcheckin, pcheckout, address, address, pmobile, DBpath, pguide, place_environments);
+//		사진관리 코드인데 다른코드쓸예정이라 막음 
+//		String DBpath = "";
+//		for (int i = 0; i < imgs.length; i++) {
+//			MultipartFile img = imgs[i];
+//
+//			String realName = img.getOriginalFilename();
+//			UUID randomStr = UUID.randomUUID();
+//			String rstr = ("" + randomStr).substring(0, 8);
+//
+//			String saveName = rstr + "-" + realName;
+//
+//			File file = new File(placeImgPath, saveName);
+//			try {
+//				img.transferTo(file);
+//			} catch (Exception e) {;
+//				System.out.println("fail");
+//			}
+//
+//			DBpath += "," + "/img/place_img/" + saveName;
+//		}
+//		DBpath = DBpath.replaceFirst(",", "");
+		hydao.addplace(pname, user_seq, place_type_seq, pcheckin, pcheckout, address, pmobile, pguide, place_environments);
 
 		return "main";
 	}
 
+	
+	
+	
 	////////////////////////// managePlace page///////////////////////////
 
-	@GetMapping("/host_managePlace/{place_Seq}")
-	public String managePlace(@PathVariable("place_Seq") int place_Seq, Model model) {
+	
+	@GetMapping("/host_managePlace/{place_seq}")
+	public String showManagePlace(@PathVariable("place_seq") int place_seq) {
 
-		/////////////// place type, option select box 관련 ////////
-
-		ArrayList<DTO_HY_P> ptypes = hydao.showPtype(); // DB에서 옵션 데이터 조회
-		model.addAttribute("ptypes", ptypes); // JSP로 데이터 전달
-
-		ArrayList<DTO_HY_P> pfeatures = hydao.showPoption();
-		model.addAttribute("pfeatures", pfeatures); // JSP로 데이터 전달
-
-		ArrayList<DTO_HY_P> environments = hydao.getEnvironments();
-		model.addAttribute("environments", environments);
-		////////////////// 업장 정보수정창에서 해당 place 정보 기본셋팅//////////////
-
-		model.addAttribute("place_seq", place_Seq);
-
-		///////////////// 객실타입 게시하는 코드시작/////////////
-
-		ArrayList<DTO_HY_roomtypeDTO> roomTypes = hydao.getRoomtype(place_Seq);
-
-		for(int i = 0; i < roomTypes.size(); i++) {
-		    DTO_HY_roomtypeDTO roomType = roomTypes.get(i);
-		    int roomtype_seq = roomType.roomtype_seq;
-		    ArrayList<DTO_HY_roomtypeDTO> options = hydao.getroomtype2(place_Seq, roomtype_seq);
-		    roomType.setOptions(options);  // roomType DTO에 setOptions라는 메소드를 추가해야 함.
-		}
-
-		model.addAttribute("roomTypes", roomTypes);
-
-		int number=hydao.pagingcount(place_Seq);
-		System.out.println(number);
-//		int end;
-//		int start;
-//		int paging;
-//		if(number%5==0) {
-//			paging=hydao.pagingcount(place_Seq);
-//			
-//		}
-		//
-		int pageend=hydao.pagingcount(place_Seq);
-        int pageval=pageend%5;
-        
-        
-        if(pageval==0) {
-           
-           pageend=pageend/5;
-        } else {
-           pageend=(pageend/5)+1;
-        }
-        model.addAttribute("startPage",1);
-        model.addAttribute("endPage",pageend);
-        model.addAttribute("curpage",1);
-	   
 		return "host_managePlace";
-
 	}
-
+	
+	
 	@PostMapping("/getPlaceInfo")
 	@ResponseBody
-	public String getPlaceInfo(HttpServletRequest req) {
-
-		DTO_HY_placeDTO place = hydao.getPlace(Integer.parseInt(req.getParameter("place_seq")));
-
+	public String getPlace(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt(req.getParameter("place_seq"));
+		DTO_HY_placeDTO place = hydao.getPlace(place_seq);
+		
+		
 		JSONObject jo = new JSONObject();
-
+		
+		jo.put("seq", place.getPlace_seq());
 		jo.put("name", place.getPlace_name());
+		jo.put("user_seq", place.getUser_seq());
 		jo.put("type_seq", place.getPlace_type_seq());
+		jo.put("checkin_time", place.getPlace_checkin_time());
+		jo.put("checkout_time", place.getPlace_checkout_time());
+		
 		jo.put("address", place.getPlace_address());
+		jo.put("imgs", place.getPlace_imgs());
 		jo.put("mobile", place.getPlace_mobile());
-		jo.put("checkin", place.getPlace_checkin_time());
-		jo.put("checkout", place.getPlace_checkout_time());
-		jo.put("guide", place.getPlace_guide());
-		jo.put("environments", place.getPlace_environment());
 		jo.put("options", place.getPlace_options());
-
+		jo.put("guide", place.getPlace_guide());
+		jo.put("environment", place.getPlace_environment());
+		
+		
 		return jo.toString();
 	}
-
-	@PostMapping("/modifyPlace")
+	
+	
+	@PostMapping("/getPlaceRoomTypes")
 	@ResponseBody
-	public String modifyPlace(HttpServletRequest req) {
-
-		HttpSession session = req.getSession();
-
-//	  	int place_seq=  Integer.parseInt(req.getParameter("place_seq"));
-		String placeSeq = (String) req.getParameter("place_seq");
-		int place_seq = Integer.parseInt(placeSeq);
-		String place_name = req.getParameter("pname");
-		System.out.println(place_name);
-		int user_seq = (int) session.getAttribute("user_seq");
-		System.out.println(user_seq);
-		int place_type_seq = Integer.parseInt(req.getParameter("ptype"));
-		String place_checkin_time = req.getParameter("pcheckin");
-		String place_checkout_time = req.getParameter("pcheckout");
-		String place_address = req.getParameter("paddress");
-		String place_mobile = req.getParameter("pmobile");
-//    	String place_options = req.getParameter("checkOpt");
-		String place_guide = req.getParameter("pguide");
-		String place_environment = req.getParameter("checkEnv");
-
-		hydao.changePlace(place_seq, place_name, user_seq, place_type_seq, place_checkin_time, place_checkout_time,
-				place_address, place_mobile, place_guide, place_environment);
-
-		return "ok";// 수정한 부분
-	}
-
-// 객실타입 추가 관련
-	@PostMapping("/insertRoomType")
-	public String insertRoomType(HttpServletRequest req, Model model,
-			
-			@RequestParam(value="place_seq") String place_Seq,
-			@RequestParam(value="roomtype_name") String rname, 
-			@RequestParam(value="roomtype_capacity") String rcap,
-			@RequestParam(value="roomtype_price") String nightrate,
-			@RequestParam(value ="pfeatures") String[] roomtype_options,
-			@RequestParam(value="roomtype_guide") String roomGuide
-			) {
+	public String getPlaceRoomTypes(HttpServletRequest req) {
 		
-			int place_seq = Integer.parseInt(place_Seq);
-			//int roomtype_Seq = Integer.parseInt(roomtype_seq);
-			System.out.println(place_seq);
-			int maxCapacity = Integer.parseInt(rcap);
-			System.out.println(maxCapacity);
-			int nightRate = Integer.parseInt(nightrate);
-			String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
-					"");
-			
-			
-			String defaultImagePath = "/img/roomtype_option/default-image.jpg";
-
-		hydao.addRoomType(rname, place_seq,defaultImagePath, maxCapacity, nightRate,roomtype_opt, roomGuide);
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		int pageNum = Integer.parseInt( req.getParameter("pageNum") );
+		int howmanyUnits = Integer.parseInt( req.getParameter("howmanyUnits") );
 		
-		return "main";
-	}
-
-
-	  ///////////////////객실타입 수정 코드 /////////////////
-		@PostMapping("/modifyRoomtype")
-		public String modifyRoomtype(HttpServletRequest req, Model model,
-		        @RequestParam(value="place_seq") String place_Seq,
-		        @RequestParam(value="roomtype_seq") int roomtype_seq,//수정부분
-		        @RequestParam(value="roomtype_name") String rname, 
-		        @RequestParam(value="roomtype_capacity") String rcap,
-		        @RequestParam(value="roomtype_price") String nightrate,
-		        @RequestParam(value ="pfeatures") String[] roomtype_options,
-		        @RequestParam(value="roomtype_guide") String roomGuide
-		        ) {
-		    
-		    int place_seq = Integer.parseInt(place_Seq);
-		    int roomtype_Seq = req.getParameter("roomtype_seq") != null ? Integer.parseInt(req.getParameter("roomtype_seq")) : 0;
-		    int maxCapacity = Integer.parseInt(rcap);
-		    int nightRate = Integer.parseInt(nightrate);
-		    String roomtype_opt = Arrays.toString(roomtype_options).replace(" ", "").replace("[", "").replace("]",
-					"");
+		int start = ((pageNum-1)*howmanyUnits) + 1;
+		int end = pageNum*howmanyUnits;
 		
-
-		    hydao.modifyRoomtype(roomtype_Seq, rname, place_seq, maxCapacity, nightRate,roomtype_opt, roomGuide);
-		    
-		    return "redirect:/mypage";
+		
+		// 1페이지가 클릭되고, 보여주고싶은 unit 이 5개일때 
+		// 1번-5번 보여줘야함.
+		
+		// 즉, 가져올 unit 의 번호의 start 는 ((pageNum-1)*howmanyUnits) + 1
+		//						end 는 (pageNum)*howmanyUnits 임
+		
+		// 예를들어서 보여주고싶은 unit 이 10개일때,
+		// 페이지 2번을 클릭한다면,
+		// 11번부터 20번까지 보여줘야하므로, 11 -> ((2-1)*10)   + 1 
+		//							20 -> (2)*10
+		
+		ArrayList<DTO_HY_roomtypeDTO> roomtypes = 
+				hydao.getRoomTypes(place_seq, start, end);
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<roomtypes.size();i++) {
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", roomtypes.get(i).getRoomtype_seq());
+			jo.put("name", roomtypes.get(i).getRoomtype_name());
+			jo.put("imgs", roomtypes.get(i).getRoomtype_imgs());
+			jo.put("capacity", roomtypes.get(i).getRoomtype_capacity());
+			jo.put("price", roomtypes.get(i).getRoomtype_price());
+			
+			System.out.println(roomtypes.get(i).getRoomtype_imgs());
+			
+			ja.put(jo);
 		}
-////////////////////////////객실타입 삭제 코드/////////////////
-
-	@PostMapping("/deleteRoomtype")
-	public RedirectView deleteRoomtype(@RequestParam("roomtype_seq") int roomtype_seq,
-			@RequestParam("place_seq") int place_seq) {
-		hydao.deleteRoomtype(roomtype_seq);
-		RedirectView redirectView = new RedirectView();
-		redirectView.setUrl("/host_managePlace/" + place_seq);
-		return redirectView;
+		
+		return ja.toString();
 	}
-
-	@PostMapping("/addRoom")
-	public RedirectView addRoom(@RequestParam("roomTypeId") int roomTypeId, @RequestParam("roomNumber") int roomNumber,
-			@RequestParam("place_seq") int place_seq) {
-
-		System.out.println(roomTypeId);
-		System.out.println(roomNumber);
-		System.out.println(place_seq);
-
-		hydao.addRoom(roomTypeId, roomNumber);
-		RedirectView redirectView = new RedirectView();
-		redirectView.setUrl("/host_managePlace/" + place_seq);
-
-		return redirectView;
-	}
-
-
-	/// 객실타입 선택후 해당 객실만 select part////
-	@PostMapping("/showRooms")
+	
+	
+	
+	@PostMapping("/getRoomTypePageNums")
 	@ResponseBody
-	public ResponseEntity<String> showRooms(@RequestParam("roomTypeNum") String roomTypeNum, Model model) {
-		try {
-			int roomTypeId = Integer.parseInt(roomTypeNum);
-			List<DTO_HY_roomtypeDTO> rooms = hydao.showRooms(roomTypeId);
+	public String loadRoomTypePageNums(HttpServletRequest req) {
+		
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		int howmanyUnits = Integer.parseInt( req.getParameter("howmanyUnits") );
+		
+		int amountOfUnits = hydao.countAllRoomTypes(place_seq);
+		
+		int howmanyPages = ( (amountOfUnits)/howmanyUnits ) + 1;
+		if((amountOfUnits)%howmanyUnits==0){
+			howmanyPages--;
+		}
 
-			JSONArray jsonArray = new JSONArray();
-			for (DTO_HY_roomtypeDTO room : rooms) {
-				JSONObject jo = new JSONObject();
-				jo.put("roomtype_seq", room.getRoomtype_seq());
-				jo.put("roomtype_name", room.getRoomtype_name());
-				jo.put("room_number", room.getRoom_number());
-				jo.put("room_seq", room.getRoom_seq());
-				jsonArray.put(jo);
+		return howmanyPages+"";
+	}
+	
+	
+	
+	@PostMapping("/getPlaceRooms")
+	@ResponseBody
+	public String getPlaceRooms(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		int pageNum = Integer.parseInt( req.getParameter("pageNum") );
+		int howmanyUnits = Integer.parseInt( req.getParameter("howmanyUnits") );
+		
+		
+		int start = ((pageNum-1)*howmanyUnits) + 1;
+		int end = pageNum*howmanyUnits;
+	
+		String sql = "";
+		
+		if(!req.getParameter("selected_roomType").equals("-1")) {
+			sql = " and rt.roomtype_seq=" + req.getParameter("selected_roomType") + " ";
+		}
+		
+		
+		ArrayList<DTO_HY_roomDTO> rooms = hydao.getRooms(place_seq, sql, start, end);
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<rooms.size();i++) {
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", rooms.get(i).getRoom_seq());
+			jo.put("type_name", rooms.get(i).getRoomtype_name());
+			jo.put("number", rooms.get(i).getRoom_number());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	
+	@PostMapping("/getRoomPageNums")
+	@ResponseBody
+	public String loadRoomPageNums(HttpServletRequest req) {
+		
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		int howmanyUnits = Integer.parseInt( req.getParameter("howmanyUnits") );
+		
+		String sql = "";
+		
+		if(!req.getParameter("selected_roomType").equals("-1")) {
+			sql = " and rt.roomtype_seq=" + req.getParameter("selected_roomType") + " ";
+		}
+		
+		int amountOfUnits = hydao.countAllRooms(place_seq, sql);
+		
+		System.out.println(amountOfUnits);
+		
+		int howmanyPages = ( (amountOfUnits)/howmanyUnits ) + 1;
+		
+		System.out.println(howmanyPages);
+		
+		if(amountOfUnits%howmanyUnits==0){
+			howmanyPages--;
+		}
+		
+		System.out.println(howmanyPages);
+		
+		System.out.println("eee");
+		return howmanyPages+"";
+	}
+	
+	
+	
+	
+	@PostMapping("/searchPlaceRoomTypes")
+	@ResponseBody
+	public String searchPlaceRoomTypes(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		
+		
+		ArrayList<DTO_HY_roomtypeDTO> roomtypes = hydao.getPlaceRoomTypes(place_seq);
+	
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<roomtypes.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", roomtypes.get(i).getRoomtype_seq());
+			jo.put("name", roomtypes.get(i).getRoomtype_name());
+			
+			ja.put(jo);
+		}
+		
+		
+		
+		return ja.toString();
+	}
+	
+	
+	
+	@PostMapping("/deleteRoom")
+	@ResponseBody
+	public void deleteRoom(HttpServletRequest req) {
+		
+		if(req.getParameter("roomSeqs")!=null && 
+		   !req.getParameter("roomSeqs").equals("")) 
+		{
+			
+			String[]RoomSeqs = req.getParameter("roomSeqs").split(",");
+			for(int i=0;i<RoomSeqs.length;i++) {
+				
+				int room_seq = Integer.parseInt(RoomSeqs[i]);
+				
+				hydao.deleteRoom(room_seq);
+				
 			}
-
-			return ResponseEntity.ok(jsonArray.toString());
-		} catch (NumberFormatException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 방 유형 번호입니다.");
+			
 		}
+		
 	}
-
-	///// 객실 삭제 part //////
-
-	@PostMapping("/deleteRoomNum")
+	
+	
+	@PostMapping("/addRoomInvalidation")
 	@ResponseBody
-	public ResponseEntity<?> deleteRoomNum(@RequestParam("roomSeq") int roomSeq,
-			@RequestParam("placeSeq") int place_seq) {
-		hydao.deleteRoomNum(roomSeq);
-		Map<String, Object> response = new HashMap<>();
-		response.put("status", "success");
-		response.put("redirectUrl", "/host_managePlace/" + place_seq);
-		return ResponseEntity.ok(response);
+	public String addRoomInvalidation(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );		
+		int room_number = Integer.parseInt( req.getParameter("room_number") );
+		
+		int roomtaken = hydao.roomNumberInvaildation(place_seq, room_number);
+		if(roomtaken>=1) {return "fail";}
+		else {return "doit";}
+		
 	}
-
-	////////////// 객실 insert시 동일객실번호 체크 part/////////////////
-
-
-	@GetMapping("/checkRoomExists")
+	
+	@PostMapping("/addRoom")
 	@ResponseBody
-	public Integer checkRoomExists(@RequestParam("place_seq") int place_seq,
-			@RequestParam("roomNumber") int roomNumber) {
-
-		Integer count = hydao.checkRoomExists(place_seq, roomNumber);
-		return count != null ? count : 0;
+	public void addRoom(HttpServletRequest req) {
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );		
+		int room_number = Integer.parseInt( req.getParameter("room_number") );
+		hydao.addRoom(roomtype_seq, room_number);
 	}
-
-//	
-	// Place Delete 삭제 part
-
-	@DeleteMapping("/deletePlace/{placeSeq}")
-	public ResponseEntity<Void> deletePlace(@PathVariable("placeSeq") int placeSeq) {
-		hydao.deletePlace(placeSeq);
-		return ResponseEntity.ok().build(); // 삭제가 성공적으로 이루어졌을 때 응답
+	
+	
+	
+	
+	
+	
+	@PostMapping("/getAllPlaceTypes")
+	@ResponseBody
+	public String getAllPlaceTypes(HttpServletRequest req) {
+		
+		ArrayList<DTO_HY_placeTypeDTO> placeTypes = hydao.getPlaceTypes();
+		
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<placeTypes.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", placeTypes.get(i).getPlace_type_seq());
+			jo.put("name", placeTypes.get(i).getPlace_type_name());
+			jo.put("img", placeTypes.get(i).getPlace_type_img());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
 	}
+	
+	@PostMapping("/getAllPlaceEnvironments")
+	@ResponseBody
+	public String getAllPlaceEnvironments(HttpServletRequest req) {
+		
+		ArrayList<DTO_HY_placeEnvironmentDTO> placeEnvironments = hydao.getPlaceEnvironments();
+
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<placeEnvironments.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", placeEnvironments.get(i).getPlace_environment_seq());
+			jo.put("name", placeEnvironments.get(i).getPlace_environment_name());
+			jo.put("img", placeEnvironments.get(i).getPlace_environment_img());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	@PostMapping("/getAllRoomTypeOptions")
+	@ResponseBody
+	public String getAllRoomTypeOptions(HttpServletRequest req) {
+	
+		ArrayList<DTO_HY_roomtypeOption> roomtypeOptions = hydao.getRoomTypeOptions();
+
+		JSONArray ja = new JSONArray();
+		
+		for(int i=0;i<roomtypeOptions.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			jo.put("seq", roomtypeOptions.get(i).getPlace_option_seq());
+			jo.put("name", roomtypeOptions.get(i).getPlace_option_name());
+			jo.put("img", roomtypeOptions.get(i).getPlace_option_img());
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	
+	@PostMapping("/updatePlace")
+	@ResponseBody
+	public String updatePlace(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		int place_type_seq = Integer.parseInt( req.getParameter("place_type_seq") );
+		String place_name = req.getParameter("place_name");
+		String place_checkin = req.getParameter("place_checkin");
+		String place_checkout = req.getParameter("place_checkout");
+		String place_mobile = req.getParameter("place_mobile");
+		String place_address =req.getParameter("place_address");
+		String place_guide = req.getParameter("place_guide");
+		String place_environment = req.getParameter("place_environment");
+		
+	
+			hydao.updatePlace
+			(place_seq, place_name,place_type_seq,  
+			place_checkin, place_checkout, 
+			place_address, place_mobile, 
+			place_guide, place_environment);
+		
+		return "success";
+	}
+	
+	@PostMapping("/getPlaceImgs")
+	@ResponseBody
+	public String getPlaceImgs(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		System.out.println(hydao.getPlaceImgs(place_seq));
+		return hydao.getPlaceImgs(place_seq);
+	}
+	
+	
+	@PostMapping("/addPlaceImg")
+	@ResponseBody
+	public String addPlaceImg(
+			@RequestParam("place_seq") int place_Seq,
+			@RequestParam("img") MultipartFile img ) 
+	{
+		
+		UUID uuid = UUID.randomUUID();
+		String randomStr = (uuid + "").substring(0, 5);
+		
+		String FileName = randomStr + "-" + img.getOriginalFilename();
+		
+		File file = new File(PlaceImgPath,FileName);
+		
+		try {img.transferTo(file);}
+		catch(Exception e) {return "fail";}
+
+		String DBpath = "/placeImgs/";
+		String DB = DBpath + FileName;
+		
+		
+		if(hydao.getPlaceImgPath(place_Seq)==null) {
+			System.out.println("null");
+		} else {
+			System.out.println("not null");
+		}
+		
+		
+		
+		
+		return "success";
+	}
+	
+	
 
 }
