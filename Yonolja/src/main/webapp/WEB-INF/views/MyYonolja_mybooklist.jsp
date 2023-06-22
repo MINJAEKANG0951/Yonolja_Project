@@ -228,10 +228,11 @@ section {
 				<c:if test="${book.checkin_date gt currentDate}">
 					<!-- '이용전' 예약 정보 출력 -->
 					<div class="div_book2">
-						<span class="book_sp">${book.place_name}</span>
-						<span class="book_sp">${book.roomtype_name}</span>
-						<span class="book_sp">${book.checkin_date} ~ ${book.checkout_date}</span>
-						<span class="book_sp">
+						<input type=hidden value="${book.place_seq}">
+						<span class="book_sp" onclick="goToPlacePage(${book.place_seq})">${book.place_name}</span>
+						<span class="book_sp" onclick="goToPlacePage(${book.place_seq})">${book.roomtype_name}</span>
+						<span class="book_sp" onclick="goToPlacePage(${book.place_seq})">${book.checkin_date} ~ ${book.checkout_date}</span>
+						<span class="book_sp" onclick="goToPlacePage(${book.place_seq})">
 						<c:choose>
 							<c:when test="${book.checkin_date gt currentDate}">
 								이용전
@@ -495,12 +496,13 @@ $(document)
     //console.log("삭제");
     
     // data-review-seq 속성에서 review_seq 값을 가져옴
-    var book_seq = $(this).siblings('input').val();
+   /*  var book_seq = $(this).siblings('input').val(); */
+     var book_seq = $(this).next('input').val(); 
     console.log(book_seq);
     
-  if(!confirm("해당 리뷰를 삭제하시겠습니까?")) return false;
+  if(!confirm("해당 예약을 취소하시겠습니까?")) return false;
 
-     $.ajax({
+      $.ajax({
         url: '/myBook_Bye',
         type: 'post',
         data: {book_seq: book_seq
@@ -508,7 +510,7 @@ $(document)
         success: function(data) {
 
             if(data=="ok") {
-                alert("삭제되었습니다.");
+                alert("취소되었습니다.");
                 location.reload();
             } else {
                 
@@ -624,25 +626,25 @@ function redirectToBookView(bookSeq, reviewStatus, placeName, roomtypeName) { //
     $("#review_modal").show();
 }
 
+function goToPlacePage(placeSeq) {
+    var confirmResult = confirm("호텔 페이지로 이동하시겠습니까?");
 
-
-
-/* function redirectToBookView(bookSeq, reviewStatus) {
-    // 리뷰가 이미 등록된 경우 알림을 표시하고 함수를 종료
-    if (reviewStatus === '등록') {
-        alert('이미 등록된 리뷰가 있습니다.');
-        return false;
+    if(confirmResult){
+        window.location.href = 'place/' + placeSeq;
     }
+}
 
-    // ID 값으로 각 book_seq에 해당하는 input 태그를 찾아서, 그 값을 읽어옴
-    var bookSeqValue = document.getElementById("seq_" + bookSeq).value;
-    
-    // review_modal에서의 input 필드에 해당 값을 설정
-    document.getElementById("book_seq").value = bookSeqValue;
-    
-    // 모달 띄우기
-    $("#review_modal").show();
-} */
+// 페이지네이션 이동 시 , 스크롤 위치 저장
+/* window.onbeforeunload = function() {
+	localStorage.setItem('scrollPosition', window.scrollY);
+};
+
+window.onload = function() {
+	if(localStorage.getItem('scrollPosition') !== null) {
+	  window.scrollTo(0, localStorage.getItem('scrollPosition'));
+	}
+}; */
+
 	
 
 </script>
