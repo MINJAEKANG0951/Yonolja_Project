@@ -547,34 +547,83 @@ public class Controller_HY {
 	@ResponseBody
 	public String add_update_RoomType(HttpServletRequest req) {
 		
-		String roomtype_name = req.getParameter("roomtype_name");
-		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
-		int roomtype_capacity = Integer.parseInt( req.getParameter("roomtype_capacity") );
-		int roomtype_price = Integer.parseInt( req.getParameter("roomtype_price") );
-		String roomtype_guide = req.getParameter("roomtype_guide");
-		String roomtype_options = req.getParameter("roomtype_options");
-			
-		System.out.println(roomtype_name);
-		System.out.println(place_seq);
-		System.out.println(roomtype_capacity);
-		System.out.println(roomtype_price);
-		System.out.println(roomtype_guide);
-		System.out.println(roomtype_options);
 		
-		if(req.getParameter("roomtype_seq")==null || 
-		   req.getParameter("roomtype_seq").equals("")) 
-		{	hydao.addRoomType(
-				roomtype_name, 
-				place_seq, 
-				roomtype_capacity, 
-				roomtype_price, 
-				roomtype_options, 
-				roomtype_guide );			/*	insert	*/					}
-		else {			/*  update  */					}
-			
 		
+	try {
+			String roomtype_name = req.getParameter("roomtype_name");
+			int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+			int roomtype_capacity = Integer.parseInt( req.getParameter("roomtype_capacity") );
+			int roomtype_price = Integer.parseInt( req.getParameter("roomtype_price") );
+			String roomtype_guide = req.getParameter("roomtype_guide");
+			String roomtype_options = req.getParameter("roomtype_options");
+			
+			
+				
+			System.out.println(roomtype_name);
+			System.out.println(place_seq);
+			System.out.println(roomtype_capacity);
+			System.out.println(roomtype_price);
+			System.out.println(roomtype_guide);
+			System.out.println(roomtype_options);
+			
+			if(req.getParameter("roomtype_seq")==null || 
+			   req.getParameter("roomtype_seq").equals("")) 
+			{	hydao.addRoomType( /*  insert  */	
+					roomtype_name, 
+					place_seq, 
+					roomtype_capacity, 
+					roomtype_price, 
+					roomtype_options, 
+					roomtype_guide );						}
+			else { 
+				int roomtype_seq = Integer.parseInt(req.getParameter("roomtype_seq"));
+				hydao.modifyRoomtype( /* update */
+					roomtype_seq, 
+					roomtype_name, 
+					roomtype_capacity, 
+					roomtype_price, 
+					roomtype_options, 
+					roomtype_guide);
+			}
+		} catch(Exception e) {
+			return "올바른 정보를 입력해주세요";
+		}
 		return "success";
 	}
+	
+	
+	@PostMapping("/getRoomTypeInfo")
+	@ResponseBody
+	public String getRoomTypeInfo(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		
+		DTO_HY_roomtypeDTO roomtype = hydao.getRoomTypeInfo(roomtype_seq);
+		
+		
+		JSONObject jo = new JSONObject();
+		
+		jo.put("seq", roomtype.getRoomtype_seq());
+		jo.put("name", roomtype.getRoomtype_name());
+		jo.put("capacity", roomtype.getRoomtype_capacity());
+		jo.put("price", roomtype.getRoomtype_price());
+		jo.put("guide", roomtype.getRoomtype_guide());
+		jo.put("options", roomtype.getRoomtype_options());
+		
+
+		return jo.toString();
+	}
+	
+	
+	@PostMapping("/deleteRoomType")
+	@ResponseBody
+	public String deleteRoomType(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		hydao.deleteRoomtype(roomtype_seq);
+		return "success";
+	}
+	
 	
 	
 

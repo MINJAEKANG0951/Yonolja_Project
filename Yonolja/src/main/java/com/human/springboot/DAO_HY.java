@@ -39,7 +39,7 @@ public interface DAO_HY {
 	
 	//Roomtype update
 	
-	void modifyRoomtype(int roomtype_seq, String roomtype_name, int place_seq,  int roomtype_capacity, int roomtype_price,String roomtype_opt, String roomtype_guide);	
+	void modifyRoomtype(int roomtype_seq, String roomtype_name,  int roomtype_capacity, int roomtype_price,String roomtype_opt, String roomtype_guide);	
 
 	//Roomtype delete 
 	
@@ -69,6 +69,7 @@ public interface DAO_HY {
 	ArrayList<DTO_HY_roomtypeDTO> getroomtype2(int place_seq, int roomtype_seq);
 	
 	
+	DTO_HY_roomtypeDTO getRoomTypeInfo(int roomtype_seq);
 	
 	
 	

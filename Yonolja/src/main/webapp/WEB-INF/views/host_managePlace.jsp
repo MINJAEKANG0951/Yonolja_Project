@@ -522,6 +522,190 @@ background-color:blue;
 }
 
 
+
+
+#ManageRoomType_background{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:4;
+	display:none;
+}
+#ManageRoomType{
+	position:fixed;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	width:300px;
+	height:130px;
+	background-color:white;
+	border-radius:10px;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
+	
+	text-align:center;
+}
+
+#closeManageRoomType{
+	position:absolute;
+	top:0;
+	right:5px;
+	font-size:25px;
+	font-weight:bold;
+	color:gray;
+	cursor:pointer;
+}
+#closeManageRoomType:hover{
+	color:black;
+}
+#ManageRoomType .rtmanage{
+	width:140px;
+	height:40px;
+	font-size:14px;
+	background-color:rgb(0, 128, 255);
+	color:white;
+	border-radius:5px;
+	border:0px;
+	cursor:pointer;
+}
+#ManageRoomType .rtmanage:hover{
+	background-color:blue;
+	transition:0.3s;
+}
+#roomtypeUpdateModal_status{
+	font-weight:bold;
+}
+#rtName{
+	font-weight:bold;
+}
+
+#deleteRoomType{
+	background-color:#ddd;
+	width:80px;
+	height:30px;
+	color:red;
+	font-weight:bold;
+	border:0px;
+	border-radius:5px;
+	cursor:pointer;
+}
+#deleteRoomType:hover{
+	background-color:gray;
+	transition:0.3s;
+}
+
+
+
+
+
+
+#roomtypeImgUpdate_background{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:4;
+	display:none; 
+}
+#roomtypeImgUpdate{
+	position:fixed;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	width:600px;
+	height:700px;
+	background-color:white;
+	border-radius:10px;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
+	
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:1fr;
+	place-items:center;
+}
+#roomtypeImgUpdateBox{
+	border:1px solid #ddd;
+	width:90%;
+	height:90%;
+	
+	display:grid;
+	grid-template-columns:1fr;
+	grid-template-rows:40px auto 50px;
+}
+#roomtypeImgUpdateBox div{
+	
+}
+
+#roomtypeImgBox_title{
+	font-size:23px;
+	font-weight:bold;
+	border-bottom:1px solid #ddd;
+}
+#roomtypeImgBox_buttons{
+	border-top:1px solid #ddd;
+	text-align:center;
+}
+#roomtypeImgBox_buttons button{
+	width:120px;
+	height:30px;
+	font-size:18px;
+	background-color:rgb(0, 128, 255);
+	color:white;
+	border:0px solid white;
+	border-radius:5px;
+	cursor:pointer;
+}
+#roomtypeImgBox_buttons button:hover{
+	background-color:blue;
+	transition:0.3s;
+}
+#roomtypeImgBox{
+	height: 500px;
+    overflow: auto;
+}
+
+.roomtypeImgFrame{
+	float:left;
+	position:relative;
+	width:150px;
+	height:150px;
+	border:1px solid gray;
+	margin:10px;
+	cursor:pointer;
+}
+.roomtypeImgFrame:hover{
+	border:1px solid black;
+}
+.roomtypeImg{
+	position:absolute;
+	width:100%;
+	height:100%;
+}
+
+.deleteRoomTypeImg{
+	position:absolute;
+	width:20%;
+	height:20%;
+	right:10px;
+	top:10px;
+	cursor:pointer;
+}
+.deleteRoomTypeImg:hover{
+	width:23%;
+	height:23%;
+	transition:0.3s;
+}
+
+
+
+
+
+
+
 </style>
 <body>
 <%@ include file ="./structure/header.jsp" %>
@@ -530,16 +714,16 @@ background-color:blue;
 <div id=roomtypeUpdate_background>
 	<table id=roomtypeUpdate>
 		<tr> 
-			<td colspan=2> 
+			<td colspan=2 id=roomtypeUpdateModal_status> 
 				객실타입 추가 
 			</td> 
 		</tr>
 		<tr> 
-			<td>객실 이름<input type=text id=roomtype_seq readonly></td> 
+			<td>객실 이름<input type=hidden id=roomtype_seq readonly></td> 
 			<td><input type=text id=roomtype_name></td> 
 		</tr>
 		<tr> 
-			<td>수용인원</td> 
+			<td style="width:50%;">수용인원</td> 
 			<td><input type=number id=roomtype_capacity></td> 
 		</tr>
 		<tr> 
@@ -581,11 +765,12 @@ background-color:blue;
 			
 			<div id=placeImgBox>
 				<!--  이런식으로 tag 를 생성할것임 -->
+				<!--  
 				<div class=placeImgFrame>
 					<img class=placeImg src="/files/baa3b18f-상명 스테이1.PNG">
 					<img class=deleteImg src="/img/website/xButton.png">
 				</div>
-				
+				-->
 			</div>	
 			
 			<div id=placeImgBox_buttons>
@@ -801,6 +986,64 @@ background-color:blue;
 
 
 
+
+<div id=ManageRoomType_background>
+	<table id=ManageRoomType>
+		<tr>
+			<td colspan=2>
+				<span id=rtName></span><input type=hidden id=roomtype_seq_storage>
+				<span id=closeManageRoomType>&times;</span>
+			</td>
+		</tr>
+		<tr>
+			<td><button id=ManageRoomTypeInfo class=rtmanage>객실 기본정보 관리</button></td>
+			<td><button id=ManageRoomTypeImg class=rtmanage>객실 이미지 관리</button></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td style="text-align:right;"><button id=deleteRoomType>객실 삭제</button></td>
+		</tr>
+	</table>
+</div>
+
+
+
+
+
+<div id=roomtypeImgUpdate_background>
+	<div id=roomtypeImgUpdate>
+		<div id=roomtypeImgUpdateBox>
+			<div id=roomtypeImgBox_title>
+				<input type=text id=img_rtSeq>
+			</div>
+			
+			<div id=roomtypeImgBox>
+				<!--  이런식으로 tag 를 생성할것임 -->
+				<div class=roomtypeImgFrame>
+					<img class=roomtypeImg src="/files/baa3b18f-상명 스테이1.PNG">
+					<img class=deleteRoomTypeImg src="/img/website/xButton.png">
+				</div>
+				
+			</div>	
+			
+			<div id=roomtypeImgBox_buttons>
+				<input type="file" id=roomtypeImgInput accept="image/*" style="display:none;">
+				<button id=addroomtypePhoto>사진추가</button> &nbsp;
+				<button id=closeRoomtypeImgModal>닫기</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+
+
+
+
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -825,11 +1068,20 @@ document.addEventListener('click',function(event){
 	} else if(event.target.id==='roomtypeUpdate_background'){
 		$('#roomtypeUpdate_background').css('display','none');
 		$('html').css('overflow','auto');
-	}	
+	} else if(event.target.id==='ManageRoomType_background'){
+		$('#ManageRoomType_background').css('display','none');
+	} else if(event.target.id==='roomtypeImgUpdate_background'){
+		$('#roomtypeImgUpdate_background').css('display','none');
+		$('html').css('overflow','auto');
+	}
+	
+	
+	
 })
 
 document.addEventListener('scroll',function(event){
 	$('#addRoomModal_background').css('display','none');
+	$('#ManageRoomType_background').css('display','none');
 })
 
 
@@ -861,19 +1113,118 @@ $(document)
 	loadrtPageNums();
 	refresh_placeImg();
 })
+.on('click','#closeRoomtypeImgModal',function(){
+	$('#roomtypeImgUpdate_background').css('display','none');
+	$('html').css('hidden');
+})
+.on('click','#ManageRoomTypeImg',function(){
+	
+	$('#ManageRoomType_background').css('display','none');
+	roomtype_seq = parseInt( $('#roomtype_seq_storage').val() );
+	refreshRoomTypeImgModal(roomtype_seq);
+	// refresh
+	
+	$('#roomtypeImgUpdate_background').css('display','block');
+	$('html').css('overflow')
+	
+})
+.on('click','#ManageRoomTypeInfo',function(){
+	
+	$('#ManageRoomType_background').css('display','none');
+	
+	roomtype_seq = parseInt( $('#roomtype_seq_storage').val() );
+	refreshRoomTypeModal(roomtype_seq);
+	$('#roomtypeUpdate_background').css('display','block');
+	$('html').css('overflow','hidden');
+	
+})
+.on('click','#closeManageRoomType',function(){
+	$('#ManageRoomType_background').css('display','none');
+})
 .on('click','.roomtype td:nth-child(1)',function(){ // 아직 안만듬
+	
 	  rtseq = $(this).parent().attr('id');
-	  alert(rtseq)
+	  rtname = $(this).parent().find('td:nth-child(1)').text();
+	  
+	  $('#rtName').text(rtname + " 관리");
+	  
+	  $('#roomtype_seq_storage').val(null);
+	  $('#roomtype_seq_storage').val(rtseq);
+	  $('#ManageRoomType_background').css('display','block');
+	  
+	  
 })
 .on('click','.roomtype td:nth-child(3)',function(){ // 아직 안만듬
-	  rtseq = $(this).parent().attr('id');
-	  alert(rtseq)
+	 rtseq = $(this).parent().attr('id');
+	  rtname = $(this).parent().find('td:nth-child(1)').text();
+	  
+	  $('#rtName').text(rtname + " 관리");
+	  
+	  $('#roomtype_seq_storage').val(null);
+	  $('#roomtype_seq_storage').val(rtseq);
+	  $('#ManageRoomType_background').css('display','block');
 })
 .on('click','.roomtype td:nth-child(4)',function(){ // 아직 안만듬
 	  rtseq = $(this).parent().attr('id');
-	  alert(rtseq)
+	  rtname = $(this).parent().find('td:nth-child(1)').text();
+	  
+	  $('#rtName').text(rtname + " 관리");
+	  
+	  $('#roomtype_seq_storage').val(null);
+	  $('#roomtype_seq_storage').val(rtseq);
+	  $('#ManageRoomType_background').css('display','block');
 })
-
+.on('click','#addRoomType',function(){
+	
+	refreshRoomTypeModal();
+	$('#roomtypeUpdate_background').css('display','block');
+	$('html').css('overflow','hidden');
+	
+})
+.on('click','#closeRoomTypeModal',function(){
+	
+	$('#roomtypeUpdate_background').css('display','none');
+	$('html').css('overflow','auto');
+	
+})
+.on('click','#InsertRoomType',function(){
+	
+	roomtype_options = '';
+	for(i=0;i<$('.roomtype_option').length;i++){
+		if ( $('.roomtype_option:eq('+i+')').prop('checked') ){
+			roomtype_options += "," + $('.roomtype_option:eq('+i+')').val();
+		} 
+	}
+	roomtype_options = roomtype_options.substring(1);
+	place_seq = parseInt($('#place_seq').val());
+	
+	$.ajax({url:'/add_update_RoomType', type:'post', dataType:'text',
+	
+		data:{
+			roomtype_seq:$('#roomtype_seq').val(),
+			place_seq:place_seq,
+			roomtype_name:$('#roomtype_name').val(),
+			roomtype_capacity:$('#roomtype_capacity').val(),
+			roomtype_price:$('#roomtype_price').val(),
+			roomtype_guide:$('#roomtype_guide').val(),
+			roomtype_options:roomtype_options
+		},
+		success:function(result){
+			alert(result);
+		},
+		complete:function(){
+			$('#roomtypeUpdate_background').css('display','none');
+			$('html').css('overflow','auto');
+			
+			
+//			currentRoomTypePage = 1; 삭제시라면 있어야함.
+			loadRoomTypes();
+			loadrtPageNums();
+		}
+	
+	})
+	
+})
 .on('click','.roomtype_page',function(){
 	currentRoomTypePage = parseInt($(this).text())
 	loadRoomTypes();
@@ -919,6 +1270,7 @@ $(document)
 			currentRoomPage = 1;
 			loadRooms();
 			loadrmPageNums();
+			$('#checkAllRooms').prop('checked',false);
 		}
 		
 	})
@@ -1028,79 +1380,99 @@ $(document)
 	
 	})
 })
-.on('click','#addRoomType',function(){
+.on('click','#deleteRoomType',function(){
+	roomtype_seq = parseInt($('#roomtype_seq_storage').val());
 	
-	refreshRoomTypeModal();
-	$('#roomtypeUpdate_background').css('display','block');
-	$('html').css('overflow','hidden');
-	
-})
-.on('click','#closeRoomTypeModal',function(){
-	
-	$('#roomtypeUpdate_background').css('display','none');
-	$('html').css('overflow','auto');
-	
-})
-.on('click','#InsertRoomType',function(){
-	
-	roomtype_options = '';
-	for(i=0;i<$('.roomtype_option').length;i++){
-		if ( $('.roomtype_option:eq('+i+')').prop('checked') ){
-			roomtype_options += "," + $('.roomtype_option:eq('+i+')').val();
-		} 
-	}
-	roomtype_options = roomtype_options.substring(1);
-	place_seq = parseInt($('#place_seq').val());
-	
-	$.ajax({url:'/add_update_RoomType', type:'post', dataType:'text',
-	
-		data:{
-			roomtype_seq:$('#roomtype_seq').val(),
-			place_seq:place_seq,
-			roomtype_name:$('#roomtype_name').val(),
-			roomtype_capacity:$('#roomtype_capacity').val(),
-			roomtype_price:$('#roomtype_price').val(),
-			roomtype_guide:$('#roomtype_guide').val(),
-			roomtype_options:roomtype_options
-		},
-		success:function(result){
-			alert(result);
-		},
+	$.ajax({url:'/deleteRoomType', type:'post', dataType:'text',
+		
+		data:{roomtype_seq:roomtype_seq},
+		success:function(){},
 		complete:function(){
-			$('#roomtypeUpdate_background').css('display','none');
-			$('html').css('overflow','auto');
+			currentRoomTypePage = 1;
+			loadRoomTypes();
+			loadrtPageNums();
+			$('#ManageRoomType_background').css('display','none');
 		}
-	
 	})
-	
 })
+
 /////////////////////////////// functions ///////////////////////////////
+function refreshRoomTypeImgModal(roomtype_seq){
+	
+	$('#img_rtSeq').val(roomtype_seq);
+	
+}
 function refreshRoomTypeModal(roomtype_seq){
 	
-	if(roomtype_seq==null){
-		
-		// 다 비우기
-		$('#roomtype_seq').val(null);
-		$('#roomtype_name').val(null);
-		$('#roomtype_capacity').val(null);
-		$('#roomtype_price').val(null);
-		$('#roomtype_guide').val(null);
-		
-		for(i=0;i<$('.roomtype_option').length;i++){
-			$('.roomtype_option:eq('+i+')').prop('checked',false);
-		}
-		
-		
-	} else {
-		
-		// roomtype 에 해당하는 정보 채우기
-		
-		
+
+	// 다 비우기
+	$('#roomtype_seq').val(null);
+	$('#roomtype_name').val(null);
+	$('#roomtype_capacity').val(null);
+	$('#roomtype_price').val(null);
+	$('#roomtype_guide').val(null);
+	
+	for(i=0;i<$('.roomtype_option').length;i++){
+		$('.roomtype_option:eq('+i+')').prop('checked',false);
 	}
 	
-	
-	
-	
+	$('#roomtypeUpdateModal_status').text('객실타입 추가')
+		
+	if(roomtype_seq!=null){ // roomtype 에 해당하는 정보 채우기
+		
+		// rootype_seq 채우기
+		$('#roomtype_seq').val(roomtype_seq);
+		
+		
+		// roomtype_name
+		// roomtype_capacity
+		// roomtype_price
+		// roomtype_guide
+		// roomtype_options 체크
+		
+		$.ajax({url:'/getRoomTypeInfo', type:'post', dataType:'json',
+			
+			data:{roomtype_seq:roomtype_seq},
+			success:function(roomtype){
+				
+				$('#roomtypeUpdateModal_status').text(roomtype.name + " 정보 수정")
+				$('#roomtype_name').val(roomtype.name);
+				$('#roomtype_capacity').val(roomtype.capacity);
+				$('#roomtype_price').val(roomtype.price);
+				$('#roomtype_guide').val(roomtype.guide);
+				
+				
+				if(roomtype.options!=null){
+					
+					rtoptions = roomtype.options.split(",")
+					
+					for(i=0;i<$('.roomtype_option').length;i++){
+						optval = $('.roomtype_option:eq('+i+')').val();
+						if( rtoptions.includes(optval) ){
+							$('.roomtype_option:eq('+i+')').prop('checked',true);
+						}
+					}
+					
+					
+					/*
+					for(i=0;i<$('.roomtype_option').length;i++){
+						for(j=0;j<rtoptions.length;j++){	
+							a = parseInt($('.roomtype_option:eq('+i+')').val());
+							b = parseInt(rtoptions[j]);
+							if(a==b){
+								$('.roomtype_option:eq('+i+')').prop('checked',true);
+								break;
+							}
+						}
+					}
+					*/
+				}
+			},
+			complete:function(){
+				
+			}
+		})
+	}
 }
 
 

@@ -173,11 +173,10 @@
 	<update id="modifyRoomtype">
     	UPDATE yonolja_roomtype SET
 	        roomtype_name = #{param2},
-	        place_seq = #{param3},
-	        roomtype_capacity = #{param4},
-	        roomtype_price = #{param5},
-	        roomtype_options= #{param6},
-	        roomtype_guide = #{param7}
+	        roomtype_capacity = #{param3},
+	        roomtype_price = #{param4},
+	        roomtype_options= #{param5},
+	        roomtype_guide = #{param6}
    		 WHERE roomtype_seq= #{param1}
 	 </update>
  
@@ -346,7 +345,9 @@
 			select place_imgs from yonolja_place where place_seq = #{param1}
 		</select>
 	
-	
+		<select id="getRoomTypeInfo"  resultType="com.human.springboot.DTO_HY_roomtypeDTO">
+			select*from yonolja_roomtype where roomtype_seq = #{param1}
+		</select>
 	
 </mapper>
 
