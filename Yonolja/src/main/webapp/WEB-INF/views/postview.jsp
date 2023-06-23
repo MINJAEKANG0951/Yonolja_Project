@@ -354,10 +354,7 @@ label {
       <input class="form-control" type="text" id="post_date" name="post_date" value="${post_date}" style="width:100%" readonly>
     </div>
 
-    <div class="form-group">
-      <label for="revision_Update_date">𝑟𝑒𝑣𝑖𝑠𝑖𝑜𝑛&nbsp;𝑑𝑎𝑡𝑒</label>
-      <input class="form-control" type="text" id="B_Update_date" name="B_Update_date" value="${b_update_date}" style="width:100%" readonly>
-    </div>
+    
 
     <input type="hidden" id="board_num" value="${board_num}" name="board_num">
 	

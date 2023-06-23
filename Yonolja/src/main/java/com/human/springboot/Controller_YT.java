@@ -265,6 +265,7 @@ public class Controller_YT {
     		jo.put("date", adminPosts.get(i).getPost_date());
     		jo.put("comment", adminPosts.get(i).getPost_comment());
     		jo.put("content", adminPosts.get(i).getPost_content());
+    		jo.put("img", adminPosts.get(i).getPost_img());
     		
     		ja.put(jo);
     	}
@@ -283,7 +284,7 @@ public class Controller_YT {
     		jo.put("date", posts.get(i).getPost_date());
     		jo.put("comment", posts.get(i).getPost_comment());
     		jo.put("content", posts.get(i).getPost_content());
-    		
+    		jo.put("img", posts.get(i).getPost_img());
     		ja.put(jo);
     	}
     	

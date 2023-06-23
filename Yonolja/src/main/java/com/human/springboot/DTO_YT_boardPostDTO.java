@@ -12,6 +12,7 @@ public class DTO_YT_boardPostDTO {
 	String post_date;
 	String post_content;
 	String post_comment;
+	String post_img;
 
 
 }

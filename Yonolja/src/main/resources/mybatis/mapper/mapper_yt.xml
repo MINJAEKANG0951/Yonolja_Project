@@ -193,13 +193,13 @@ on a.user_seq = b.user_seq
 
 	
 <select id="getAdminPosts" resultType="com.human.springboot.DTO_YT_boardPostDTO">
-	 select row_num,  post_seq, user_id, post_category, post_title, post_date, post_content, post_comment   
+	 select row_num,  post_seq, user_id, post_category, post_title, post_date, post_content, post_comment,post_img  
 	    from
 	    (
-	    select rownum as row_num, post_seq, user_id, post_category, post_title, post_date, post_content, post_comment    
+	    select rownum as row_num, post_seq, user_id, post_category, post_title, post_date, post_content, post_comment,post_img
 	        from
 	        (
-	        select p.post_seq, u.user_id ,p.post_category, p.post_title, p.post_date ,p.post_content, p.post_comment 
+	        select p.post_seq, u.user_id ,p.post_category, p.post_title, p.post_date ,p.post_content, p.post_comment,p.post_img
 	        from yonolja_post p, yonolja_user u
 	        where p.user_seq = u.user_seq 
 	        and p.post_category=1
@@ -208,15 +208,15 @@ on a.user_seq = b.user_seq
 	    )
 	 where row_num between 1 and 3
 </select>
-	
+	<!-- 보류 -->
 <select id="getPosts" resultType="com.human.springboot.DTO_YT_boardPostDTO">
-	select  row_num, post_seq, user_id, post_category ,post_title, post_date, post_content, post_comment
+	select  row_num, post_seq, user_id, post_category ,post_title, post_date, post_content, post_comment,post_img
 		from 
 		    (
-		        select rownum as row_num, post_seq, user_id, post_category ,post_title, post_date, post_content, post_comment
+		        select rownum as row_num, post_seq, user_id, post_category ,post_title, post_date, post_content, post_comment,post_img
 		        from
 		        (
-		            select p.post_seq, u.user_id ,p.post_category, p.post_title, p.post_date ,p.post_content, p.post_comment 
+		            select p.post_seq, u.user_id ,p.post_category, p.post_title, p.post_date ,p.post_content, p.post_comment,p.post_img 
 		            from yonolja_post p, yonolja_user u
 		            where p.user_seq = u.user_seq 
 		        	and p.post_category=2
@@ -226,6 +226,7 @@ on a.user_seq = b.user_seq
 		    )  
 	where row_num between #{param3} and #{param4}
 </select>
+<!-- 보류 -->
 	
 
 <select id="allPostCounts" resultType="int">
@@ -239,6 +240,12 @@ on a.user_seq = b.user_seq
 	        order by p.post_date desc
 	)
 </select>
+
+
+	<!-- 보류 -->
+	
+	
+	
 	
 	<select id="post_category" resultType="com.human.springboot.DTO_YT_boardPostDTO">
 	
