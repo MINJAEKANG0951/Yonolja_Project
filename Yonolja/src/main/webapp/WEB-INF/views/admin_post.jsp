@@ -8,7 +8,8 @@
 <meta charset="UTF-8">
 <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-<title>Insert title here</title>
+<title>관리자 게시글 관리</title>
+<br><br><br>
 </head>
 
 <style>
@@ -24,13 +25,32 @@ padding-top:150px; */
  margin-left:900px;
 }
 table{
-
-border-left: none;
-border-right: none;
+	table-layout:fixed;
+    border-left: none;
+	border-right: none;   
 }
 
 tr:first-child{
 border: 1px;
+}
+td{
+	
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;	
+}
+td:first-child{
+width: 40px;
+}
+.dlg_style_control input{
+width:150px;
+}
+#post_admin_comment_btn{
+width: 50px;
+}
+.img_size_control{
+width: 60px;
+height: 60px;
 }
 </style>
 
@@ -67,7 +87,7 @@ border: 1px;
 </div>
 
 <div id="typeDlg" style="display:none" >
-   <table border="1px solid black">
+   <table class=dlg_style_control border="1px solid black">
    
 	    <tr>
 	        <td>
@@ -99,7 +119,7 @@ border: 1px;
 	    </tr>
 	    <tr> 	
 		    <td colspan=4>		      
-		    	<textarea rows="20" cols="65" id=dialog_post_contents maxlength="500" readonly></textarea>
+		    	<textarea rows="10" cols="30" id=dialog_post_contents maxlength="500" readonly></textarea>
 		    </td>   
 		</tr>
 		<tr>
@@ -109,7 +129,8 @@ border: 1px;
 		</tr>
 		<tr>
 			<td colspan=4>
-				<textarea rows="10" cols="65" maxlength="500" id=post_admin_comment></textarea>
+				<textarea rows="10" cols="30" maxlength="500" id=post_admin_comment></textarea>
+				
 			</td>
 		</tr>
 		<tr>
@@ -119,26 +140,21 @@ border: 1px;
 </div>
 
 <div id=admin_post_list_diolog_text style="display:none">
-	   <table border="1px solid black">
+	   <table class=dlg_style_control id=diolog_table_name border="1px solid black">
 	    <tr>
 	        <td>
 	        	<a>Title</a><input type=hidden id=dialog_post_seq_hidden_view value=''>
 	    	</td>	    	
 		    <td colspan=3>		      
-		    	<input type='text' id=dialog__post_title_view readonly>
+		    	<input type='text' id=dialog__post_title_view  readonly>
 		    </td>   
 		</tr>
 		<tr>
-			<td>
-	        	<a>Hits</a>
-	    	</td>	    
-		    <td>
-	        	<input type=text id=dialog__post_view_count_view readonly>
-	    	</td>
-	        <td>
+    
+	        <td colspan=2>
 	        	<a>Writer</a>
 	    	</td>	    	
-		    <td>		      
+		    <td colspan=2>		      
 		    	<input type='text' id=dialog__post_id_view readonly>
 		    </td>			
 		</tr>
@@ -149,7 +165,8 @@ border: 1px;
 	    </tr>
 	    <tr> 	
 		    <td colspan=4>		      
-		    	<textarea rows="20" cols="65" id=dialog_post_contents_view maxlength="500" readonly></textarea>
+		    	<textarea rows="10" cols="45" id=dialog_post_contents_view maxlength="500" readonly></textarea><br>
+		    	
 		    </td>   
 		</tr>
 		<tr>
@@ -159,7 +176,7 @@ border: 1px;
 		</tr>
 		<tr>
 			<td colspan=4>
-				<textarea rows="10" cols="65" maxlength="500" id=post_admin_comment_view></textarea>
+				<textarea rows="10" cols="45" maxlength="500" id=post_admin_comment_view></textarea>
 			</td>
 		</tr>
 
@@ -169,6 +186,9 @@ border: 1px;
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
+paging_num=1;
+search_paging_num=1;
+search_max_page=1;
 $(document)
 .ready(function(){
 	/*if($('#adminCheck').val()!='admin'){	관리자 인지 확인
@@ -198,7 +218,8 @@ $(document)
 				$('#typeDlg').dialog({
 		            title: '고객문의관리',
 		            modal: true,
-		            width:625,
+		            width:500,
+		            height:800,
 		            focus:function(){
 		            	
 		              	$('#dialog__post_title').val(data[0]['post_title'])
@@ -277,7 +298,7 @@ $(document)
 				$('#admin_post_list_diolog_text').dialog({
 		            title: '고객문의관리',
 		            modal: true,
-		            width:625,
+		            width:500,
 		            focus:function(){
 		            	
 		              	$('#dialog__post_title_view').val(data['post_title'])
@@ -286,6 +307,10 @@ $(document)
 						$('#dialog_post_contents_view').text(data['post_content'])
 						$('#dialog_post_seq_hidden_view').val(data['post_seq'])
 						$('#post_admin_comment_view').val(data['post_comment'])
+						if(data['post_img']!=null){
+							$('#diolog_table_name tr:eq(3) td:eq(0)').append('<img class=img_size_control src='+data['post_img']+'>')
+						}
+							
 						
 		        	},
 		        	/*close: function(){
@@ -357,7 +382,123 @@ $(document)
     $('#admin_post_controller>a').not(this).css('font-weight', 'normal');
 })
 	
+.on('click','.next_page',function(){
+	console.log($('#pagenum_max').val());
+	paging_num+=1;
+	css_num=paging_num;
+	console.log("css_num="+css_num)
+	post_list(paging_num)
+	    .then(function() {
+	      return post_paging();
+	    })
+	    .then(function() {
+	      $('#admin_post_controller>a').css('font-weight', 'normal');
+	      console.log($('#admin_post_controller>a'));
+	      console.log($('#admin_post_controller>a').eq(0).text());
+	    $('#admin_post_controller>a').eq(0).css('font-weight', 'bold')
 
+	    })
+	    .catch(function(error) {
+	      console.error("An error occurred:", error);
+	    });
+
+})
+
+.on('click','.before_page',function(){
+	console.log($('#pagenum_min').val())
+	if(paging_num%5==0){
+		paging_num-=9
+		post_paging()
+	    .then(function() {
+		      return post_list(paging_num);
+		    })
+		    .then(function() {
+		      $('#admin_post_controller>a').css('font-weight', 'normal');
+		      console.log($('#admin_post_controller>a'));
+		      console.log($('#admin_post_controller>a').eq(4).text());
+		    $('#admin_post_controller>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
+		
+	}else{
+		remain=paging_num%5
+		console.log("remain"+remain)
+		paging_num-=(remain+4)
+		console.log(paging_num)
+		post_paging()
+	    .then(function() {
+		      return post_list(paging_num);
+		    })
+		    .then(function() {
+		      $('#admin_post_controller>a').css('font-weight', 'normal');
+		      console.log($('#admin_post_controller>a'));
+		      console.log($('#admin_post_controller>a').eq(4).text());
+		    $('#admin_post_controller>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
+	}
+		
+		
+})
+.on('click','.search_next_page',function(){
+	console.log($('#pagenum_max').val())
+	search_paging_num+=1
+	if(search_paging_num>5){
+		str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
+	}
+	for(search_paging_num;search_paging_num<=search_max_page;search_paging_num++){
+		str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
+		if(search_paging_num%5==0){
+			str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
+			break;
+		}
+	}
+	  $('#admin_post_controller').append(str);
+})
+
+.on('click','.search_before_page',function(){
+	console.log($('#pagenum_min').val())
+	str="";
+
+	if(search_paging_num%5==0){
+		search_paging_num-=9
+		if(search_paging_num>5){
+				str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
+		}
+		for(search_paging_num;search_paging_num<=search_max_page;search_paging_num++){
+			str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
+			if(search_paging_num%5==0){
+				str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
+			}
+		}
+		  $('#admin_post_controller').append(str);
+		
+	}else{
+		remain=search_paging_num%5
+		console.log("remain"+remain)
+		search_paging_num-=(remain+4)
+		if(search_paging_num>5){
+			str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
+		}
+		console.log(search_paging_num)
+		for(search_paging_num;search_paging_num<=search_max_page;search_paging_num++){
+			str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
+			if(search_paging_num%5==0){
+				str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
+				break;
+			}
+		}
+		  $('#admin_post_controller').append(str);
+	}
+		
+		
+})
 .on('click','#admin_post_search_btn',function(){
 console.log($('#admin_post_searchBar').val())
 	$.ajax({
@@ -365,14 +506,27 @@ console.log($('#admin_post_searchBar').val())
 		data:{search:$('#admin_post_searchBar').val(),searchVal:$("#admin_post_search_select").val()},
 		dataType:'text',
 		type:'post',
+		beforeSend:function(){
+			if($('#admin_post_searchBar').val()==''){
+				alert('검색란에 내용을 적어주세요')
+				return false
+			}
+		},
 		success:function(data){
 			console.log("pagetest="+data)
 			if(data!=0){
 				str="";
+				
 				$('#admin_post_controller').empty()
-				for(let i=1;i<=data;i++){
-					str+= "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
+
+				for(search_paging_num;search_paging_num<=data;search_paging_num++){
+					str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
+					if(search_paging_num%5==0){
+						str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
+					}
+					
 				}
+				search_max_page=data
 				  $('#admin_post_controller').append(str);
 				  $('#pagenum1').css('font-weight', 'bold'); 
 				  search_list(1,$('#admin_post_search_select').val())
@@ -392,7 +546,7 @@ console.log($('#admin_post_searchBar').val())
 })
 
 function post_list(page){
-
+	 return new Promise(function(resolve, reject) {
 	$.ajax({url:'/post_list',
 		data:{page:page},
 		dataType:"json",
@@ -417,13 +571,21 @@ function post_list(page){
 						+test+'</td></tr>'
 					
 				}
-				$('#admin_post_page_table').append(str)	
-			}
+				$('#admin_post_page_table').append(str)
+				resolve();
+			}else {
+		          reject("No data available");
+	        }
+	      },
+	      error: function(xhr, status, error) {
+	        reject(error);
+	      }
 				
-		}
+	})
 	})
 }
 function post_paging(){
+	 return new Promise(function(resolve, reject) {
 	$.ajax({
 		url:"/admin_post_paging",
 		data:{},
@@ -435,16 +597,30 @@ function post_paging(){
 				str="";
 				$('#admin_post_controller').empty()
 				console.log(data)
-				for(let i=1;i<=data;i++){
-					str+= "<a id=pagenum" + i + " value=" + i + ">" + i + "</a>&nbsp";
+				if(paging_num>5){
+					str+= "<input type=hidden id=pagenum_min value="+paging_num+"><input type=button class=before_page id=before_page_"+paging_num+" value='<<'>&nbsp&nbsp"
+				}
+				for(paging_num;paging_num<=data;paging_num++){
+
+					str+= "<a id=pagenum" + paging_num + " value=" + paging_num + ">" + paging_num + "</a>&nbsp";
+					if(paging_num%5==0){
+						str+="&nbsp&nbsp<input type=hidden id=pagenum_max value="+paging_num+"><input type=button class=next_page id=next_page_"+paging_num+" value='>>'>"
+						break;
+					}
 				}
 				$('#admin_post_controller').append(str);
-				$('#pagenum1').css('font-weight', 'bold');  
-			}
-			
-		}
+				$('#pagenum1').css('font-weight', 'bold');
+				resolve();
+			}else {
+		          reject("No data available");
+	        }
+	      },
+	      error: function(xhr, status, error) {
+	        reject(error);
+	      }	
+
+		})
 	})
-	
 }
 
 function search_list(page,select_val){
@@ -457,12 +633,6 @@ function search_list(page,select_val){
 			page:page},
 		dataType:'json',
 		type:'post',
-		beforeSend:function(){
-			if($('#admin_post_searchBar').val()==''){
-				alert('검색란에 내용을 적어주세요')
-				return false
-			}
-		},
 		success:function(data){
 	
 		

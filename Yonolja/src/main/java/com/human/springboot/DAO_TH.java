@@ -70,10 +70,16 @@ public interface DAO_TH {
 	// 관리자 리뷰 관리
 	ArrayList<DTO_TH> yonolja_review_list(int start,int end);
 	int yonolja_review_page();
+	// 리뷰보기
+	DTO_TH yonolja_review_dig(int seq);
 	
 	//review delete
 	void review_delete_list(String seq);
 	// 관리자 리뷰 관리 검색
 	ArrayList<DTO_TH> yonolja_review_search(String search, int start, int end);
 	int yonolja_review_search_page(String search);
+	// 옵션 이미지 삭제때 사용
+	DTO_TH getPlaceType(int placeType_seq);
+	// 옵션 이미지 삭제때 사용
+	DTO_TH getPlaceOption(int placeOption_seq);
 }

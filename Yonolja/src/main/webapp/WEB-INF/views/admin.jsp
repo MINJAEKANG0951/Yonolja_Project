@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>사이드바 테스트</title>
+    <title>admin_page</title>
     <link href="css/styles.css" rel="stylesheet" />
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
@@ -277,7 +277,7 @@
 	 -->
 <!-- <section> -->
 	<div id=iframe_controller class="d-flex float-end">
-		<iframe id=selected_admin_page src="/admin_user" style="width: 1200px; height: 900px;"></iframe>
+		<iframe id=selected_admin_page src="/admin_user" style="width: 1150px; height: 750px;"></iframe>
 	</div>
 <!-- </section> -->    
 </body>
@@ -327,6 +327,10 @@ $(document)
         
 })
 
+.on('hidden.bs.modal','#type_model',function(){
+	console.log('test')
+	type_reset()
+})
 
 .on('click','#yonolja_place_type_list',function(){
 	type_list()
@@ -542,6 +546,12 @@ $(document)
 	 $('#option_model').modal('show');
         
 })
+
+.on('hidden.bs.modal','#option_model',function(){
+	console.log("option test")
+	reset_option()
+})
+
 
 .on('click','#yonolja_place_option_list option:selected',function(){
 	console.log($(this).val())

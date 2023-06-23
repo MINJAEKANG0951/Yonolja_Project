@@ -167,7 +167,7 @@
 	</update>
 	
 	<select id="post_list_diolog" resultType="com.human.springboot.DTO_TH">
-		select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment,a.post_content 
+		select a.post_seq,a.POST_CATEGORY,b.user_id,a.post_title,a.post_date,a.post_comment,a.post_content,a.post_img
 		from yonolja_post a, yonolja_user b where a.user_seq=b.user_seq and a.post_seq=#{param1}
 	</select>
 	
@@ -212,11 +212,11 @@
 	</delete>
 	
 	
-	<!-- 리뷰 관리  차후 변경 필요 -->
+	
 	<select id="yonolja_review_list" resultType='com.human.springboot.DTO_TH'>
-		select review_seq,place_seq,place_name, user_name, review_date, review_star,review_content, num from
-			(select review_seq,place_seq,place_name, user_name, review_date, review_star,review_content, rownum as num from
-				(select a.review_seq,e.place_seq,e.place_name, f.user_name, a.review_date, a.review_star,a.review_content
+		select review_seq,place_seq,place_name, user_id, review_date, review_star,review_content, num from
+			(select review_seq,place_seq,place_name, user_id, review_date, review_star,review_content, rownum as num from
+				(select a.review_seq,e.place_seq,e.place_name, f.user_id, a.review_date, a.review_star,a.review_content
 					from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e, yonolja_user f
 						where a.book_seq=b.book_seq and
 						b.room_seq=c.room_seq and
@@ -231,9 +231,9 @@
 	</select> 
 	<!-- 나중에 변경해야됨 변경 내역은 테이블 명, 및 컬럼 명, bookseq는 다른 테이블과 조인이 필요 -->
 	<select id="yonolja_review_search" resultType='com.human.springboot.DTO_TH'>
-			select review_seq,place_seq,place_name, user_name, review_date, review_star,review_content, num from
-			(select review_seq,place_seq,place_name, user_name, review_date, review_star,review_content, rownum as num from
-				(select a.review_seq,e.place_seq,e.place_name, f.user_name, a.review_date, a.review_star,a.review_content
+			select review_seq,place_seq,place_name, user_id, review_date, review_star,review_content, num from
+			(select review_seq,place_seq,place_name, user_id, review_date, review_star,review_content, rownum as num from
+				(select a.review_seq,e.place_seq,e.place_name, f.user_id, a.review_date, a.review_star,a.review_content
 					from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e, yonolja_user f
 						where a.book_seq=b.book_seq and
 						b.room_seq=c.room_seq and
@@ -241,28 +241,45 @@
 						d.place_seq=e.place_seq and 
 						b.user_seq=f.user_seq and 
 						( e.place_name like '%' || #{param1} || '%' 
-						or  f.user_name like '%' || #{param1} || '%' 
+						or  f.user_id like '%' || #{param1} || '%' 
 						or a.REVIEW_CONTENT like '%' || #{param1} || '%' 
-	              		or a.BOOK_SEQ like '%' || #{param1} || '%' ) order by a.review_seq desc))
+	              		) order by a.review_seq desc))
 						where num between #{param2} and #{param3}
 	
-	
-<!-- 		SELECT REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ, NUM -->
-<!-- 	    FROM (SELECT REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ,rownum as num -->
-<!-- 	    FROM ( select REVIEW_SEQ_test,REVIEW_CONTENT,REVIEW_DATE,REVIEW_STAR,BOOK_SEQ -->
-<!-- 	            from review where ( REVIEW_CONTENT like '%' || #{param1} || '%'  -->
-<!-- 	              날짜는 나중에 다시 확인  or  REVIEW_DATE like '%' || #{param1} || '%'  -->
-<!-- 	              or BOOK_SEQ like '%' || #{param1} || '%' ) ORDER BY REVIEW_SEQ_test desc)) -->
-<!-- 	    WHERE NUM BETWEEN #{param2} AND #{param3} -->
 	</select>
 	<select id="yonolja_review_search_page" resultType="int">
 		select count(*)
-            from yonolja_review where ( REVIEW_CONTENT like '%' || #{param1} || '%' 
-               <!-- 날짜는 나중에 다시 확인  or  REVIEW_DATE like '%' || #{param1} || '%' --> 
-              or BOOK_SEQ like '%' || #{param1} || '%' )
+					from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e, yonolja_user f
+						where a.book_seq=b.book_seq and
+						b.room_seq=c.room_seq and
+						c.roomtype_seq=d.roomtype_seq and 
+						d.place_seq=e.place_seq and 
+						b.user_seq=f.user_seq and 
+						( e.place_name like '%' || #{param1} || '%' 
+						or  f.user_id like '%' || #{param1} || '%' 
+						or a.REVIEW_CONTENT like '%' || #{param1} || '%' )
 	</select>
+	<select id="yonolja_review_dig" resultType='com.human.springboot.DTO_TH'>
+		select a.review_seq,e.place_name, f.user_id, a.review_date, a.review_star,a.review_content
+			from yonolja_review a, yonolja_book b, yonolja_room c, yonolja_roomtype d, yonolja_place e, yonolja_user f
+			where a.book_seq=b.book_seq and
+			b.room_seq=c.room_seq and
+			c.roomtype_seq=d.roomtype_seq and 
+			d.place_seq=e.place_seq and 
+			b.user_seq=f.user_seq and a.review_seq=#{param1}
+	
+	</select>
+	
 	<delete id="review_delete_list">
 		delete from yonolja_review where review_seq=#{param1}
 	</delete>
+	
+	<select id="getPlaceType" resultType='com.human.springboot.DTO_TH'>
+		select * from yonolja_place_type where place_type_seq = #{param1}
+	</select>
+	
+	<select id="getPlaceOption" resultType='com.human.springboot.DTO_TH'>
+		select * from yonolja_place_option where place_option_seq= #{param1}
+	</select>
 </mapper>
 

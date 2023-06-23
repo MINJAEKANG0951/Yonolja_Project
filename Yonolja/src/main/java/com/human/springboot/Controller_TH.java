@@ -4,6 +4,8 @@ import java.io.File;
 import java.lang.reflect.Array;
 import java.net.http.HttpRequest;
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.UUID;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -118,6 +120,7 @@ public class Controller_TH {
 	public String admin_user_search(HttpServletRequest req) {
 		String search=req.getParameter("search");
 		int page=Integer.parseInt(req.getParameter("number"));
+		System.out.println("checkseq="+req.getParameter("searchVal"));
 		int searchVal=Integer.parseInt(req.getParameter("searchVal"));
 		int end=page*10;
 		int start=end-9;
@@ -388,6 +391,7 @@ public class Controller_TH {
 		jo.put("post_seq", list.getPost_seq());
 		jo.put("post_content", list.getPost_content());
 		jo.put("post_comment", list.getPost_comment());
+		jo.put("post_img",list.getPost_img());
 		ja.put(jo);
 		System.out.println("check pls"+ja);
 		return jo.toString();
@@ -612,13 +616,16 @@ public class Controller_TH {
 	   @PostMapping("/type_img")
 	   @ResponseBody
 	   public String type_Img(HttpServletRequest req, MultipartFile file) {
+		   
 	      String img="ok";
-	  
+
+	      UUID uuid=UUID.randomUUID();
+	      String random = (uuid + "").substring(0, 5);
 		   try {
-	         String fileName = file.getOriginalFilename();
+	         String fileName = random+file.getOriginalFilename();
 //	         String fileName = file.getOriginalFilename();
 	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_type");
-	         String filePath = uploadDir + "\\" + fileName;
+	         String filePath = uploadDir + "\\"  + fileName;
 //	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type
 	         // webapp 폴더까지의 경로 정보를 가져온다. 
 	         String data_img_url="/img/place_type/" + fileName;
@@ -677,12 +684,13 @@ public class Controller_TH {
 	@ResponseBody
 	   public String update_type_Img(HttpServletRequest req, MultipartFile file) {
 	      String img="ok";
-	  
+	      UUID uuid=UUID.randomUUID();
+	      String random = (uuid + "").substring(0, 5);
 		   try {
-	         String fileName = file.getOriginalFilename();
+	         String fileName = random+file.getOriginalFilename();
 //	         String fileName = file.getOriginalFilename();
 	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_type");
-	         String filePath = uploadDir + "\\" + fileName;
+	         String filePath = uploadDir + "\\"+ fileName;
 //	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type
 	         // webapp 폴더까지의 경로 정보를 가져온다. 
 	         String data_img_url="/img/place_type/" + fileName;
@@ -705,11 +713,26 @@ public class Controller_TH {
 	public String yonolja_place_type_update(HttpServletRequest req) {
 		String checkVal="ok";
 		int seq=Integer.parseInt(req.getParameter("seq"));
-		String name=req.getParameter("name")
-				;
-		try {
-			tdao.yonolja_place_type_update_all(seq,name, imgUrl);
+		String name=req.getParameter("name");
 		
+		DTO_TH placeType = tdao.getPlaceType(seq);
+		placeType.getPlace_type_img();
+		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static";
+		String DBpath = placeType.getPlace_type_img();  // /img/place_type/airbnb.png
+		
+		try {
+			
+			String deletePath = absPath + DBpath;
+			
+			System.out.println(deletePath);
+			File file = new File(deletePath);
+			if(file.exists()) {
+				tdao.yonolja_place_type_update_all(seq,name, imgUrl);
+				file.delete();
+				System.out.println("ok");
+			} else {
+				System.out.println("fail");
+			}
 
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -724,13 +747,38 @@ public class Controller_TH {
 	public String place_type_delete(HttpServletRequest req) {
 		String checkVal="ok";
 		int seq=Integer.parseInt(req.getParameter("seq"));
-		System.out.println(seq);
+		
+		DTO_TH placeType = tdao.getPlaceType(seq);
+		
+		placeType.getPlace_type_img();
+		
+//		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type";
+		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static";
+		String DBpath = placeType.getPlace_type_img();  // /img/place_type/airbnb.png
+		// dbpath + 파일명.확장자
+		
+		String deletePath = absPath + DBpath;
+		
+		System.out.println(deletePath);
+		File file = new File(deletePath);
+		
+	
+		
 		try {
-			tdao.yonolja_place_type_delete(seq);
+			if(file.exists()) {
+				tdao.yonolja_place_type_delete(seq);
+				file.delete();
+				System.out.println("ok");
+			} else {
+				System.out.println("fail");
+			}
+			
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			checkVal="fail";
 		}
+		
+		
 		
 		return checkVal;		
 	}
@@ -759,9 +807,10 @@ public class Controller_TH {
 	   @ResponseBody
 	   public String option_Img(HttpServletRequest req, MultipartFile file) {
 	      String img="ok";
-	  
+	      UUID uuid=UUID.randomUUID();
+	      String random = (uuid + "").substring(0, 5);
 		   try {
-	         String fileName = file.getOriginalFilename();
+	         String fileName = random+file.getOriginalFilename();
 //	         String fileName = file.getOriginalFilename();
 	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_option");
 	         String filePath = uploadDir + "\\" + fileName;
@@ -788,6 +837,9 @@ public class Controller_TH {
 	public String yonolja_place_option_add(HttpServletRequest req) {
 		String checkVal="ok";
 		String name=req.getParameter("name");
+		
+		
+		
 		try {
 			tdao.yonolja_place_option_add(name, imgUrl);
 
@@ -822,9 +874,10 @@ public class Controller_TH {
 	@ResponseBody
 	   public String update_option_Img(HttpServletRequest req, MultipartFile file) {
 	      String img="ok";
-	  
+	      UUID uuid=UUID.randomUUID();
+	      String random = (uuid + "").substring(0, 5);
 		   try {
-	         String fileName = file.getOriginalFilename();
+	         String fileName = random+file.getOriginalFilename();
 //	         String fileName = file.getOriginalFilename();
 	         String uploadDir = req.getServletContext().getRealPath("/main/resources/static/img/place_option");
 	         String filePath = uploadDir + "\\" + fileName;
@@ -850,10 +903,32 @@ public class Controller_TH {
 	public String yonolja_place_option_update(HttpServletRequest req) {
 		String checkVal="ok";
 		int seq=Integer.parseInt(req.getParameter("seq"));
-		String name=req.getParameter("name")
-				;
+		String name=req.getParameter("name");
+		
+		DTO_TH placeType = tdao.getPlaceOption(seq);
+		
+		
+//		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type";
+		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static";
+		String DBpath = placeType.getPlace_option_img();  // /img/place_type/airbnb.png
+		// dbpath + 파일명.확장자
+		
+		String deletePath = absPath + DBpath;
+		
+		System.out.println(deletePath);
+		File file = new File(deletePath);
+		
+	
 		try {
-			tdao.yonolja_place_option_update_all(seq,name, imgUrl);
+			
+			if(file.exists()) {
+				tdao.yonolja_place_option_update_all(seq,name, imgUrl);
+				file.delete();
+				System.out.println("ok");
+			} else {
+				System.out.println("fail");
+			}
+			
 		
 
 		} catch (Exception e) {
@@ -870,7 +945,25 @@ public class Controller_TH {
 		String checkVal="ok";
 		int seq=Integer.parseInt(req.getParameter("seq"));
 		System.out.println(seq);
+		DTO_TH placeType = tdao.getPlaceOption(seq);
+		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static";
+		String DBpath = placeType.getPlace_option_img();  // /img/place_type/airbnb.png
+		// dbpath + 파일명.확장자
+		
+		String deletePath = absPath + DBpath;
+		
+		System.out.println(deletePath);
+		File file = new File(deletePath);
+		
+		
 		try {
+			if(file.exists()) {
+				tdao.yonolja_place_option_delete(seq);
+				file.delete();
+				System.out.println("ok");
+			} else {
+				System.out.println("fail");
+			}
 			tdao.yonolja_place_option_delete(seq);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -907,7 +1000,7 @@ public class Controller_TH {
 			
 			jo.put("review_seq", list.get(i).getReview_seq());
 			jo.put("place_name", list.get(i).getPlace_name());
-			jo.put("user_name",list.get(i).getUSER_NAME());
+			jo.put("user_id",list.get(i).getUSER_ID());
 			jo.put("review_content", list.get(i).getReview_content());
 			jo.put("review_date", list.get(i).getReview_date());
 			jo.put("review_star", list.get(i).getReview_star());
@@ -955,6 +1048,7 @@ public class Controller_TH {
 			
 			jo.put("review_seq", list.get(i).getReview_seq());
 			jo.put("place_name", list.get(i).getPlace_name());
+			jo.put("user_id", list.get(i).getUSER_ID());
 			jo.put("review_content", list.get(i).getReview_content());
 			jo.put("review_date", list.get(i).getReview_date());
 			jo.put("review_star", list.get(i).getReview_star());
@@ -1009,6 +1103,32 @@ public class Controller_TH {
 			System.out.println(returnVal);
 		
 		return returnVal;
+	}
+	
+	@PostMapping("/admin_review_dig")
+	@ResponseBody
+	public String admin_review_dig(HttpServletRequest req) {
+		
+		int seq= Integer.parseInt(req.getParameter("seq"));
+		DTO_TH review=tdao.yonolja_review_dig(seq);
+			JSONArray ja=new JSONArray();
+			JSONObject jo=new JSONObject();
+		try {
+			
+			jo.put("review_seq", review.getReview_seq());
+			jo.put("place_name", review.getPlace_name());
+			jo.put("review_date", review.getReview_date());
+			jo.put("review_content", review.getReview_content());
+			jo.put("user_id", review.getUSER_ID());
+			ja.put(jo);
+		} catch (Exception e) {
+			System.err.println(e.getMessage());
+			ja.put("fail");
+		}
+		
+		System.out.println(ja);
+		
+		return ja.toString();
 	}
 	
 }

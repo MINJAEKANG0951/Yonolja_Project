@@ -502,6 +502,7 @@ $(document)
 				}
 			}else{
 				alert('취소합니다')
+				return false;
 			}
 		},
 		success:function(data){
@@ -713,6 +714,7 @@ $(document)
 				}	
 			}else{
 				alert('취소합니다')
+				return false;
 			}
 		},
 		success:function(data){

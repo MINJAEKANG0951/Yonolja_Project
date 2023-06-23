@@ -6,7 +6,8 @@
 <head>
 <meta charset="UTF-8">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-<title>Insert title here</title>
+<title>관리자 유저관리</title>
+<br><br><br>
 </head>
 
 <style>
@@ -16,8 +17,10 @@ display: block;
 padding-top:150px; */
 }
 .amdin_user{
-text-align: center;
-
+	text-align: center;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 ul{
 justify-content: center;
@@ -25,15 +28,19 @@ justify-content: center;
 }
 
 table{
-
-border-left: none;
-border-right: none;
+	table-layout:fixed;
+    border-left: none;
+	border-right: none;   
 }
 
 tr:first-child{
-border: 1px;
+	border: 1px;
 }
 td{
+	
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;	
 
 }
 </style>
@@ -89,6 +96,9 @@ td{
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
+paging_num=1;
+search_paging_num=1;
+search_max_page=1;
 $(document)
 .ready(function(){
 	/*if($('#adminCheck').val()!='admin'){ 관리자 인지 확인
@@ -99,28 +109,7 @@ $(document)
 
 
 })
-/* 시간나면 타입별 검색 기능 추가
-.on('click','#post_user_type',function(){
-	$.ajax({
-		url:'/admin_user_type',
-		data:{},
-		dataType:'json',
-		type:'post',
-		success:function(data){
-			if(data){
-				str=""
-				for(var i=1;data.lenght;i++){
-					str+='<option value=select_data'+i+'>'+data[i]['one']+'</option>'
-					+<
-					
-				}
-				$('#admin_user_type').append(str)
-			}
-		}
-		
-	})
-})
-*/
+
 
 .on('click','#user_management_title',function(){
 	document.location='/admin_user'
@@ -143,8 +132,75 @@ $(document)
     $('#member_pagenumber>a').not(this).css('font-weight', 'normal');
   
   	
-// 	$('#boot_pagination>li').addClass('active')
- //	$('#boot_pagination>li').not(this).removeClass('active')  
+})
+
+.on('click','.next_page',function(){
+	console.log($('#pagenum_max').val());
+	paging_num+=1;
+	css_num=paging_num;
+	console.log("css_num="+css_num)
+	memberlist(paging_num)
+	    .then(function() {
+	    	console.log("why?")
+	    	
+	      return paging();
+	    })
+	    .then(function() {
+	    	console.log("chekc")
+	      $('#member_pagenumber>a').css('font-weight', 'normal');
+	      console.log("test="+$('#member_pagenumber>a'));
+	      console.log("check="+$('#member_pagenumber>a').eq(0).text());
+	    $('#member_pagenumber>a').eq(0).css('font-weight', 'bold')
+
+	    })
+	    .catch(function(error) {
+	      console.error("An error occurred:", error);
+	    });
+
+})
+
+.on('click','.before_page',function(){
+	console.log($('#pagenum_min').val())
+	if(paging_num%5==0){
+		paging_num-=9
+		paging()
+	    .then(function() {
+		      return memberlist(paging_num);
+		    })
+		    .then(function() {
+		    	console.log("check css 0")
+		      $('#member_pagenumber>a').css('font-weight', 'normal');
+		      console.log($('#member_pagenumber>a'));
+		      console.log($('#member_pagenumber>a').eq(4).text());
+		    $('#member_pagenumber>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
+		
+	}else{
+		remain=paging_num%5
+		console.log("remain"+remain)
+		paging_num-=(remain+4)
+		console.log(paging_num)
+		paging()
+	    .then(function() {
+		      return memberlist(paging_num);
+		    })
+		    .then(function() {
+		    	console.log("check css 5")
+		      $('#member_pagenumber>a').css('font-weight', 'normal');
+
+		    $('#member_pagenumber>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
+	}
+		
+		
 })
 
 .on('click','#admin_user_search_btn',function(){
@@ -189,61 +245,78 @@ $(document)
 })
 
 function paging(){
-	$.ajax({
-		url:'/member_list_paging',
-		data:{},
-		dataType:'text',
-		type:'post',
-		success:function(data){
-			if(data!=0){
-				let str="";
-					for(i=1;i<=data;i++){
-						str+=" <a id=admin_user_page"+i+" value="+i+">"+i+"</a>"
-						//str+=" <li class=page-item id=page_item"+i+" ><a class=page-link id=admin_user_page"+i+" value="+i+">"+i+"</a></li>"
-						
+	 return new Promise(function(resolve, reject) {
+		$.ajax({
+			url:'/member_list_paging',
+			data:{},
+			dataType:'text',
+			type:'post',
+			success:function(data){
+				if(data!=0){
+					let str="";
+					if(paging_num>5){
+						str+= "<input type=hidden id=pagenum_min value="+paging_num+"><input type=button class=before_page id=before_page_"+paging_num+" value='<<'>&nbsp&nbsp"
 					}
-				
-					console.log(str)
-					$('#member_pagenumber').empty()
-					//$('#boot_pagination').empty()
-					$('#member_pagenumber').append(str)
-					//$('#boot_pagination').append(str)
-					//$('#page_item1').addClass('active')
-					$('#admin_user_page1').css('font-weight', 'bold');
+						for(paging_num;paging_num<=data;paging_num++){
+							str+=" <a id=admin_user_page"+paging_num+" value="+paging_num+">"+paging_num+"</a>"
+							if(paging_num%5==0){
+								str+="&nbsp&nbsp<input type=hidden id=pagenum_max value="+paging_num+"><input type=button class=next_page id=next_page_"+paging_num+" value='>>'>"
+								break;
+							}
+						}
 					
-			}
-		}
+						console.log(str)
+						$('#member_pagenumber').empty()
+						
+						$('#member_pagenumber').append(str)
 	
-	})
+						$('#admin_user_page1').css('font-weight', 'bold');
+						resolve();
+						
+				}else {
+			          reject("No data available");
+		        }
+		      },
+		      error: function(xhr, status, error) {
+		        reject(error);
+		      }
+
+		})
+	 })
 }
 
 function memberlist(page){
-
-	$.ajax({url:"/member_list",
-			data:{page:page},
-			dataType:"json",
-			type:"post",
-			success:function(data){
-				
-				$('#admin_member_management_table tr:gt(0)').remove();
-				for(var i=0;i<data.length;i++){
-					let str=''
-					str+='<tr><td>'
-					+data[i]['user_seq']+'</td><td>'
-					+data[i]['user_name']+'</td><td>'
-					+data[i]['user_id']+'</td><td>'
-					+data[i]['user_mobile']+'</td><td>'
-					+data[i]['user_gender']+'</td><td>'
-					+data[i]['user_email']+'</td><td>'
-					+data[i]['user_type']+'</td></tr>'
-					
-					$('#admin_member_management_table').append(str)
-				}
-				
-			
-			}
+	 return new Promise(function(resolve, reject) {
+		$.ajax({url:"/member_list",
+				data:{page:page},
+				dataType:"json",
+				type:"post",
+				success:function(data){
+					if(data!=""){
+						$('#admin_member_management_table tr:gt(0)').remove();
+						for(var i=0;i<data.length;i++){
+							let str=''
+							str+='<tr><td>'
+							+data[i]['user_seq']+'</td><td>'
+							+data[i]['user_name']+'</td><td>'
+							+data[i]['user_id']+'</td><td>'
+							+data[i]['user_mobile']+'</td><td>'
+							+data[i]['user_gender']+'</td><td>'
+							+data[i]['user_email']+'</td><td>'
+							+data[i]['user_type']+'</td></tr>'
+							
+							$('#admin_member_management_table').append(str)
+						}
+						resolve();
+					}else {
+				          reject("No data available");
+			        }
+			      },
+			      error: function(xhr, status, error) {
+			        reject(error);
+			      }
 		})
-	
+	 })
 }
 
 function search_list(num,searchVal){

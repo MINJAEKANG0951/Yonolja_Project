@@ -22,11 +22,13 @@ public class DTO_TH {
 	String post_content;
 	String post_date;
 	String post_comment;
+	String post_img;
 	
 	//호텔 옵션타입관리
 	int place_type_seq;
 	String place_type_name;
 	String place_type_img;
+	
 	
 	int place_option_seq;
 	String place_option_name;
