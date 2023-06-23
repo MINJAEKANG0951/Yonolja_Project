@@ -1240,6 +1240,11 @@ $(document)
 	$('#roomtypeUpdate_background').css('display','block');
 	$('html').css('overflow','hidden');
 	
+	loadRooms()
+	loadrmPageNums()
+	roomType_search()
+
+	
 })
 .on('click','#closeRoomTypeModal',function(){
 	
