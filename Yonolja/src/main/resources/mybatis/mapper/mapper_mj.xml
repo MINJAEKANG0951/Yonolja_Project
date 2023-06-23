@@ -151,5 +151,38 @@
 	</select>
 	
 	
+	
+	
+	<select id="countRoomLeft" resultType="int">
+		select count(*)
+		from yonolja_room rm, yonolja_roomtype rt
+		where rm.roomtype_seq = rt.roomtype_seq 
+		and rt.roomtype_seq = #{param1} ${param2}
+	</select>
+	
+	
+	<insert id="addBook">
+		insert into yonolja_book values(book_seq.nextval, #{param1}, #{param2}, #{param3}, #{param4}, #{param5})
+	</insert>
+	
+	<select id="getAnyRoomAvailable" resultType="int">
+		 select room_seq
+	        from
+	        (
+	        select rownum as row_num, room_seq
+	        from
+	            (
+	                select*
+	                from yonolja_room rm, yonolja_roomtype rt
+	                where rm.roomtype_seq = rt.roomtype_seq 
+	                and rt.roomtype_seq = #{param1} 
+	                ${param2}
+	            )
+	        )
+	    where row_num=1
+	</select>
+	
+	
+	
 </mapper>
 

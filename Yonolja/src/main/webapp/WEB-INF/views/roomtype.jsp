@@ -38,7 +38,7 @@
 	
 	<div id=searchBox>
 			<div id=searchbar>
-				<div><button id=when> 언제든지 </button></div> 
+				<div><button id=when> 날짜선택 </button></div> 
 				<div><button id=howmanypeople> 인원추가 </button></div>
 			</div>
 		<div id=searchResult>
@@ -54,11 +54,11 @@
 				</div>
 				<div>(1박기준)</div>
 				<div id=pricePerDay></div>
-				<div id=pricePerPeriod>2박 총액 260,000원</div>
+				<div id=pricePerPeriod></div>
 				<div id=bookButtonBox>
 					<button id=bookButton>객실 예약하기</button>
 				</div>
-				<div id=howmanyLeft>남은 객실 3개</div>
+				<div id=howmanyLeft></div>
 			</div>
 			<div id=empty>
 				
@@ -123,7 +123,41 @@
 
 
 
+<div id=calendarModal_background>
+	<div id=calendarModal>
+		
+		
+	</div>
+</div>
 
+<div id=howmanypeopleModal_background>
+	<div id=howmanypeopleModal>
+		<table>
+			<tr><td colspan=2><span id=howmanypeople_close>&times;&nbsp;</span></td></tr>
+			<tr>
+				<td>성인</td> 
+				<td class=peopleNum>
+					<button id=adnumMinus>-</button>
+					<span id=adultNum>1</span>
+					<button id=adnumPlus>+</button>
+				</td>
+			</tr>
+			<tr>
+				<td>아동</td> 
+				<td class=peopleNum>
+					<button id=chnumMinus>-</button>
+					<span id=childNum>0</span>
+					<button id=chnumPlus>+</button>
+				</td>
+			</tr>
+		</table>
+		
+		<div id=howmanypeople_buttons>
+			<button id=howmanypeople_decide> 확인 </button>
+			<button id=howmanypeople_reset> 다시설정 </button>
+		</div>
+	</div>
+</div>
 
 
 
@@ -143,10 +177,51 @@ checkout = null;
 howmanyChildren = null;
 howmanyAdults = null;
 
+let review_pageNum = 1;
+let review_flag = true;
 
-roomtypeOptions = null;
-////////////////////////////////////////// javascript ///////////////////////////////////////////////
+roomtype_options = [];
 
+roomtype_price = null;
+roomtype_capacity = null;
+/////////////////////////////////  js, jquery  //////////////////////////////////////////////
+
+
+//modal code 
+
+document.addEventListener('click',function(event){
+	if(event.target.id==='calendarModal_background'){
+		$('#calendarModal_background').css('display','none');
+	} else if(event.target.id==='howmanypeopleModal_background'){
+		$('#howmanypeopleModal_background').css('display','none');
+	}
+})
+document.addEventListener('scroll',function(event){
+	$('#calendarModal_background').css('display','none');
+	$('#howmanypeopleModal_background').css('display','none');
+})
+
+
+
+
+//modal 에 calendar 넣기
+
+calendar = calendarMaker();
+if(checkin!=null && checkout!=null){
+	calendar.checkin_selected = checkin;
+	calendar.checkout_selected = checkout;
+	
+	calendar.calendar_year = checkout.split(".")[0];
+	calendar.calendar_month = checkout.split(".")[1];
+	
+}
+tag = calendar.getTag();
+css = calendar.getCss();
+$('body').append(css);
+$('#calendarModal').append(tag);
+calendar.fillCalendar();
+calendar.setFinishCode(  decideButtonFinishCode );
+calendar.setCloseCode( calendarModalClose ); 
 
 
 
@@ -172,6 +247,7 @@ for(ck=0;ck<cookies.length;ck++){
 	} 
 }
 
+
 // 그 후 바로 삭제
 document.cookie = "checkin= ; path=/roomtype; expires=Tue, 19 Jan 2000 03:14:07 GMT;"
 document.cookie = "checkout= ; path=/roomtype;expires=Tue, 19 Jan 2000 03:14:07 GMT;"
@@ -187,6 +263,8 @@ $(document)
 .ready(function(){
 	allOptions(); // loadPage() 가 callback function 으로 들어있음
 	loadRoomTypeReviews();
+	
+	// 여기다가 roomRefresh 하면될듯
 })
 .on('click','.toPlace',function(){
 	document.location = "/place/" + $(this).attr('id');
@@ -197,13 +275,75 @@ $(document)
 .on('click','#upwards',function(){
 	goToScroll('body'); 
 })
-///////////////////////////////////////// global variables //////////////////////////////////////////
-
-let review_pageNum = 1;
-let review_flag = true;
-
-roomtype_options = [];
-
+.on('click','#when',function(){
+	$('#calendarModal_background').css('display','block');
+})
+.on('click','#howmanypeople',function(){
+	$('#howmanypeopleModal_background').css('display','block');
+})
+.on('click','#howmanypeople_close',function(){
+	$('#howmanypeopleModal_background').css('display','none');
+})
+.on('click','#adnumMinus',function(){
+	adnum = parseInt( $('#adultNum').text() );
+	if((adnum-1)<=0){return false;}
+	$('#adultNum').text( (adnum-1) );
+})
+.on('click','#adnumPlus',function(){
+	adnum = parseInt( $('#adultNum').text() );
+	$('#adultNum').text( (adnum+1) );
+})
+.on('click','#chnumMinus',function(){
+	chnum = parseInt( $('#childNum').text() );
+	if((chnum-1)<0){return false;}
+	$('#childNum').text( (chnum-1) );
+})
+.on('click','#chnumPlus',function(){
+	chnum = parseInt( $('#childNum').text() );
+	$('#childNum').text( (chnum+1) );
+})
+.on('click','#howmanypeople_decide', function(){
+	howmanyAdults = parseInt( $('#adultNum').text() );
+	howmanyChildren = parseInt( $('#childNum').text() );
+	$('#howmanypeopleModal_background').css('display','none');
+	
+	roomRefresh();
+})
+.on('click','#howmanypeople_reset', function(){
+	$('#adultNum').text(1);
+	$('#childNum').text(0);
+})
+.on('click','#bookButton',function(){
+	
+	// 예약페이지 이동 
+	// book
+	
+	roomtype_seq = parseInt( $('#roomtype_seq').val() );
+	checkinDate = new Date(checkin) 
+	checkoutDate = new Date(checkout)
+	howmanyDays = (checkoutDate-checkinDate)/(24*1000*3600);
+	book_price = howmanyDays*roomtype_price;
+	
+	
+	
+	$.ajax({url:'/addBook', type:'post', dataType:'text',
+		data:{
+			roomtype_seq:roomtype_seq,
+			checkin:checkin,
+			checkout:checkout,
+			book_price:book_price,
+			howmanypeople:( howmanyAdults + howmanyChildren )
+		},
+		success:function(url){
+			if(url=='main'){alert('예약이 성공적으로 완료되었습니다!')}
+			document.location = "/" + url;
+		}
+	
+	})
+	
+	
+	
+})
 
 //////////////////////////////////////////// functions ///////////////////////////////////////////////////
 function allOptions(){
@@ -291,7 +431,7 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 				options = roomtype.options.split(","); 
 				container = [] 
 				for(i=0;i<options.length;i++){
-					
+		
 					for(j=0;j<roomtype_options.length;j++){
 						if( parseInt(options[i]) == roomtype_options[j].seq && !container.includes(options[i])){
 							str += '<div class=option>'
@@ -307,7 +447,12 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 				str += '</div>'
 				$('#optionBox').append(str);
 			} else {
-				$('#optionBox').append('객실의 옵션이 존재하지 않습니다.');
+					str += '<div class=options>'
+					str += '<div class=option>'
+					str += '<div><img src="/img/place_option/none.png"></div>'
+					str += '<div>없음</div>' 
+					str += '</div>'
+				$('#optionBox').append(str);
 			}
 			
 
@@ -319,6 +464,8 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 			$('#roomtype_checkout').text(roomtype.checkout);
 			$('#pricePerDay').text( parseInt(roomtype.price).toLocaleString() + "원" )
 			
+			roomtype_price = roomtype.price;
+			roomtype_capacity = roomtype.capacity;
 			
 			// 5. roomtype_guide 표시
 			$('#roomtype_guide').html(roomtype.guide);
@@ -331,12 +478,119 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 			
 		},
 		complete:function(){
-			
+			roomRefresh();
 		}
 	
 	})
 	
 }
+
+function roomRefresh(){
+	
+	// 달력에 checkin, checkout 날짜 채우고, 인원추가도 성인, 아동 표시하면서,
+	// 검색된 결과를 기준으로 n박 총액~도 표시해주고, 남은객실수도 표시해주는 function
+	
+	// 그러렴 일단 data 를 server 에 보내서, 검색기준으로 남은방이 몇개있는지 찾아줘야함.
+	// 근데 참고로, 남은방은 0개는 표시되지 않을거임. 왜냐면 애초에 달력으로 막을거라서.
+	// 즉 달력으로 막는애도 필요함. 
+	
+	
+/*	 roomRefresh 의 기능
+	
+	1. 달력에 선택된 checkin, checkout 날짜를 표시해주고(checkin, checkout == null 일때는 '날짜선택')
+		--> 언제든지를 할 수 없음. 왜냐면, 예약하려면 꼭 체크인,체크아웃 date가 필요하니깐
+	2. 선택된 인원수도 보여줌( howmanyChildren, howmanyAdults == null 일때는 '인원추가' )
+		
+	3. 검색된 결과를 기준으로 총 금액(n박 총액~원)을 표시해줌.
+	4. 검색된 결과를 기준으로 남은 객실타입의 객실 수를 보여줌(0은 나오지 않을거임. 애초에 달력의 checkin, checkout 막아놓음)
+		- 근데 만약에 0이면, 예약버튼을 disabled 하긴함
+	
+	보낼데이터는 여전히 roomtype_seq ,체크인,체크아웃,총 인원 수
+	
+	가져올 데이터는 해당하는 방의 개수가 몇개인지 가져옴.
+	
+	날짜선택과 인원추가 둘중하나라도 하지 않거나,
+	해당하는 방의 개수가 0개이면 객실예약하기 버튼을 막아버림.
+*/	
+	
+	roomtype_seq = parseInt( $('#roomtype_seq').val() );
+	
+	// 1. 선택날짜 표시
+	if(checkin!=null && checkout!=null){ $('#when').text(checkin + "-" + checkout); } 
+	else { $('#when').text('날짜선택');}
+	
+		
+	// 2. 선택인원 표시 
+	if( !(howmanyAdults==null && howmanyChildren==null) ){
+		$('#howmanypeople').text('어른 ' + howmanyAdults + '명, 아이 ' + howmanyChildren + '명')
+	} else { $('#howmanypeople').text('인원추가'); }
+	
+	
+	// 3. 총 금액 표시
+	if(checkin!=null && checkout!=null){
+		checkinDate = new Date(checkin) 
+		checkoutDate = new Date(checkout)
+		howmanyDays = (checkoutDate-checkinDate)/(24*1000*3600);
+		
+		$('#pricePerPeriod').text( howmanyDays + '박 총액 '+ (roomtype_price*howmanyDays).toLocaleString() +'원');
+		
+	} else {
+		$('#pricePerPeriod').text('1박 총액 '+ roomtype_price.toLocaleString() +'원');
+	}
+	
+	
+	howmanyLeft = null;
+	
+	// 여기부터 서버랑 소통 
+	
+	$.ajax({url:'/countRoomLeft', type:'post', dataType:'text', 
+		data:{
+			roomtype_seq:roomtype_seq,
+			checkin:checkin,
+			checkout:checkout,
+			howmanypeople:( howmanyAdults + howmanyChildren )
+		},
+		
+		success:function(howmanyRoomLeft){
+			$('#howmanyLeft').text('남은 객실 ' + howmanyRoomLeft + '개');
+			howmanyLeft = parseInt(howmanyRoomLeft);
+		},
+		complete:function(){
+			
+			if( (howmanyAdults+howmanyChildren)>roomtype_capacity ){
+				$('#bookButton').addClass('disabled')
+				$('#bookButton').text('투숙인원 불일치');
+				$('#bookButton').prop('disabled',true);
+			} 
+			else if(howmanyLeft==0){
+				$('#bookButton').addClass('disabled')
+				$('#bookButton').text('남은 방 없음');	
+				$('#bookButton').prop('disabled',true);
+			} 
+			else if( checkin==null || checkout==null || howmanyAdults==null	){
+				$('#bookButton').addClass('disabled')
+				$('#bookButton').text('날짜,인원 선택');	
+				$('#bookButton').prop('disabled',true);
+			}
+			else {
+				$('#bookButton').removeClass()
+				$('#bookButton').text('객실 예약하기');
+				$('#bookButton').prop('disabled',false);
+			}
+			
+		}
+	})
+	
+	
+
+
+
+	
+	
+}
+
+
+
 
 
 function loadRoomTypeReviews(){
@@ -411,6 +665,29 @@ function loadRoomTypeReviews(){
 }
 
 
+
+function decideButtonFinishCode(){
+	$('#calendarModal_background').css('display','none');
+
+	checkin = calendar.getCheckin();
+	checkout = calendar.getCheckout();
+	
+	roomRefresh();
+}
+
+function calendarModalClose(){
+	$('#calendarModal_background').css('display','none');
+}
+
+
+
+
+
+
+
+
+
+
 function reviewToStar(reviewRate){
 	
 	reviewRate_ceil = Math.floor(reviewRate)
@@ -430,6 +707,7 @@ function refreshReview(){
 	loadRoomTypeReviews();			// 머 리뷰없다있따표시는 loadPlaceReviews 에서 하는걸로.
 	
 }
+
 
 
 

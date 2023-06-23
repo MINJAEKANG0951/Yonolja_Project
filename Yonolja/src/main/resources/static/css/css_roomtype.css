@@ -208,6 +208,7 @@ section{
 	width:120px;
 	height:32px;
 	font-size:14px;
+	font-weight:bold;
 	border-radius:5px;
 	cursor:pointer;
 	border:0px;
@@ -217,6 +218,20 @@ section{
 	background-color:rgb(0, 60, 255);
 	transition:0.3s;
 }
+
+#bookButton.disabled{
+	background-color:#CCCCCC;
+	color:#FFFFFF;
+	width:120px;
+	height:32px;
+	font-size:14px;
+	font-weight:bold;
+	border-radius:5px;
+	cursor:pointer;
+	border:0px;
+	margin-top:10px;
+}
+
 
 #howmanyLeft{
 	color:#E67000;
@@ -340,7 +355,6 @@ section{
 }
 
 
-
 #upwards{
 	position:fixed;
 	top:80%;
@@ -356,6 +370,134 @@ section{
 #upwards:hover{
 	background-color:#ddd;
 }
+
+
+
+#calendarModal_background{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:3;
+	display:none;
+}
+
+#calendarModal{
+	position:fixed;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	min-height:480px;
+	min-width:540px;
+	border-radius:10px;
+	background-color:white;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#howmanypeopleModal_background{
+	position:fixed;
+	top:0;
+	left:0;
+	width:100%;
+	height:100%;
+	background-color:rgb(0,0,0,0.2);
+	z-index:3;
+	display:none;
+}
+
+#howmanypeopleModal{
+	
+	position:fixed;
+	top:50%;
+	left:50%;
+	transform:translate(-50%,-50%);
+	min-height:300px;
+	min-width:300px;
+	border-radius:10px;
+	background-color:white;
+	box-shadow: 0px 3px 9px rgba(0,0,0,.5);
+}
+#howmanypeopleModal table{
+
+	margin-top:0px;
+	width:100%;
+	border-collapse:collapse;
+}
+#howmanypeopleModal table td{
+	text-align:right;
+	font-size:20px;
+	font-weight:bold;
+}
+
+#howmanypeople_close{
+	font-size:30px;
+	font-weight:bold;
+	color:#aaa;
+	cursor:pointer;
+}
+#howmanypeople_close:hover{
+	color:black;
+}
+.peopleNum{
+	padding-right:27px;
+}
+.peopleNum span{
+	display:inline-block;
+	width:25px;
+	text-align:center;
+}
+.peopleNum button{
+	border:0.5px solid black;
+	border-radius:50%;
+	background-color:white;
+	width:30px;
+	height:30px;
+	cursor:pointer;
+}
+.peopleNum button:hover{
+	background-color:#ddd;
+}
+
+#howmanypeople_buttons{
+	position:absolute;
+	bottom:10px;
+	right:10px;
+}
+
+#howmanypeople_buttons button{
+	width:100px;
+	height:30px;
+	background-color:black;
+	color:white;
+	border:0px solid black;
+	border-radius:10px;
+	cursor:pointer;
+}
+
+#howmanypeople_buttons button:hover{
+	background-color:#ddd;
+	transition:0.3s;
+}
+
+
+
+
+
 
 
 

@@ -33,4 +33,8 @@ public interface DAO_MJ {
 	
 	DTO_MJ_roomTypeDTO getRoomType(int roomtype_seq);
 	
+	
+	int countRoomLeft(int roomtype_seq, String sql);
+	void addBook(int user_seq, int room_seq, String checkin, String checkout,int book_price);
+	int getAnyRoomAvailable(int roomtype_seq, String sql);
 }

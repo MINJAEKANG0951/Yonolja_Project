@@ -658,10 +658,83 @@ public class Controller_MJ {
 	
 	
 	
+	@PostMapping("/countRoomLeft")
+	@ResponseBody
+	public String countRoomLeft(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+
+		
+		
+		String sql = " ";
+		
+		if(req.getParameter("howmanypeople")!=null && 
+		  !req.getParameter("howmanypeople").equals("")) 
+		{
+			sql += " and rt.roomtype_capacity>=" + req.getParameter("howmanypeople") + " ";
+		}
+
+		
+		if( (req.getParameter("checkin")!=null && req.getParameter("checkout")!=null) && 
+				(!req.getParameter("checkin").equals("") && !req.getParameter("checkout").equals(""))) 
+			{
+				String userCheckin = req.getParameter("checkin");
+				String userCheckout = req.getParameter("checkout");
+				
+				sql += " and rm.room_seq not in ";
+				sql += "(select room_seq from yonolja_book where ";
+				sql += "( to_date('"+ userCheckin +"')<=to_date(checkin_date) and to_date(checkin_date)<to_date('"+ userCheckout +"') )";
+				sql += " or ";
+				sql += "( to_date('"+ userCheckin +"')< to_date(checkout_date) and to_date(checkout_date)<=to_date('"+ userCheckout +"') )";			
+				sql += ") order by rm.room_seq";    
+				
+			}
+		
+
+		mjdao.countRoomLeft(roomtype_seq, sql);
+		
+		return mjdao.countRoomLeft(roomtype_seq, sql) + "";
+	}
 	
 	
+	@PostMapping("/addBook")
+	@ResponseBody
+	public String addBook(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		String checkin = req.getParameter("checkin");
+		String checkout = req.getParameter("checkout");
+		int book_price = Integer.parseInt( req.getParameter("book_price") );
 	
 	
+		HttpSession session = req.getSession();
+	
+		if(session.getAttribute("user_seq")==null) {
+			return "login";
+		} else {
+			
+			String sql = "";
+			
+			sql += " and rt.roomtype_capacity>=" + req.getParameter("howmanypeople") + " ";
+			
+			String userCheckin = req.getParameter("checkin");
+			String userCheckout = req.getParameter("checkout");
+			
+			sql += " and rm.room_seq not in ";
+			sql += "(select room_seq from yonolja_book where ";
+			sql += "( to_date('"+ userCheckin +"')<=to_date(checkin_date) and to_date(checkin_date)<to_date('"+ userCheckout +"') )";
+			sql += " or ";
+			sql += "( to_date('"+ userCheckin +"')< to_date(checkout_date) and to_date(checkout_date)<=to_date('"+ userCheckout +"') )";			
+			sql += ") order by rm.room_seq";  
+			
+			int room_seq = mjdao.getAnyRoomAvailable(roomtype_seq, sql);
+			
+			int user_seq = (int)session.getAttribute("user_seq");
+			mjdao.addBook(user_seq,room_seq,checkin,checkout,book_price);
+		}
+		
+		return "main";
+	}
 	
 	
 	

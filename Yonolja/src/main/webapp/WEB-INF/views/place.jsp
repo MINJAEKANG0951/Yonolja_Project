@@ -488,19 +488,32 @@ function loadAlloptions(){
 		data:{place_seq:place_seq},
 		success:function(options){
 			
-			str = '<div class=optionBox_title>보유옵션</div>'
-			str += '<div class=options>'
-			for(i=0;i<options.length;i++){
-				str += '<div class=option>'
-				str += '<div><img src="' + options[i].img + '"></div>'
-				str += '<div>' + options[i].name + '</div>'
+			if(options==""){
+				
+				str = '<div class=optionBox_title>보유옵션</div>'
+					str += '<div class=options>'
+					str += '<div class=option>'
+					str += '<div><img src="/img/place_option/none.png"></div>'
+					str += '<div>없음</div>' 
+					str += '</div>'
 				str += '</div>'
+				$('#optionBox').append(str);
+				
+			} else {
+				str = '<div class=optionBox_title>보유옵션</div>'
+					str += '<div class=options>'
+					for(i=0;i<options.length;i++){
+						str += '<div class=option>'
+						str += '<div><img src="' + options[i].img + '"></div>'
+						str += '<div>' + options[i].name + '</div>'
+						str += '</div>'
+					}
+					str += '</div>'
+					
+					$('#optionBox').append(str);
 			}
-			str += '</div>'
 			
-			$('#optionBox').append(str);
-			
-
+		
 		}
 	})
 	return false;
