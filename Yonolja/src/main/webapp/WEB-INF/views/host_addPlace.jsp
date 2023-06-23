@@ -4,11 +4,15 @@
 <%@ page session="true" %>
 <!DOCTYPE html>
  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
 <html>
 <head>
     <title>사업장 정보 입력</title>
 </head>
 <style>
+
+
 
 .dropzone{
 
@@ -29,19 +33,66 @@ height:100%;
 /* padding:auto; */
 }
 
+.container{
+	display:flex;
+	justify-content:center;
+	
+}
+
+.content{
+/*     border: 1px solid black; */
+/*     padding:30px; */
+/*     border-radius:5%; */
+   
+/*     transform-origin: top left; */
+
+    border: 1px solid #ccc; /* 외부에 네모난 선 추가 */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 15px;
+    width: 400px;
+    margin: auto; /* 가운데 정렬 */
+    padding: 20px; /* 내부 패딩 추가 for better appearance */
+    background-color: #lightblue;
+    position: relative;
+  
+}
+
+.addformSubmit{
+	display:flex;
+	justify-content:right;
+	padding-right:20px;
+	margin-top:20px;
+	
+
+}
+
+  h2, h3 {
+        font-weight: bold;
+    }
+
+.btn-primary{
+
+	margin-left: 5px;
+    padding-bottom: 30px;
+    margin-bottom: 5px;
+    height: 10px;
+
+}
 </style>
 <body>
-
-
-    <h2>사업장 정보 입력</h2>
-    <form action="/insertPlace" method="POST" id="fmt" enctype="multipart/form-data">
+<%@ include file ="./structure/header.jsp" %>
+<div class= container>
+    <form action="/insertPlace" method="POST" id="fmt" enctype="multipart/form-data"  >
+<!--     <h2>사업장 정보 입력</h2>  -->
     	
-        <label for="pname">사업장 이름:</label><br>
-        <input type="text" id="pname" name="pname"><br>
+    	<div class=content>
+    	 <h2>사업장 정보 입력</h2> 
+        <label for="pname" >사업장 이름:</label><br>
+        <input type="text" id="pname" name="pname" class="form-control form-control-lg" aria-label=".form-control-lg example"><br>
         
         <label for="ptype">사업장 유형:</label>
 		
-		<select id="ptype" name="ptype">
+		<select  id="ptype" name="ptype"  class="form-select" aria-label="Default select example">
     	<c:forEach items="${ptypes}" var="ptype">
         <option name=ptype value="${ptype.place_type_seq}">${ptype.place_type_name}</option>
     	</c:forEach>
@@ -52,36 +103,67 @@ height:100%;
    
         
         <div class="information5">
-         <input type="address" class="address-input" id=pzip_code name=pzip_code placeholder="우편번호" readonly><input type="button" onclick="sample6_execDaumPostcode()" value="우편번호 찾기"><br>                                                                                               
-         <br> <input type="address" id=paddress1 name=paddress1 readonly class="address2-input" placeholder="기본주소" required>
-         <br> <br><input type="address" id=paddress2 name=paddress2 class="address2-input" placeholder="상세주소" required>
+         <input type="address" class="address-input" id=pzip_code name=pzip_code placeholder="우편번호" readonly><input type="button" onclick="sample6_execDaumPostcode()" class="btn btn-primary" value="우편번호 찾기" ><br>                                                                                               
+         <br> <input type="address" id=paddress1 name=paddress1 readonly class="address2-input" placeholder="기본주소" style= width:100%; required>
+         <br> <br><input type="address" id=paddress2 name=paddress2 class="address2-input" placeholder="상세주소" style= width:100%; required>
         </div>
-        
+        <br>
         <label for="pmobile">사업자 전화번호:</label><br>
-        <input type="text" id="pmobile" name="pmobile"><br>
+        <input type="text" id="pmobile" name="pmobile" class="form-control form-control-lg" aria-label=".form-control-lg example"><br>
         
         <label for="checkin">체크인 시간:</label><br>
-        <input type="time" id="pcheckin" name="pcheckin"><br>
+        <input type="time" id="pcheckin" name="pcheckin" class="form-control form-control-lg" aria-label=".form-control-lg example"><br>
         
         <label for="checkout">체크아웃 시간:</label><br>
-        <input type="time" id="pcheckout" name="pcheckout"><br>
+        <input type="time" id="pcheckout" name="pcheckout" class="form-control form-control-lg" aria-label=".form-control-lg example"><br>
         
         <label for="guide">안내문:</label><br>
-        <textarea id="pguide" name="pguide"></textarea><br>
-       
+        <textarea id="pguide" name="pguide" style="width:100%; height:100px;"></textarea><br>
+       <br>
       <h3>사업장 주변 환경</h3>
-       <c:forEach items="${environments}" var="environment">
-         <input type="checkbox" id="environment${environment.place_environment_seq}" name="environments" value="${environment.place_environment_seq}">
-         <label for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
-       </c:forEach>
+     
+
+
+
+<div class="form-row">
+  <c:forEach items="${environments}" var="environment" varStatus="loop">
+    <div class="col-4">
+      <div class="form-check">
+        <input type="checkbox" class="form-check-input" id="environment${environment.place_environment_seq}" name="environments" value="${environment.place_environment_seq}">
+        <label class="form-check-label" for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label>
+      </div>
+    </div>
+    <c:if test="${loop.index % 3 == 2}">
+      </div><div class="form-row">
+    </c:if>
+  </c:forEach>
+</div>
+
+
+       
+      <!-- 
+          <div class="form-check">
+  <c:forEach items="${environments}" var="environment">
+    <input type="checkbox" class="form-check-input" id="environment${environment.place_environment_seq}" name="environments" value="${environment.place_environment_seq}">
+    <label class="form-check-label" for="environment${environment.place_environment_seq}">${environment.place_environment_name}</label><br>
+  </c:forEach>
+</div>
+
+      
+       --> 
+       
+       
+       
+       
        
  
-        
-        <input type="submit" value="제출">
+        <div class=addformSubmit>
+        <input type="submit" class="btn btn-primary" value="제출">
+    	</div>
     </form>
+    </div>
     
-    
-   
+   </div>
 </body>
 
 
@@ -181,6 +263,12 @@ var dropzone = document.getElementById('dropzone');
         }).open();
         return false;
     }
+    
+    
+    
+    
+    
+    
 </script>
 
 </html>
