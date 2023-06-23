@@ -507,6 +507,7 @@ $(document)
 				}
 			}else{
 				alert('취소합니다')
+				return false;
 			}
 		},
 		success:function(data){
@@ -651,6 +652,7 @@ $(document)
 							   }
 							   else {
 							      alert('이미지를 변경해주세요.');
+							      return false;
 							   }
 					},
 					success:function(data){
