@@ -40,7 +40,7 @@ public class Controller_HS {
         int startIndex = (page - 1) * size + 1;
         int endIndex = Math.min(startIndex + size - 1, totalCount);
         int totalPages = (int) Math.ceil((double) totalCount / size);
-        ArrayList<DTO_HS_userDTO> placeList = hsdao.host_imgs(startIndex, size);
+        ArrayList<DTO_HS_userDTO> placeList = hsdao.host_imgs(startIndex, size, user_seq);
         
         model.addAttribute("placeList", placeList);
         model.addAttribute("totalPages", totalPages);
@@ -55,6 +55,7 @@ public class Controller_HS {
         model.addAttribute("user_name", name);
         model.addAttribute("user_type", type);
         model.addAttribute("page", page);
+        
 
         
         //ArrayList<DTO_HS_userDTO> placeList = hsdao.host_imgs();

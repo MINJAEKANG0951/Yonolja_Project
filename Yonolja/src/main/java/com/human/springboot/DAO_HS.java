@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Param;
 public interface DAO_HS {
 	
 	// 마이페이지 업주 등록한 업장 사진 select/페이지네이션 구현
-	ArrayList<DTO_HS_userDTO> host_imgs(int offset, int limit);
+	ArrayList<DTO_HS_userDTO> host_imgs(int offset, int limit, int user_seq);
 	int img_count(int user_seq);
 
 	// 유저 정보 user_seq에 맞게 가져오기

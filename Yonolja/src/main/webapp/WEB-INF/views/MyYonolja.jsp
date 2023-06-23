@@ -303,7 +303,7 @@ a {
 		
 		<span><b style="font-size:20px;">예약</b></span><br>
 		<a href="#" id="mybooks">예약내역조회</a><br>
-		
+		<input type = hidden value="${sessionScope.user_seq}">
 <!-- 		<span><b>찜</b></span><br>
 		<a href="#" id="mylikes">찜한 호텔</a><br> -->
 		

@@ -13,6 +13,7 @@
 	        ROW_NUMBER() OVER (ORDER BY b.place_seq) AS rnum
 	    from yonolja_user a, yonolja_place b 
 	    where a.user_seq = b.user_seq
+	    and a.user_seq = #{param3}
 	          ) where rnum BETWEEN #{param1} and #{param1} + #{param2} - 1
 	
 	    ]]>
@@ -79,7 +80,7 @@
 			INNER JOIN yonolja_room b ON a.room_seq = b.room_seq 
 			INNER JOIN yonolja_roomtype c ON b.roomtype_seq = c.roomtype_seq
 			INNER JOIN yonolja_place d ON c.place_seq = d.place_seq
-		    where a.user_seq = #{param1} AND a.checkin_date > SYSDATE
+		    where a.user_seq = #{param1} AND TO_DATE(a.checkin_date, 'yy.mm.dd') > TRUNC(SYSDATE)
 		          ) where rnum BETWEEN #{param2} and #{param2} + #{param3} - 1
 	
 	    ]]>
