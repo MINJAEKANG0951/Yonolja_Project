@@ -1014,7 +1014,6 @@ background-color:blue;
 	<div id=roomtypeImgUpdate>
 		<div id=roomtypeImgUpdateBox>
 			<div id=roomtypeImgBox_title>
-				<input type=text id=img_rtSeq>
 			</div>
 			
 			<div id=roomtypeImgBox>
@@ -1027,6 +1026,7 @@ background-color:blue;
 			</div>	
 			
 			<div id=roomtypeImgBox_buttons>
+				<input type=hidden id=img_rtSeq readonly>
 				<input type="file" id=roomtypeImgInput accept="image/*" style="display:none;">
 				<button id=addroomtypePhoto>사진추가</button> &nbsp;
 				<button id=closeRoomtypeImgModal>닫기</button>
@@ -1113,6 +1113,61 @@ $(document)
 	loadrtPageNums();
 	refresh_placeImg();
 })
+.on('click','#addroomtypePhoto',function(){
+	$('#roomtypeImgInput').trigger('click');
+})
+.on('input','#roomtypeImgInput',function(){
+	
+	
+	var roomtype_seq = parseInt( $('#img_rtSeq').val() );
+
+	var img = $('#roomtypeImgInput')[0].files[0];
+	
+	formData = new FormData();
+	formData.append("roomtype_seq",roomtype_seq);
+	formData.append("img",img);
+	
+	$.ajax({url:'/addRoomTypeImg', type:'post', dataType:'text',
+		processData: false,
+	    contentType: false,
+		data:formData,
+		success:function(result){
+			console.log(result);
+		}, 
+		complete:function(){
+			refreshRoomTypeImgModal();
+			loadRoomTypes();
+			loadrtPageNums();
+		}
+		
+	})
+	
+	
+})
+.on('click','.deleteRoomTypeImg',function(){
+	if(confirm('정말로 이 사진을 삭제하시겠습니까?')){
+		src = $(this).parent().find('.roomtypeImg').attr('src')
+		roomtype_seq = parseInt( $('#img_rtSeq').val() );
+		
+		$.ajax({url:'/deleteRoomTypeImg', type:'post', dataType:'text',
+			
+			data:{
+				roomtype_seq:roomtype_seq,
+				src:src
+			},
+			success:function(result){
+				console.log(result);
+			},
+			complete:function(){
+				refreshRoomTypeImgModal();
+				loadRoomTypes();
+				loadrtPageNums();
+			}
+			
+		})
+	}
+})
+
 .on('click','#closeRoomtypeImgModal',function(){
 	$('#roomtypeImgUpdate_background').css('display','none');
 	$('html').css('hidden');
@@ -1120,8 +1175,13 @@ $(document)
 .on('click','#ManageRoomTypeImg',function(){
 	
 	$('#ManageRoomType_background').css('display','none');
+	
 	roomtype_seq = parseInt( $('#roomtype_seq_storage').val() );
-	refreshRoomTypeImgModal(roomtype_seq);
+	$('#img_rtSeq').val(roomtype_seq);
+	
+	 $('#roomtypeImgBox_title').text( $('#rtName').text() + " 사진 관리" )
+	
+	refreshRoomTypeImgModal();
 	// refresh
 	
 	$('#roomtypeImgUpdate_background').css('display','block');
@@ -1146,7 +1206,7 @@ $(document)
 	  rtseq = $(this).parent().attr('id');
 	  rtname = $(this).parent().find('td:nth-child(1)').text();
 	  
-	  $('#rtName').text(rtname + " 관리");
+	  $('#rtName').text(rtname);
 	  
 	  $('#roomtype_seq_storage').val(null);
 	  $('#roomtype_seq_storage').val(rtseq);
@@ -1155,10 +1215,10 @@ $(document)
 	  
 })
 .on('click','.roomtype td:nth-child(3)',function(){ // 아직 안만듬
-	 rtseq = $(this).parent().attr('id');
+	  rtseq = $(this).parent().attr('id');
 	  rtname = $(this).parent().find('td:nth-child(1)').text();
 	  
-	  $('#rtName').text(rtname + " 관리");
+	  $('#rtName').text(rtname);
 	  
 	  $('#roomtype_seq_storage').val(null);
 	  $('#roomtype_seq_storage').val(rtseq);
@@ -1168,7 +1228,7 @@ $(document)
 	  rtseq = $(this).parent().attr('id');
 	  rtname = $(this).parent().find('td:nth-child(1)').text();
 	  
-	  $('#rtName').text(rtname + " 관리");
+	  $('#rtName').text(rtname);
 	  
 	  $('#roomtype_seq_storage').val(null);
 	  $('#roomtype_seq_storage').val(rtseq);
@@ -1381,26 +1441,63 @@ $(document)
 	})
 })
 .on('click','#deleteRoomType',function(){
-	roomtype_seq = parseInt($('#roomtype_seq_storage').val());
 	
-	$.ajax({url:'/deleteRoomType', type:'post', dataType:'text',
+	if(confirm('정말로 이 객실타입을 삭제하시겠습니까?')){
 		
-		data:{roomtype_seq:roomtype_seq},
-		success:function(){},
-		complete:function(){
-			currentRoomTypePage = 1;
-			loadRoomTypes();
-			loadrtPageNums();
-			$('#ManageRoomType_background').css('display','none');
-		}
-	})
+		roomtype_seq = parseInt($('#roomtype_seq_storage').val());
+		
+		$.ajax({url:'/deleteRoomType', type:'post', dataType:'text',
+			
+			data:{roomtype_seq:roomtype_seq},
+			success:function(){},
+			complete:function(){
+				currentRoomTypePage = 1;
+				loadRoomTypes();
+				loadrtPageNums();
+				
+				$('#ManageRoomType_background').css('display','none');
+				
+				currentRoomPage = 1;
+				loadRooms();
+				loadrmPageNums();
+			}
+		})
+	}
+	
+	
 })
 
 /////////////////////////////// functions ///////////////////////////////
-function refreshRoomTypeImgModal(roomtype_seq){
+function refreshRoomTypeImgModal(){
 	
-	$('#img_rtSeq').val(roomtype_seq);
+	roomtype_seq = parseInt($('#img_rtSeq').val());
 	
+	$('#roomtypeImgBox').empty()
+	
+	$.ajax({url:'/getRoomTypeImgs', type:'post', dataType:'text', 
+		
+		data:{roomtype_seq:roomtype_seq},
+		success:function(img){
+			
+			if(img!=""){
+				imgs = img.split(",");
+				for(i=0;i<imgs.length;i++){
+					str = '<div class=roomtypeImgFrame>'
+					str +='<img class=roomtypeImg src="' + imgs[i] + '">'
+					str +='<img class=deleteRoomTypeImg src="/img/website/xButton.png">' 
+					str +='</div>'
+					
+					$('#roomtypeImgBox').append(str);
+				}	
+			} else {
+				$('#roomtypeImgBox').append('<span>등록된 이미지가 없습니다.</span>');
+			}
+
+		},
+		complete:function(){
+	
+		}
+	})
 }
 function refreshRoomTypeModal(roomtype_seq){
 	
@@ -1863,7 +1960,7 @@ function loadRooms(){
 }
 
 function loadrmPageNums(){
-	
+
 	place_seq = parseInt($('#place_seq').val());
 	
 	$('#rmPageNums').empty();

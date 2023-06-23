@@ -79,7 +79,7 @@ public interface DAO_HY {
 	
 	
 	
-	// test img insert
+	// test img insert(업장,객실타입 xxxx)
 	Object getImgAddress(int img_seq);
 	void updateImg(String img_address, int roomtype_seq);
 	void insertimg(String img_address);// 안쓰이는듯?
@@ -90,7 +90,7 @@ public interface DAO_HY {
 	
 	
 	
-	//////////////////////////////////////////////////////////////////
+	////////////////////////////////////////////////////////////////////
 	
 	
 	
@@ -123,6 +123,9 @@ public interface DAO_HY {
 	
 	
 	String getPlaceImgs(int place_seq);
+	String getRoomTypeImgs(int roomtype_seq);
 	
+	Object getRoomTypeImgPath(int roomtype_seq);
+	void updateRoomTypeImg(String newPath, int roomtype_seq);
 	
 }

@@ -326,7 +326,7 @@
 			select*from yonolja_place_option
 		</select>
 		
-	
+
 		<update id="updatePlace">
 			update yonolja_place set
 			place_name = #{param2},
@@ -348,6 +348,22 @@
 		<select id="getRoomTypeInfo"  resultType="com.human.springboot.DTO_HY_roomtypeDTO">
 			select*from yonolja_roomtype where roomtype_seq = #{param1}
 		</select>
+	
+		<select id="getRoomTypeImgs" resultType="String">
+			select roomtype_imgs from yonolja_roomtype where roomtype_seq = #{param1}
+		</select>
+		
+		
+		
+		<select id="getRoomTypeImgPath" resultType="Object">
+			select roomtype_imgs from yonolja_roomtype where roomtype_seq = #{param1}
+		</select>
+		
+		<update id="updateRoomTypeImg">
+			update yonolja_roomtype set roomtype_imgs=#{param1} where roomtype_seq = #{param2}
+		</update>
+		
+		
 	
 </mapper>
 

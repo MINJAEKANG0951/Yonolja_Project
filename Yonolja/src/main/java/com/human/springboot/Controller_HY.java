@@ -626,5 +626,83 @@ public class Controller_HY {
 	
 	
 	
+	@PostMapping("/getRoomTypeImgs")
+	@ResponseBody
+	public String getRoomTypeImgs(HttpServletRequest req) {
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		return hydao.getRoomTypeImgs(roomtype_seq);
+	}
+	
+	
+	
+	@PostMapping("/addRoomTypeImg")
+	@ResponseBody
+	public String addRoomTypeImg(
+			@RequestParam("roomtype_seq") int roomtype_seq,
+			@RequestParam("img") MultipartFile img ) 
+	{
+		
+		System.out.println(img);
+		
+		UUID uuid = UUID.randomUUID();
+		String randomStr = (uuid + "").substring(0, 5);
+		
+		String FileName = randomStr + "-" + img.getOriginalFilename();
+		
+		File file = new File(RoomTypeImgPath,FileName);
+		
+		try {img.transferTo(file);}
+		catch(Exception e) {return "fail";}
+
+		String DBpath = "/roomTypeImgs/";
+		String DB = DBpath + FileName;
+		
+		
+		if(hydao.getRoomTypeImgPath(roomtype_seq)==null) {
+			hydao.updateRoomTypeImg(DB, roomtype_seq);
+		} else {
+			String newDBpath = hydao.getRoomTypeImgPath(roomtype_seq) + "," + DB;
+			hydao.updateRoomTypeImg(newDBpath, roomtype_seq);
+		}
+		
+		return "success";
+	}
+	
+	@PostMapping("/deleteRoomTypeImg")
+	@ResponseBody
+	public String deleteRoomTypeImg(HttpServletRequest req) {
+		
+		int roomtype_seq = Integer.parseInt( req.getParameter("roomtype_seq") );
+		String src = req.getParameter("src");
+		
+		String[]roomtypeImgs = (hydao.getRoomTypeImgPath(roomtype_seq)+"").split(",");
+		
+		
+		String newImgs = "";
+		for(int i=0;i<roomtypeImgs.length;i++) {
+			if(roomtypeImgs[i].equals(src)) {
+				// ignore
+			} else {
+				newImgs += "," + roomtypeImgs[i];
+			}
+		}
+		newImgs = newImgs.replaceFirst(",", "");
+		
+		hydao.updateRoomTypeImg(newImgs, roomtype_seq);
+		
+		String fileName = src.replace("/roomTypeImgs/", "");
+		
+		File file = new File(RoomTypeImgPath + "/" + fileName);
+		
+		try {
+			if(file.exists()) {
+				file.delete();
+			}
+		}
+		catch(Exception e) {return "fail";}
+		
+
+		return "success";
+	}
 
 }
