@@ -200,6 +200,8 @@ public class Controller_HS {
         model.addAttribute("waitingTotalPages", waitingTotalPages);
         model.addAttribute("waitingCurrentPage", waitingPage);
         model.addAttribute("waitingPage", waitingPage);
+        
+        System.out.println("waitingList= "+ waitingList);
 
         // 예약확정 페이지네이션
         int confirmed_groupSize = 5;
@@ -219,6 +221,8 @@ public class Controller_HS {
         model.addAttribute("confirmedCurrentPage", confirmedPage);
         model.addAttribute("confirmedPage", confirmedPage);
 
+        System.out.println("confirmedList= "+confirmedList);
+        
         return "MyYonolja_mybooklist";
     }    
     

@@ -7,7 +7,7 @@
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>    
 <%
   // 컨테이너 범위 함수 정의
-  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yy/MM/dd");
+  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy.M.dd");
   pageContext.setAttribute("currentDate", sdf.format(new java.util.Date()));
 %>
 
@@ -224,7 +224,7 @@ section {
 	  			<p style="text-align: center; font-size:20px;"><b>예약내역이 없습니다</b></p>
 			</c:if> 
 		
-			<c:forEach items="${waitingList}" var="book" varStatus="status">
+			<c:forEach items="${waitingList}" var="book" varStatus="status">			
 				<c:if test="${book.checkin_date gt currentDate}">
 					<!-- '이용전' 예약 정보 출력 -->
 					<div class="div_book2">
@@ -237,13 +237,13 @@ section {
 							<c:when test="${book.checkin_date gt currentDate}">
 								이용전
 							</c:when>
-							<c:when test="${book.checkin_date le currentDate and book.checkout_date ge currentDate}">
+ 							<c:when test="${book.checkin_date le currentDate and book.checkout_date ge currentDate}">
 								이용가능
 							</c:when>
 							<c:otherwise>
 								이용완료
-							</c:otherwise>
-						</c:choose>
+							</c:otherwise> 
+						 </c:choose> 
 						</span>
 						<button class="btnX">예약취소</button>
 						<input type="hidden" value="${book.book_seq}" id="seq_${book.book_seq}">

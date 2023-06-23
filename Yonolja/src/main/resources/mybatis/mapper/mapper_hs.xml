@@ -72,7 +72,7 @@
 		    c.roomtype_name, d.place_name, d.place_seq,
 		    (case when e.book_seq is null then '미등록' else '등록' end) as review_status,
 		    (case 
-		        when a.checkin_date > SYSDATE then '이용전'
+		        when TO_DATE(a.checkin_date, 'YYYY.MM.DD') > TRUNC(SYSDATE) then '이용전'
 		    end) as usage_status,
 		        ROW_NUMBER() OVER (ORDER BY a.checkin_date, a.checkout_date DESC) AS rnum
 		    from yonolja_book a 
@@ -80,7 +80,7 @@
 			INNER JOIN yonolja_room b ON a.room_seq = b.room_seq 
 			INNER JOIN yonolja_roomtype c ON b.roomtype_seq = c.roomtype_seq
 			INNER JOIN yonolja_place d ON c.place_seq = d.place_seq
-		    where a.user_seq = #{param1} AND TO_DATE(a.checkin_date, 'yy.mm.dd') > TRUNC(SYSDATE)
+		    where a.user_seq = #{param1} AND TO_DATE(a.checkin_date, 'YYYY.MM.DD') > TRUNC(SYSDATE)
 		          ) where rnum BETWEEN #{param2} and #{param2} + #{param3} - 1
 	
 	    ]]>
