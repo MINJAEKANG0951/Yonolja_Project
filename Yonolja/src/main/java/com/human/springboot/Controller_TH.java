@@ -694,7 +694,7 @@ public class Controller_TH {
 //	         C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_type
 	         // webapp 폴더까지의 경로 정보를 가져온다. 
 	         String data_img_url="/img/place_type/" + fileName;
-	         System.out.println(filePath);
+	         System.out.println("check="+filePath);
 	         file.transferTo(new File(urlPass+"\\"+fileName));
 	         System.out.println("check list");
 	         imgUrl=data_img_url;
@@ -719,12 +719,14 @@ public class Controller_TH {
 		placeType.getPlace_type_img();
 		String absPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static";
 		String DBpath = placeType.getPlace_type_img();  // /img/place_type/airbnb.png
-		
+		if(DBpath==null) {
+			DBpath="//";
+		}
 		try {
 			
 			String deletePath = absPath + DBpath;
 			
-			System.out.println(deletePath);
+			System.out.println("path="+deletePath);
 			File file = new File(deletePath);
 			if(file.exists()) {
 				tdao.yonolja_place_type_update_all(seq,name, imgUrl);
