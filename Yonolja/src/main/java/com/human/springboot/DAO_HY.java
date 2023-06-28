@@ -59,10 +59,6 @@ public interface DAO_HY {
 //	int checkRoomExists(int place_seq, int roomNumber);
 	Integer checkRoomExists(int place_seq, int roomNumber);
 
-
-	// place Delete 
-	void deletePlace(int place_seq);	
-	
 	
 	
 	// roomtype_optin name 관련 
@@ -127,5 +123,8 @@ public interface DAO_HY {
 	
 	Object getRoomTypeImgPath(int roomtype_seq);
 	void updateRoomTypeImg(String newPath, int roomtype_seq);
+
+	// place Delete 
+	void deletePlace(int place_seq);	
 	
 }

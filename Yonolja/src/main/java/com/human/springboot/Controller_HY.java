@@ -704,5 +704,15 @@ public class Controller_HY {
 
 		return "success";
 	}
+	
+	
+	@PostMapping("/deletePlace")
+	@ResponseBody
+	public String deletePlace(HttpServletRequest req) {
+		
+		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
+		hydao.deletePlace(place_seq);
+		return "success";
+	}
 
 }

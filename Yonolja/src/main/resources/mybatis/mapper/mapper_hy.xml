@@ -234,16 +234,6 @@
 
 		
 
-
-
-		
-<!-- place Delete part -->
-
-		<delete id="deletePlace" >
-    		DELETE FROM yonolja_place
-    		WHERE place_seq = #{param1}
-  		</delete>
-  		
   		
 
 
@@ -362,6 +352,14 @@
 		<update id="updateRoomTypeImg">
 			update yonolja_roomtype set roomtype_imgs=#{param1} where roomtype_seq = #{param2}
 		</update>
+		
+		<!-- place Delete part -->
+
+		<delete id="deletePlace" >
+    		DELETE FROM yonolja_place
+    		WHERE place_seq = #{param1}
+  		</delete>
+		
 		
 		
 	
