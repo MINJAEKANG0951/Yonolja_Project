@@ -5,6 +5,7 @@ import lombok.Data;
 @Data
 public class DTO_YT_boardPostDTO {
 	
+	
 	int post_seq;
 	String user_id;
 	int post_category;

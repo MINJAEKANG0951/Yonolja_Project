@@ -322,7 +322,7 @@ label {
         
         
 <!-- 이미지 -->
-<img src="${post_img}" alt="" style="width: 100%; height: 100%; object-fit: contain; display: none;" data-toggle="modal" data-target="#myModal" id="postImage">
+<img src="${post_img}" alt="" style="width: 100%; height: 100%; object-fit: contain; " data-toggle="modal" data-target="#myModal" id="postImage">
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -396,7 +396,7 @@ label {
         <ul class="list-group">
             <!-- Single comment item -->
             <li class="list-group-item" style=width:720px;>
-                <h6 class="mb-1" style="font-weight: bold;">ghy123456</h6><br>
+                <h6 class="mb-1" style="font-weight: bold;">admin</h6><br>
                 <p class="mb-1">안녕하세요 </p><br>
                 <input type="button" class="btn btn-secondary btn-sm" value="Edit">
 				<input type="button" class="btn btn-danger btn-sm" value="Delete">

@@ -209,13 +209,13 @@ public class Controller_YT {
     
     
     
-    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public ResponseEntity<List<DTO_YT>> searchPosts(@RequestParam("searchCategory") String searchCategory, @RequestParam("keyword") String keyword) {
-        List<DTO_YT> searchResults = dao_yt.searchPosts(searchCategory, keyword);
-        System.out.println(searchResults );
-        return new ResponseEntity<>(searchResults, HttpStatus.OK);
-    }
+//    @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
+//    @ResponseBody
+//    public ResponseEntity<List<DTO_YT>> searchPosts(@RequestParam("searchCategory") String searchCategory, @RequestParam("keyword") String keyword) {
+//        List<DTO_YT> searchResults = dao_yt.searchPosts(searchCategory, keyword);
+//        System.out.println(searchResults );
+//        return new ResponseEntity<>(searchResults, HttpStatus.OK);
+//    }
 
 
 //grid post_image
@@ -258,6 +258,8 @@ public class Controller_YT {
     	for(int i=0;i<adminPosts.size();i++) {
     		
     		JSONObject jo = new JSONObject();
+    		
+    		
     		jo.put("seq", adminPosts.get(i).getPost_seq());
     		jo.put("category", adminPosts.get(i).getPost_category());
     		jo.put("title", adminPosts.get(i).getPost_title());

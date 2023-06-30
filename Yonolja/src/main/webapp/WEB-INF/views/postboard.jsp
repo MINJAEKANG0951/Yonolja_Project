@@ -15,50 +15,6 @@
 <style>
 
 
-/* section{	 */
-/* 	display:grid; */
-/* 	grid-template-columns:1fr; */
-/* 	grid-template-rows:50px 30px auto; */
-/* 	width:90%; */
-/* 	margin:0 auto; */
-/* 	margin-top:100px; */
-/* } */
-/* section div{ */
-/* 	border:1px solid #ddd; */
-/* } */
-
-/* #boardTitleBox span{ */
-/* 	font-size:40px; */
-/* 	font-weight:bold; */
-/* 	font-family:cursive; */
-/* } */
-
-/* #postTB{ */
-/* 	width:100%; */
-/* 	border-collapse:collapse; */
-/* 	table-layout: fixed; */
-/* 	min-width:600px; */
-/* } */
-
-
-/* #postTB tfoot tr:nth-child(1) td{ */
-/* 	text-align:center; */
-/* 	border-top:1px solid #ddd; */
-/* 	border-bottom:1px solid #ddd; */
-/* } */
-
-/* #postTB tfoot tr:nth-child(2) td{ */
-/* 	text-align:center; */
-/* 	border-top:1px solid #ddd; */
-/* 	border-bottom:1px solid #ddd; */
-/* } */
-
-/* #postTB tfoot tr:nth-child(3) td{ */
-
-/* 	text-align:right; */
-/* 	border-top:1px solid #ddd; */
-/* 	border-bottom:1px solid #ddd; */
-/* } */
  .adminPost{
 
  	cursor:pointer; 
@@ -154,7 +110,66 @@
 }
 
 
+.banner-slider {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
 
+.banner-container {
+  display: flex;
+  width: 300%;
+  animation: slide 15s infinite;
+}
+
+.banner-container img {
+  width: 33.333%;
+  object-fit: cover;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  16.66% {
+    transform: translateX(0);
+  }
+  33.33% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(-100%);
+  }
+  66.66% {
+    transform: translateX(-100%);
+  }
+  83.33% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+
+.prev-button, .next-button {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 10px;
+  font-size: 16px;
+  background-color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+.prev-button {
+  left: 10px;
+}
+
+.next-button {
+  right: 10px;
+}
  
 </style>
 <body>
@@ -163,7 +178,33 @@
 <section class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <h2 class="text-center">Board</h2>
+        
+        
+        
+        
+           <div class="banner-slider">
+           
+           
+  <h2 class="text-center">문의 게시판</h2>
+  <div class="banner-container">
+    <img src="https://yaimg.yanolja.com/v5/2023/05/24/13/646e100ad092c4.89080932.png" alt="Banner 1">
+    <img src="https://yaimg.yanolja.com/v5/2023/06/16/20/648cc7768e3dc4.94186600.png" alt="Banner 2">
+    <img src="https://yaimg.yanolja.com/v5/2023/06/16/17/648ca0ac4bd4a2.38321025.png" alt="Banner 3">
+      <img src="https://yaimg.yanolja.com/v5/2023/06/22/17/649485e981fa00.70596094.png" alt="Banner 4">
+        <img src="https://yaimg.yanolja.com/v5/2023/06/20/17/6491e6110bada9.53697753.png" alt="Banner 5">
+  <img src="https://yaimg.yanolja.com/v5/2023/06/21/16/649323b4886ad0.01670379.png" alt="Banner 4">
+  <img src="https://yaimg.yanolja.com/v5/2023/06/16/15/648c80b6a093e8.52969078.png" alt="Banner 4">
+  <img src="https://yaimg.yanolja.com/v5/2023/05/31/14/64775deec257f7.80454624.png" alt="Banner 4">
+  <img src="https://yaimg.yanolja.com/v5/2023/05/24/13/646e100ad092c4.89080932.png" alt="Banner 4">
+  <img src="https://yaimg.yanolja.com/v5/2023/06/22/15/64946a9b6d4e18.42466979.png" alt="Banner 4">
+  </div>
+    <button class="prev-button"> < </button>
+  <button class="next-button"> > </button>
+</div>
+
+            
+            
+            
             <div class="form-group mt-4">
             
 			 <div class="view-buttons d-flex justify-content-end">
@@ -172,7 +213,7 @@
                 </div>
                 <label for="howmanyPosts"></label>
                 
-                <select id="howmanyPosts" class="form-control">
+                <select id="howmanyPosts" class="form-control" style=width:8%;>
                     <option value=5>5</option>
                     <option value=10>10</option>
                     <option value=20>20</option>
@@ -183,18 +224,18 @@
                 <table class="table table-bordered">
                    <thead>
     <tr>
-        <th style="width: 8%;">글번호</th>
-        <th style="width: 47%;">글제목</th>
-        <th style="width: 13%;">작성자</th>
-        <th style="width: 15%;">작성일</th>
-        <th style="width: 17%;">답변여부</th>
+        <th style="width: 7%;">번호</th>
+        <th style="width: 57%;">글제목</th>
+        <th style="width: 11%;">작성자</th>
+        <th style="width: 11%;">작성일</th>
+        <th style="width: 14%;">답변여부</th>
     </tr>
 </thead>
 
                     </table>
              
                     <table id="postTB" class="table table-bordered" style="width: 900px; ">
-					<tbody  ">
+					<tbody >
 					                        <!-- AJAX로 추가됨 -->
                     </tbody>
                     <tfoot>
@@ -210,12 +251,12 @@
                         <tr id="searchbarBox">
                             <td colspan="7">
                                 <div class="input-group mb-3">
-                                    <select id="keyword_select" class="form-control" style=width:20px;>
-                                        <option value="post_title" >제목</option>
+                                    <select id="keyword_select" class="form-control" style=width:20%;>
+                                        <option value="post_title"  >제목</option>
                                         <option value="post_content">내용</option>
                                         <option value="user_id">작성자</option>
                                     </select>
-                                    <input type="text" id="keyword_input" class="form-control" placeholder="Keyword">
+                                    <input type="text" id="keyword_input" class="form-control" style=width:60%; placeholder="Keyword">
                                     <div class="input-group-append">
                                         <button id="search" class="btn btn-outline-secondary" type="button">검색</button>
                                     </div>
@@ -229,15 +270,10 @@
                         </tr>
                     </tfoot>
                 </table>
-             
             </div>
         </div>
     </div>
 </section>
-
-
-
-
 </body>
 <script src="https://code.jquery.com/jquery-latest.js"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
@@ -346,11 +382,12 @@ $(document).ready(function(){
                             
                             str += '<div class="post_seq">' + post.seq + '</div>';
 //                             str += '<div class="post_image"><img src="' + "https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyMzAxMThfNTgg%2FMDAxNjc0MDQ5NjIxNjcw.a8-em3T9ehX9tKcbO9w5S-sS2bvwVwTowCdSUcFwvlwg.cSO9oy1TN8cDsYJ--nfZat7_eSNME4I5sRbLixaQvtsg.JPEG.happppy_%2F076b496d6716aea28e3a0ef6c4e00ecb.jpg&type=a340" + '" style="width: 200px; height: 200px;" alt="post image"></div>';
-                            str += '<div class="post_image"><img src="' + post.img + '" style="width: 200px; height: 200px;" " alt="post image"></div>'; // 이미지 추가
+							str += '<div class="post_image"><img src="' + post.img + '" style="width: 200px; height: 200px;" alt="post image" onerror="this.parentNode.removeChild(this)"></div>'; // 이미지 추가
+
                             str += '<div class="post_title">(공지)' + post.title + '</div>';
-                            str += '<div>' + post.user_id + '</div>';
-                            str += '<div>' + post.date + '</div>';
-                            str += '<div>' + commented + '</div>';
+                            str += '<div>' + "작성자:"+ post.user_id + '</div>';
+                            str += '<div>' +"작성일:"+ post.date + '</div>';
+//                             str += '<div>' + commented + '</div>';
                             str += '</div>';
                             
                         } else { // 일반 게시물
@@ -395,10 +432,9 @@ $(document).ready(function(){
                 }
                 
                 $('#postTB tbody').append(str);
-            }
-        });
-    }
-
+     }
+  });
+}
     function loadPageNums() {
         $('#pagination').empty();
         $.ajax({
@@ -433,6 +469,26 @@ $(document).ready(function(){
             }
         });
     }
+});
+
+
+
+///
+
+const prevButton = document.querySelector('.prev-button');
+const nextButton = document.querySelector('.next-button');
+const bannerContainer = document.querySelector('.banner-container');
+
+prevButton.addEventListener('click', () => {
+  bannerContainer.style.animationPlayState = 'paused';
+  bannerContainer.insertBefore(bannerContainer.lastElementChild, bannerContainer.firstElementChild);
+  bannerContainer.style.animationPlayState = 'running';
+});
+
+nextButton.addEventListener('click', () => {
+  bannerContainer.style.animationPlayState = 'paused';
+  bannerContainer.appendChild(bannerContainer.firstElementChild);
+  bannerContainer.style.animationPlayState = 'running';
 });
 
 </script>
