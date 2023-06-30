@@ -34,8 +34,28 @@ public class Controller_TH {
 	@Autowired
 	DAO_TH tdao;
 	
+	@GetMapping("/notAllowed")
+	public String notAllowed() {
+		return "notAllowed";
+	}
+	
+	
+	
+	
 	@GetMapping("/admin")
-	public String admin() {
+	public String admin(HttpServletRequest req, Model model) {
+		HttpSession logIn=req.getSession();
+		logIn.getAttribute("user_id");
+		System.out.println("admintest");
+
+		
+		if(logIn.getAttribute("user_id")==null) {
+			System.out.println("check id admin");
+			return "notAllowed";
+		}else if(!logIn.getAttribute("user_id").equals("admin")) {
+			return "notAllowed";
+		}
+		
 		return "admin";
 	}
 
@@ -43,9 +63,9 @@ public class Controller_TH {
 	public String admin_user(Model model, HttpServletRequest req) {
 
 		   HttpSession logIn=req.getSession();
-		   logIn.getAttribute("logid");
-		   model.addAttribute("logId",logIn.getAttribute("logid"));
-		  
+		   
+		   model.addAttribute("user_id",logIn.getAttribute("user_id"));
+		   
 		   int pageend=tdao.member_count();
 		   int pageval=pageend%10;
 		   	   if(pageval==0) {
@@ -60,8 +80,14 @@ public class Controller_TH {
 			   model.addAttribute("cur",1);
 			   
 		 
-	
-	
+				if(logIn.getAttribute("user_id")==null) {
+					System.out.println("check id admin");
+					return "notAllowed";
+				}else if(!logIn.getAttribute("user_id").equals("admin")) {
+					return "notAllowed";
+				}
+				
+
 	
 		   return "admin_user";
 	}
@@ -195,9 +221,9 @@ public class Controller_TH {
 	public int admin_user_search_paging(HttpServletRequest req) {
 		String search=req.getParameter("search");
 		int number=0;
-		
+		System.out.println("search_va=l="+search);
 		int searchVal=Integer.parseInt(req.getParameter("searchVal"));
-		
+		System.out.println("va;l"+searchVal);
 		if(searchVal==0) {
 			number=tdao.admin_user_search_count(search);
 		}else if(searchVal==1) {
@@ -222,10 +248,14 @@ public class Controller_TH {
 	public String admin_post(HttpServletRequest req, Model model) {
 		
 		   HttpSession logIn=req.getSession();
-		   logIn.getAttribute("logid");
-		   model.addAttribute("logId",logIn.getAttribute("logid"));
-
 		   
+		   model.addAttribute("user_id",logIn.getAttribute("user_id"));
+			if(logIn.getAttribute("user_id")==null) {
+				System.out.println("check id admin");
+				return "notAllowed";
+			}else if(!logIn.getAttribute("user_id").equals("admin")) {
+				return "notAllowed";
+			}
 
 		   return "admin_post";
 		
@@ -391,6 +421,8 @@ public class Controller_TH {
 		jo.put("post_seq", list.getPost_seq());
 		jo.put("post_content", list.getPost_content());
 		jo.put("post_comment", list.getPost_comment());
+		System.out.println("img="+list.getPost_img());
+		System.out.println("hello");
 		jo.put("post_img",list.getPost_img());
 		ja.put(jo);
 		System.out.println("check pls"+ja);
@@ -977,7 +1009,16 @@ public class Controller_TH {
 	
 	
 	@GetMapping("/admin_review")
-	public String admin_review() {
+	public String admin_review(HttpServletRequest req, Model model) {
+		 HttpSession logIn=req.getSession();
+		   
+		   model.addAttribute("user_id",logIn.getAttribute("user_id"));
+			if(logIn.getAttribute("user_id")==null) {
+				System.out.println("check id admin");
+				return "notAllowed";
+			}else if(!logIn.getAttribute("user_id").equals("admin")) {
+				return "notAllowed";
+			}
 		return "admin_review";
 	}
 	

@@ -36,6 +36,7 @@
 <body>
 
     <div id="layoutSidenav_nav">
+    
         <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
             <div class="sb-sidenav-menu">
                 <div class="nav">
@@ -93,7 +94,7 @@
     		<div class="modal-content">
           <!-- Modal Header -->
       			<div class="modal-header">
-        			<h4 class="modal-title">place type test</h4>
+        			<h4 class="modal-title">숙박업체 타입</h4>
         			<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       			</div>
 			<div id=yonolja_place_type_dig >
@@ -147,7 +148,7 @@
 	    <div class="modal-content">
 	          <!-- Modal Header -->
 	      <div class="modal-header">
-	        <h4 class="modal-title">place option test</h4>
+	        <h4 class="modal-title">숙박업체 옵션</h4>
 	        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 	      </div>
 	
@@ -196,90 +197,11 @@
 	    </div>
 	  </div>
 	</div>
-<!-- 에러시 다이얼로그로 수정용 -->
-	<!-- <div id=yonolja_place_type_dig style="display:none">
-	
-		<table>
-		<tr>
-			<td>
-				<select id='yonolja_place_type_list' size=7></select>
-			</td>
-			<td>
-				<table id='yonolja_place_type_table' border=1px;>
-					<tr>
-						<td>
-							<a>호텔타입 이름</a>
-						</td>
-						<td>
-							<input type=hidden id=type_seq value="">
-							<input type=text id=type_name value="">
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<a>호텔타입 이미지</a>
-						</td>
-						<td>
-							<input type="file" id=type_file value=""><br>
-							<img id=type_img >
-							
-							
-						</td>				
-					</tr>
-				</table>
-				<input type='button' id='yonolja_place_type_add' value=추가/수정>
-				<input type='button' id='yonolja_place_type_delete' value=삭제>
-				<input type="button" id=reset value="비우기">
-				
-				</td>
-			</tr>
-		</table>
-	</div>
-	 -->
-	<!-- <div id=yonolja_place_option_dig style="display:none">
-	
-		<table>
-		<tr>
-			<td>
-				<select id='yonolja_place_option_list' size=7></select>
-			</td>
-			<td>
-				<table id='yonolja_place_option_table' border=1px;>
-					<tr>
-						<td>
-							<a>호텔옵션 이름</a>
-						</td>
-						<td>
-							<input type=hidden id=option_seq value="">
-							<input type=text id=option_name value="">
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<a>호텔옵션 이미지</a>
-						</td>
-						<td>
-							<input type="file" id=option_file value=""><br>
-							<img id=option_img >
-							
-							
-						</td>				
-					</tr>
-				</table>
-				<input type='button' id='yonolja_place_option_add' value=추가/수정>
-				<input type='button' id='yonolja_place_option_delete' value=삭제>
-				<input type="button" id=reset_option value="비우기">
-				
-				</td>
-			</tr>
-		</table>
-	</div>
-	 -->
-<!-- <section> -->
+
 	<div id=iframe_controller class="d-flex float-end">
 		<iframe id=selected_admin_page src="/admin_user" style="width: 1150px; height: 750px;"></iframe>
 	</div>
-<!-- </section> -->    
+    
 </body>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
@@ -291,11 +213,19 @@
 // model 사이즈 변경이 필수적 화면 출력 간 버튼 색상 변경 필요해 보임
 $(document)
 .ready(function(){
-	/* if($('#adminCheck').val()!='admin'){
-		alert('잘못된 접근입니다')
-	}*/
-	type_list()
-	option_list()
+	 if($('#adminCheck').val()!='admin'){
+// 		alert('잘못된 접근입니다')
+// 		console.log("admin_page")
+ 		// window.location='/main';
+		type_list()
+		option_list()	
+		
+		
+	}else{
+		type_list()
+		option_list()	
+	}
+	
 })
 .on('click','#admin_user_select',function(){
 	$('#selected_admin_page').attr('src','/admin_user')

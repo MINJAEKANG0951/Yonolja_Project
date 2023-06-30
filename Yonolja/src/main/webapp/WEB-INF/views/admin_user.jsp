@@ -70,6 +70,7 @@ td{
 		<div id=pagenumber>
 
 		</div>
+		
 		<div >
 			<select id=admin_user_search_type>
 				<option value=0>통합검색</option>
@@ -98,15 +99,18 @@ td{
 <script>
 paging_num=1;
 search_paging_num=1;
-search_max_page=1;
+// search_max_page=1;
+
+//통합,키워드
+search_val="";
+search_text="";
+// search_paging_return_val="";
 $(document)
 .ready(function(){
-	/*if($('#adminCheck').val()!='admin'){ 관리자 인지 확인
-		alert('잘못된 접근입니다')
-	}*/
-	paging()
-	memberlist(1)
 
+	paging()
+	memberlist(1)	
+	
 
 })
 
@@ -205,44 +209,91 @@ $(document)
 
 .on('click','#admin_user_search_btn',function(){
 	console.log($('#admin_user_search').val())
-	$.ajax({
-		url:'/admin_user_search_paging',
-		data:{search:$('#admin_user_search').val(),searchVal:$('#admin_user_search_type').val()},
-		dataType:'text',
-		type:'post',
-		success:function(data){
-				
-			if(data!=0){
-				console.log(data)
-				str=""
-				for(i=1;i<=data;i++){
+	search_text=$('#admin_user_search').val();
+	search_val=$('#admin_user_search_type').val();
+	search_paging_num=1;
+	console.log("check text="+search_text+ "check val=")
 
-					str+="<a id=admin_search_page"+i+" value="+i+">"+i+"</a>&nbsp"
-				
-					
-				}
-				console.log(str)
-				
-				
-				$('#member_pagenumber').empty()
-				$('#pagenumber').empty()
-				$('#pagenumber').append(str)
-				$('#admin_search_page1').css('font-weight', 'bold');
-				search_list(1)
-				
-			}else{
-				
-				alert('검색 결과가 없습니다.')
-			}
-			
-		}
-	})
-	
-	
-	// 페이징 번호
-	
+	search_paging()
+		.then(function() {
+		
+				return search_list(1);
+
+	    })
+
 
 })
+
+.on('click','.search_next_page',function(){
+	console.log('max='+$('#search_pagenum_max').val());
+	search_paging_num+=1;
+	css_num=search_paging_num;
+	console.log("css_num="+css_num)
+	search_list(search_paging_num)
+	    .then(function() {
+	    	console.log("why?")
+	    	
+	      return search_paging();
+	    })
+	    .then(function() {
+	    	console.log("chekc")
+	      $('#pagenumber>a').css('font-weight', 'normal');
+	      console.log("test="+$('#pagenumber>a'));
+	      console.log("check="+$('#pagenumber>a').eq(0).text());
+	    $('#pagenumber>a').eq(0).css('font-weight', 'bold')
+
+	    })
+	    .catch(function(error) {
+	      console.error("An error occurred:", error);
+	    });
+
+})
+
+.on('click','.search_before_page',function(){
+	console.log('min='+$('#search_pagenum_min').val())
+	if(search_paging_num%5==0){
+		search_paging_num-=9
+		search_paging()
+	    .then(function() {
+		      return search_list(search_paging_num);
+		    })
+		    .then(function() {
+		    	console.log("check css 0")
+		      $('#pagenumber>a').css('font-weight', 'normal');
+		      console.log($('#pagenumber>a'));
+		      console.log($('#pagenumber>a').eq(4).text());
+		    $('#pagenumber>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
+		
+	}else{
+		console.log('remain='+search_paging_num%5)
+		remain=search_paging_num%5
+		console.log("remain"+remain)
+		search_paging_num-=(remain+4)
+		console.log(search_paging_num)
+		search_paging()
+	    .then(function() {
+		      return search_list(search_paging_num);
+		    })
+		    .then(function() {
+		    	console.log("check css 5")
+		      $('#pagenumber>a').css('font-weight', 'normal');
+
+		    $('#pagenumber>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
+	}
+		
+		
+})
+
 
 function paging(){
 	 return new Promise(function(resolve, reject) {
@@ -259,7 +310,7 @@ function paging(){
 					}
 						for(paging_num;paging_num<=data;paging_num++){
 							str+=" <a id=admin_user_page"+paging_num+" value="+paging_num+">"+paging_num+"</a>"
-							if(paging_num%5==0){
+							if(paging_num%5==0 && data%5!=0){
 								str+="&nbsp&nbsp<input type=hidden id=pagenum_max value="+paging_num+"><input type=button class=next_page id=next_page_"+paging_num+" value='>>'>"
 								break;
 							}
@@ -319,20 +370,22 @@ function memberlist(page){
 	 })
 }
 
-function search_list(num,searchVal){
+function search_list(num){
+	return new Promise(function(resolve, reject) {
 	console.log($('#admin_user_search_type').val())
 	console.log($('#admin_user_search').val())
-	$.ajax({
+
+		$.ajax({
 		url:'/admin_user_search',
-		data:{search:$('#admin_user_search').val(),number:num,searchVal:$('#admin_user_search_type').val()},
+		data:{search:search_text,number:num,searchVal:search_val},
 		dataType:'json',
 		type:'post',
-		beforeSend:function(){
-			if($('#admin_user_search').val()==""){
-				alert('검색창에 입력해주세요')
-				return false;
-			}
-		},
+// 		beforeSend:function(){
+// 			if($('#admin_user_search').val()==""){
+// 				alert('검색창에 입력해주세요')
+// 				return false;
+// 			}
+// 		},
 		success:function(data){
 			console.log(data)
 			console.log("data="+data.length)
@@ -353,18 +406,83 @@ function search_list(num,searchVal){
 					
 					$('#admin_member_management_table').append(str)
 				}	
-			
+				resolve();
 			}else{
 				$('#admin_member_management_table tr:gt(0)').remove();
 				let val='<tr><td colspan=7>검색 된 내역이 없습니다</td></tr>'
 					$('#admin_member_management_table').append(val)
 				
+		      reject("No data available");
 				
 			}
 			
 			
-		}
+		},
+		 error: function(xhr, status, error) {
+		        reject(error);
+		      }
 	
+	})
+	
+	})
+}
+function search_paging(){
+	 return new Promise(function(resolve, reject) {
+	 
+	$.ajax({
+		url:'/admin_user_search_paging',
+		data:{search:search_text,searchVal:search_val},
+		dataType:'text',
+		type:'post',
+		beforeSend:function(){
+			if(search_text==""){
+				alert('검색창에 입력해주세요')
+				return false;
+			}
+		},
+		success:function(data){
+			str=""
+			if(data!=0){
+				
+				
+				if(search_paging_num>5){
+					str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=search_before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
+					console.log('text 6 val')
+				}
+				console.log("data=+"+data)
+				
+					for(search_paging_num;search_paging_num<=data;search_paging_num++){
+						str+=" <a id=admin_search_page"+search_paging_num+" value="+search_paging_num+">"+search_paging_num+"</a>"
+						if(search_paging_num%5==0 && data%5!=0){
+							str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=search_next_page_"+search_paging_num+" value='>>'>"
+							console.log("why before button")
+							break;
+						}
+					}
+
+				console.log(str)
+				$('#member_pagenumber').empty()
+				$('#pagenumber').empty()
+				$('#pagenumber').append(str)
+				$('#admin_search_page1').css('font-weight', 'bold');
+				console.log("search_page="+data)
+				
+				resolve();
+			}else{
+				reject("No data available");
+				str+=" <a id=admin_search_page"+1+" value="+1+">"+1+"</a>"
+				$('#member_pagenumber').empty()
+				$('#pagenumber').empty()
+				$('#pagenumber').append(str)
+				$('#admin_search_page1').css('font-weight', 'bold');
+				search_list(1)
+			}
+			
+		},
+		 error: function(xhr, status, error) {
+		        reject(error);
+		      }
+	})
 	})
 }
 </script>

@@ -57,6 +57,7 @@ height: 60px;
 <body>
 
 <div class=admin_post_page id="admin_post_page">
+
 	<h2><a id='admin_post_page_reset'>문의 관리 게시판</a></h2><input type=hidden id=admin_post_reset value=0>
 	<div id=post_delete_div>
 		<input type=button id=post_delete value=삭제>
@@ -70,6 +71,8 @@ height: 60px;
 		</tr>
 		
 	</table>
+	<div id=admin_post_search_controller>
+	</div>
 	<div id=admin_post_controller>
 
 	</div>
@@ -188,15 +191,14 @@ height: 60px;
 <script>
 paging_num=1;
 search_paging_num=1;
-search_max_page=1;
+// search_max_page=1;
+
+search_val="";
+search_text="";
 $(document)
 .ready(function(){
-	/*if($('#adminCheck').val()!='admin'){	관리자 인지 확인
-		alert('잘못된 접근입니다')
-	}*/
-		
-		post_paging()
-		post_list(1)
+	post_paging()
+	post_list(1)
 
 	
 })
@@ -218,8 +220,8 @@ $(document)
 				$('#typeDlg').dialog({
 		            title: '고객문의관리',
 		            modal: true,
-		            width:500,
-		            height:800,
+		            width:450,
+		            height:680,
 		            focus:function(){
 		            	
 		              	$('#dialog__post_title').val(data[0]['post_title'])
@@ -298,24 +300,26 @@ $(document)
 				$('#admin_post_list_diolog_text').dialog({
 		            title: '고객문의관리',
 		            modal: true,
-		            width:500,
+		            width:450,
 		            focus:function(){
-		            	
+		            	console.log(data['post_img'])
 		              	$('#dialog__post_title_view').val(data['post_title'])
 		            	$('#dialog__post_id_view').val(data['user_id'])
 
 						$('#dialog_post_contents_view').text(data['post_content'])
 						$('#dialog_post_seq_hidden_view').val(data['post_seq'])
 						$('#post_admin_comment_view').val(data['post_comment'])
-						if(data['post_img']!=null){
+						if(data['post_img']!=""){
 							$('#diolog_table_name tr:eq(3) td:eq(0)').append('<img class=img_size_control src='+data['post_img']+'>')
 						}
 							
 						
 		        	},
-		        	/*close: function(){
+		        	close: function(){
+		        		console.log('close')
+		        		$('#diolog_table_name tr:eq(3) img').remove()
 		        		$('#post_admin_comment').val("")
-		        	}*/
+		        	},
 				/*,beforeClose:function(){  다이얼로그 종료시 작동할 동장 필요시 사용
         		if($('#post_admin_comment').text()==null || $('#post_admin_comment').text()=="" ){
         			alert("값이 있습니다")
@@ -381,7 +385,15 @@ $(document)
     // 나머지 a 태그의 글자 굵기 초기화
     $('#admin_post_controller>a').not(this).css('font-weight', 'normal');
 })
-	
+
+.on('click','#admin_post_search_controller>a',function(){
+	console.log('test')
+	search_list($(this).text())
+    $(this).css('font-weight', 'bold');
+    // 나머지 a 태그의 글자 굵기 초기화
+    console.log('click')
+    $('#admin_post_search_controller>a').not(this).css('font-weight', 'normal');
+})
 .on('click','.next_page',function(){
 	console.log($('#pagenum_max').val());
 	paging_num+=1;
@@ -446,100 +458,94 @@ $(document)
 		
 		
 })
+
+.on('click','#admin_post_search_btn',function(){
+console.log($('#admin_post_searchBar').val())
+	search_text=$('#admin_post_searchBar').val();
+	search_val=$('#admin_post_search_select').val();
+	search_paging_num=1;
+	search_paging()
+		.then(function(){
+			return search_list(1);
+		})
+	
+	
+	
+})
+
 .on('click','.search_next_page',function(){
-	console.log($('#pagenum_max').val())
-	search_paging_num+=1
-	if(search_paging_num>5){
-		str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
-	}
-	for(search_paging_num;search_paging_num<=search_max_page;search_paging_num++){
-		str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
-		if(search_paging_num%5==0){
-			str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
-			break;
-		}
-	}
-	  $('#admin_post_controller').append(str);
+	console.log('max='+$('#search_pagenum_max').val());
+	search_paging_num+=1;
+	css_num=search_paging_num;
+	console.log("css_num="+css_num)
+	search_list(search_paging_num)
+	    .then(function() {
+	    	console.log("why?")
+	    	
+	      return search_paging();
+	    })
+	    .then(function() {
+		    console.log("chekc")
+		    $('#admin_post_search_controller>a').css('font-weight', 'normal');
+		    console.log("test="+$('#admin_post_search_controller>a'));
+		    console.log("check="+$('#admin_post_search_controller>a').eq(0).text());
+		    $('#admin_post_search_controller>a').eq(0).css('font-weight', 'bold')
+
+	    })
+	    .catch(function(error) {
+	      console.error("An error occurred:", error);
+	    });
+
 })
 
 .on('click','.search_before_page',function(){
-	console.log($('#pagenum_min').val())
-	str="";
-
+	console.log('min='+$('#search_pagenum_min').val())
 	if(search_paging_num%5==0){
 		search_paging_num-=9
-		if(search_paging_num>5){
-				str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
-		}
-		for(search_paging_num;search_paging_num<=search_max_page;search_paging_num++){
-			str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
-			if(search_paging_num%5==0){
-				str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
-			}
-		}
-		  $('#admin_post_controller').append(str);
+		search_paging()
+	    	.then(function() {
+		      return search_list(search_paging_num);
+		    })
+		    .then(function() {
+		    	console.log("check css 0")
+		      $('#admin_post_search_controller>a').css('font-weight', 'normal');
+		      console.log($('#admin_post_search_controller>a'));
+		      console.log($('#admin_post_search_controller>a').eq(4).text());
+		    $('#admin_post_search_controller>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
 		
 	}else{
+		console.log('remain='+search_paging_num%5)
 		remain=search_paging_num%5
 		console.log("remain"+remain)
 		search_paging_num-=(remain+4)
-		if(search_paging_num>5){
-			str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
-		}
-		console.log(search_paging_num)
-		for(search_paging_num;search_paging_num<=search_max_page;search_paging_num++){
-			str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
-			if(search_paging_num%5==0){
-				str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
-				break;
-			}
-		}
-		  $('#admin_post_controller').append(str);
+		console.log('value='+search_paging_num)
+		
+		search_paging()
+	    	.then(function() {
+	    		console.log('hi')
+	    		console.log('before list'+search_paging_num)
+		    	return search_list(search_paging_num);
+		    })
+		    .then(function() {
+		    	console.log("check css 5")
+		      $('#admin_post_search_controller>a').css('font-weight', 'normal');
+
+		    $('#admin_post_search_controller>a').eq(4).css('font-weight', 'bold')
+
+		    })
+		    .catch(function(error) {
+		      console.error("An error occurred:", error);
+		    });
 	}
 		
 		
 })
-.on('click','#admin_post_search_btn',function(){
-console.log($('#admin_post_searchBar').val())
-	$.ajax({
-		url:"/admin_post_search_paging",
-		data:{search:$('#admin_post_searchBar').val(),searchVal:$("#admin_post_search_select").val()},
-		dataType:'text',
-		type:'post',
-		beforeSend:function(){
-			if($('#admin_post_searchBar').val()==''){
-				alert('검색란에 내용을 적어주세요')
-				return false
-			}
-		},
-		success:function(data){
-			console.log("pagetest="+data)
-			if(data!=0){
-				str="";
-				
-				$('#admin_post_controller').empty()
 
-				for(search_paging_num;search_paging_num<=data;search_paging_num++){
-					str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
-					if(search_paging_num%5==0){
-						str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
-					}
-					
-				}
-				search_max_page=data
-				  $('#admin_post_controller').append(str);
-				  $('#pagenum1').css('font-weight', 'bold'); 
-				  search_list(1,$('#admin_post_search_select').val())
-			}else{
-				alert('검색결과가 없습니다')
-				return false;
-			}
-		}
-	})
-	
-	
-	
-})
 
 .on('click','#admin_post_page_reset',function(){
 	post_reset()
@@ -623,13 +629,14 @@ function post_paging(){
 	})
 }
 
-function search_list(page,select_val){
-
+function search_list(page){
+	 return new Promise(function(resolve, reject) {
 	console.log($('#admin_post_search_select').val())
+	
 	$.ajax({
 		url:'/post_search',
-		data:{admin_post_searchBar:$('#admin_post_searchBar').val(),
-			admin_post_search_select:select_val,
+		data:{admin_post_searchBar:search_text,
+			admin_post_search_select:search_val,
 			page:page},
 		dataType:'json',
 		type:'post',
@@ -656,10 +663,75 @@ function search_list(page,select_val){
 						
 				}
 				$('#admin_post_page_table').append(str)
-			}
-		}
+				resolve();
+			}else {
+		          reject("No data available");
+	        }
+		},
+	      error: function(xhr, status, error) {
+		        reject(error);
+		      }	
+	})
 	})
 }
+
+function search_paging(){
+	return new Promise(function(resolve, reject) {
+	$.ajax({
+		url:"/admin_post_search_paging",
+		data:{search:search_text,searchVal:search_val},
+		dataType:'text',
+		type:'post',
+		beforeSend:function(){
+			if($('#admin_post_searchBar').val()==''){
+				alert('검색란에 내용을 적어주세요')
+				return false
+			}
+		},
+		success:function(data){
+			console.log("pagetest="+data)
+			str="";
+			if(data!=0){
+				
+				console.log('search='+search_paging_num)
+				$('#admin_post_controller').empty()
+
+				if(search_paging_num>5){
+					str+= "<input type=hidden id=search_pagenum_min value="+search_paging_num+"><input type=button class=search_before_page id=search_before_page_"+search_paging_num+" value='<<'>&nbsp&nbsp"
+					console.log('text 6 val')
+				}
+				for(search_paging_num;search_paging_num<=data;search_paging_num++){
+					str+= "<a id=pagenum" + search_paging_num + " value=" + search_paging_num + ">" + search_paging_num + "</a>&nbsp";
+					if(search_paging_num%5==0 && data%5!=0){
+						str+="&nbsp&nbsp<input type=hidden id=search_pagenum_max value="+search_paging_num+"><input type=button class=search_next_page id=next_page_"+search_paging_num+" value='>>'>"
+						break;
+					}
+					
+				}
+				search_max_page=data
+				$('#admin_post_search_controller').empty();
+				$('#admin_post_search_controller').append(str);
+				console.log('as')
+				$('#pagenum1').css('font-weight', 'bold');
+				resolve();
+				
+			}else{
+				alert('검색결과가 없습니다')
+				reject("No data available");
+				return false;
+			}
+		          
+			console.log('as2')
+		},
+	      error: function(xhr, status, error) {
+		        reject(error);
+		      }	
+		})
+	})
+	
+}
+
+
 function post_reset(){
 			window.location.href = "http://localhost:8081/admin_post"
 	

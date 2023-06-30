@@ -31,8 +31,7 @@
                   or  USER_NAME like '%' || #{param1} || '%' 
                   or  USER_MOBILE like '%' || #{param1} || '%' 
                   or USER_EMAIL like '%' || #{param1} || '%'
-                  or USER_gender like '%' || #{param1} || '%'
-                  or USER_TYPE like '%' || #{param1} || '%') ORDER BY user_seq desc))
+                  ) ORDER BY user_seq desc))
 		WHERE NUM BETWEEN #{param2} AND #{param3} 
 	</select>
 	<select id="admin_user_search_count" resultType='int'>
@@ -40,9 +39,7 @@
 				from yonolja_user where not user_id='admin' and (USER_ID like '%' || #{param1} || '%'
                   or  USER_NAME like '%' || #{param1} || '%' 
                   or  USER_MOBILE like '%' || #{param1} || '%' 
-                  or USER_EMAIL like '%' || #{param1} || '%'
-                  or USER_gender like '%' || #{param1} || '%'
-                  or USER_TYPE like '%' || #{param1} || '%')
+                  or USER_EMAIL like '%' || #{param1} || '%')
 	
 	</select>
 	<select id="admin_user_search_name" resultType='com.human.springboot.DTO_TH'>

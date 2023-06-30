@@ -53,10 +53,7 @@ text-align: center;
 <body>
 
 <div class='admin_review'>
-	<div class='admin_page_login'>
-		<input type='hidden' id='adminCheck' value="${adcheck}">
-		
-	</div>
+
 
  	<div id=admin_review_title>
  		<h2>리뷰 관리 게시판</h2>
@@ -136,22 +133,19 @@ $(document)
 .ready(function(){
 
 	
-	/*if($('#adminCheck').val()!='3'){	관리자 인지 확인
-	alert('잘못된 접근입니다')
-}*/         
-	console.log("hi")
-//	review_list()
-    paging()
-        .then(function() {
-            console.log($('#pagenum1').attr('value'));
-            review_list($('#pagenum1').attr('value'));	
 
-	
-        })
-        .catch(function(error) {
-            console.error(error);
-        });
-	console.log("hello")
+    paging()
+.then(function() {
+    console.log($('#pagenum1').attr('value'));
+    review_list($('#pagenum1').attr('value'));	
+
+
+})
+.catch(function(error) {
+    console.error(error);
+});
+ 
+
 	
 })
 .on('click','#admin_review_title',function(){
