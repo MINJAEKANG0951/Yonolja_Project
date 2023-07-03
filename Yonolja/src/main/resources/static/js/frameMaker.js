@@ -1,8 +1,11 @@
 
 function makeFrame(){
 
-    uuid = self.crypto.randomUUID();
-    uuid = "f" + uuid.substring(0,10);
+    uuid = ( Math.random()*10000000000000 ) + "";
+    uuid = "a" + uuid;
+    uuid = uuid.replace(".","");
+	// 원래 uuid 써야하는데, server돌릴때 보안상으로 차단되어서 mathrandom 으로 함 ㅋ;
+	console.log(uuid);
 
     frame = {
 		

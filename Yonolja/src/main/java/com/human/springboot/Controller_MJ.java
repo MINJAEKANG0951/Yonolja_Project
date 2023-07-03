@@ -1,7 +1,7 @@
 package com.human.springboot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.UUID;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -13,6 +13,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -804,9 +806,60 @@ public class Controller_MJ {
 		return "/test/testmap";
 	}
 	
+	@GetMapping("/email")
+	public String emailCheck() {
+		return "/test/EmailSending";
+	}
 	
 	
 	
+	// 이메일인증 - 나중에 비밀번호 분실시 해당 이메일로 비밀번호 전송 가능(아이디/비밀번호 찾기 둘 다 가능하려면 email이 primary key 여야함)
+	@Autowired
+	MailSender sender;
+	
+	@PostMapping("/sendEmail")
+	@ResponseBody
+	public String sendEmail(HttpServletRequest req) {
+		
+		
+		String toAddress = 
+				req.getParameter("emAddress")!=null ? req.getParameter("emAddress"):null;
+		
+		
+		UUID uuid = UUID.randomUUID();
+		String securityCode = (uuid+"").substring(0,5);
+		
+		SimpleMailMessage message = new SimpleMailMessage();
+		message.setFrom("the_relaxed_tortoise@naver.com");
+		message.setTo(toAddress);
+		message.setSubject("Yonolja 인증 메일입니다.");
+		message.setText("보안코드 " + securityCode + "를 yonolja 웹사이트에서 입력해주세요.");
+		sender.send(message);
+		
+		HttpSession session = req.getSession();
+		session.setAttribute("securityCode", securityCode);
+		
+		return "이메일이 전송되었습니다";
+	}
+	
+	
+	@PostMapping("/confirmCode")
+	@ResponseBody
+	public String confirmCode(HttpServletRequest req) {
+		
+		
+		String code = 
+				req.getParameter("code")!=null ? req.getParameter("code"):null;
+		
+		HttpSession session = req.getSession();
+		String codeSent = (String) session.getAttribute("securityCode");
+		
+		if(code.equals(codeSent)) 
+		{session.setAttribute("securityCode", null);return "이메일 인증 완료";}
+		else {return "이메일 인증 실패";}
+		
+		
+	}
 	
 	
 	

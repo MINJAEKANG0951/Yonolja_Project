@@ -391,25 +391,30 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 			
 			
 			
-			
-			
-			// 1. roomtypeImg 넣기
-			
-			imgs = roomtype.imgs.split(",");
-			
 			frame = makeFrame();
 			frame.left_img = "/img/website/place_left.png"
 			frame.right_img = "/img/website/place_right.png"
 			frame.left_style = 'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);left:10px;width:80px;height:150px;'
 			frame.right_style = 'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);right:10px;width:80px;height:150px;'
 			
-			for(i=0;i<imgs.length;i++){
-				frame.addPhoto(imgs[i]);
+			// 1. roomtypeImg 넣기
+			if(roomtype.imgs==null || roomtype.imgs==""){
+				frame.addPhoto("/img/website/noimg.png");
+				tagstr = frame.getTagStr();
+				cssstr = frame.getCssStr();
+				$('body').append(cssstr);
+				$('#frame').append(tagstr);
+			} else {
+				imgs = roomtype.imgs.split(",");
+				for(i=0;i<imgs.length;i++){
+					frame.addPhoto(imgs[i]);
+				}
+				tagstr = frame.getTagStr();
+				cssstr = frame.getCssStr();
+				$('body').append(cssstr);
+				$('#frame').append(tagstr);
 			}
-			tagstr = frame.getTagStr();
-			cssstr = frame.getCssStr();
-			$('body').append(cssstr);
-			$('#frame').append(tagstr);
+	
 			
 			
 			
@@ -450,7 +455,7 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 					str += '<div class=options>'
 					str += '<div class=option>'
 					str += '<div><img src="/img/place_option/none.png"></div>'
-					str += '<div>없음</div>' 
+					str += '<div>옵션없음</div>' 
 					str += '</div>'
 				$('#optionBox').append(str);
 			}
@@ -468,7 +473,9 @@ function loadPage(){ // roomtype 에 관한 전반적인 정보들을 불러옴
 			roomtype_capacity = roomtype.capacity;
 			
 			// 5. roomtype_guide 표시
-			$('#roomtype_guide').html(roomtype.guide);
+			
+			if(roomtype.guide==null){roomtype.guide = "아직 작성되지 않았습니다."}
+			$('#roomtype_guide').append(roomtype.guide + "<br><br>");
 			
 			// 6. roomtype 에 대한 review 개수 표시
 			

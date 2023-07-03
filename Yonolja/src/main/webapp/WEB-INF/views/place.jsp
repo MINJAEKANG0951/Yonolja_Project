@@ -355,21 +355,31 @@ function loadPage(){
 		*/
 			
 			// 1. placeImg 넣기
-			imgs = place.imgs.split(",");
-			
 			frame = makeFrame();
 			frame.left_img = "/img/website/place_left.png"
 			frame.right_img = "/img/website/place_right.png"
 			frame.left_style = 'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);left:10px;width:80px;height:150px;'
 			frame.right_style = 'position:absolute;cursor:pointer;top:50%;transform:translateY(-50%);right:10px;width:80px;height:150px;'
 			
-			for(i=0;i<imgs.length;i++){
-				frame.addPhoto(imgs[i]);
+			if(place.imgs=="" || place.imgs==null){
+				
+				frame.addPhoto("/img/website/noimg.png");
+				
+				tagstr = frame.getTagStr();
+				cssstr = frame.getCssStr();
+				$('body').append(cssstr);
+				$('#frame').append(tagstr);
+			} else {
+				imgs = place.imgs.split(",");
+				for(i=0;i<imgs.length;i++){
+					frame.addPhoto(imgs[i]);
+				}
+				tagstr = frame.getTagStr();
+				cssstr = frame.getCssStr();
+				$('body').append(cssstr);
+				$('#frame').append(tagstr);
 			}
-			tagstr = frame.getTagStr();
-			cssstr = frame.getCssStr();
-			$('body').append(cssstr);
-			$('#frame').append(tagstr);
+			
 			
 			
 			// 2. title 에 이름,평점넣기
@@ -391,8 +401,8 @@ function loadPage(){
 			// 4. guide 입력. 그런데 이거 summernote 처럼 사용자가 엔터치면 엔터 저장하고 해야함. 
 			//	  팀원들이랑 맞춰서 하기. summernote 같은거 써야할듯.
 			// 	  사용자가 입력할때.
-			
-			$('#place_guide').text(place.guide);			
+			if(place.guide==null){place.guide = "아직 작성되지 않았습니다."}
+			$('#place_guide').append('<h3>안내/정책</h3>' + place.guide);			
 			
 			
 			
@@ -607,7 +617,7 @@ function loadRoomTypes(){
 		}, 
 		
 		complete:function(){
-			setTimeout(function(){roomtype_flag=true;},500)
+			setTimeout(function(){roomtype_flag=true;},30)
 		}
 	
 	})
@@ -767,7 +777,7 @@ function loadPlaceReviews(){
 		}, 
 		
 		complete:function(){
-			setTimeout(function(){review_flag=true},500);
+			setTimeout(function(){review_flag=true},30);
 		}
 	
 	})

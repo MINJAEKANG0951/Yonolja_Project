@@ -1625,18 +1625,35 @@ function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만�
 		place = placesToShow[j];
 		
 		portrait = makeStructure();
-		portrait.setBody(place.seq ,place.name , "★ " + place.reviewRate.toFixed(1) , place.address, place.price.toLocaleString() + '원 <span class=bak>(1박)</span>');
+		rvRate = ''
+		if(place.reviewRate!=null && place.reviewRate!=''){
+			rvRate = "★ " + place.reviewRate.toFixed(1)
+		}
+		portrait.setBody(place.seq ,place.name , rvRate , place.address, place.price.toLocaleString() + '원 <span class=bak>(1박)</span>');
 		
-		imgsArray = place.imgs.split(",");
-		for(b=0;b<imgsArray.length;b++){
-			portrait.add_picture(imgsArray[b]);
+		if(place.imgs=="" || place.imgs==null){
+			
+			portrait.add_picture("/img/website/noimg.png");
+			
+			
+			cssStr = portrait.getPortraitCss();
+			tagStr = portrait.getPortrait();
+			
+			$('body').append(cssStr)
+			$('section').append(tagStr)
+		} else {
+			imgsArray = place.imgs.split(",");
+			for(b=0;b<imgsArray.length;b++){
+				portrait.add_picture(imgsArray[b]);
+			}
+			
+			cssStr = portrait.getPortraitCss();
+			tagStr = portrait.getPortrait();
+			
+			$('body').append(cssStr)
+			$('section').append(tagStr)
 		}
 		
-		cssStr = portrait.getPortraitCss();
-		tagStr = portrait.getPortrait();
-		
-		$('body').append(cssStr)
-		$('section').append(tagStr)
 		
 	}
 	
