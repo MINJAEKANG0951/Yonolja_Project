@@ -699,7 +699,7 @@ div[class*=portrait]:hover{
 
 /*     여기부터는 filter modal css    */
 #filterModal{
-	position:absolute;
+	position:fixed;
 	left:50%;
 	top:50%;
 	transform:translate(-50%,-50%);
@@ -728,7 +728,7 @@ div[class*=portrait]:hover{
   display:none;
 }
 #filterModal_background{
-	position:absolute;
+	position:fixed;
 	left:0;
 	top:0;
 	width:100%;
@@ -1625,7 +1625,7 @@ function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만�
 		place = placesToShow[j];
 		
 		portrait = makeStructure();
-		rvRate = ''
+		rvRate = '리뷰없음'
 		if(place.reviewRate!=null && place.reviewRate!=''){
 			rvRate = "★ " + place.reviewRate.toFixed(1)
 		}

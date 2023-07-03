@@ -37,12 +37,12 @@ public class Controller_HY {
 
 	// test path
 	private String path = "C:/Users/admin/Desktop/imgs";
-	private String PlaceImgPath = "C:/Users/User/Desktop/YONOLJA/placeImgs";
-	private String RoomTypeImgPath = "C:/Users/User/Desktop/YONOLJA/roomTypeImgs";
+	private String PlaceImgPath = "C:/Users/admin/Desktop/placeImgs";
+	private String RoomTypeImgPath = "C:/Users/admin/Desktop/roomTypeImgs";
 
 	// 경로 나중에 변환해야함
-	String placeImgPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_img";
-
+	String placeImgPath = "C:\\Users\\user\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_img";
+	
 	// roomtype_option 경로
 
 	String roomtype_optionImgPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\roomtype_option";
