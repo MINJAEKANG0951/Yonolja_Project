@@ -310,14 +310,6 @@ div[class*=frame]{
 	background-color:blue;
 	transition:0.3s;
 }
-#place_delete  {
-background-color: red; /* 배경색을 빨간색으로 변경 */
-}
-
-#place_delete:hover {
-	background-color: darkred; /* 호버 시 배경색을 더 진한 빨강으로 변경 */
-	transition: 0.3s;
-}
 #place_environments{
 	width:100%;
 	padding-left:30px;
@@ -848,7 +840,6 @@ background-color:blue;
 			<td colspan=2 id=placeUpdateButtons>
 				<button id=place_update>등록</button> &nbsp;
 				<button id=close_placeModal>닫기</button>
-				<button id="place_delete">업장삭제</button>
 			</td> 
 		</tr>
 	</table>
@@ -1122,12 +1113,6 @@ $(document)
 	loadrtPageNums();
 	refresh_placeImg();
 })
-.on('click','#place_delete',function(){
-	if(confirm('정말로 이 업장을 삭제하시겠습니까?')){
-		deletePlace();	
-	}
-	
-})
 .on('click','#addroomtypePhoto',function(){
 	$('#roomtypeImgInput').trigger('click');
 })
@@ -1255,9 +1240,6 @@ $(document)
 	$('#roomtypeUpdate_background').css('display','block');
 	$('html').css('overflow','hidden');
 	
-
-
-	
 })
 .on('click','#closeRoomTypeModal',function(){
 	
@@ -1298,8 +1280,8 @@ $(document)
 //			currentRoomTypePage = 1; 삭제시라면 있어야함.
 			loadRoomTypes();
 			loadrtPageNums();
-			loadRooms()
-			loadrmPageNums()
+			
+			// select 박스의 roomtype 에 추가되어야함. delete때도 마찬가지로 selectbox에서 지워져야함
 			roomType_search()
 		}
 	
@@ -1478,41 +1460,21 @@ $(document)
 				
 				$('#ManageRoomType_background').css('display','none');
 				
-				currentRoomPage = 1;
-				loadRooms();
-				loadrmPageNums();
+				
+				roomType_search();
+			
 			}
 		})
+		
+		
+		
+		
 	}
 	
 	
 })
 
 /////////////////////////////// functions ///////////////////////////////
-
-
-
-
-
-function deletePlace(){
-	//플레이스 seq받아서 아작스로 보내고 삭제하는 dao 만들어서
-	//컨트롤러에서 연결 
-		place_seq = parseInt($('#place_seq').val());
-		console.log()
-		$.ajax({url:'/deletePlace', type:'post', dataType:'text', 	
-		data:{place_seq:place_seq},
-		success:function(place){
-			alert('객실이 삭제되었습니다');
-			window.location.href='/mypage';
-			
-		}
-	
-	
-		})
-
-}
-
-
 function refreshRoomTypeImgModal(){
 	
 	roomtype_seq = parseInt($('#img_rtSeq').val());
@@ -1581,7 +1543,11 @@ function refreshRoomTypeModal(roomtype_seq){
 				$('#roomtype_name').val(roomtype.name);
 				$('#roomtype_capacity').val(roomtype.capacity);
 				$('#roomtype_price').val(roomtype.price);
-				$('#roomtype_guide').val(roomtype.guide);
+				
+				rtguide = roomtype.guide;
+				if(rtguide!="" && rtguide!=null){rtguide = rtguide.replace("<br>","\n")}
+				
+				$('#roomtype_guide').val(rtguide);
 				
 				
 				if(roomtype.options!=null){
@@ -1866,7 +1832,6 @@ function loadPlaceInfo(){
 			$('#pzip_code').val( place.address.split(",")[0] );
 			$('#paddress1').val( place.address.split(",")[1] );
 			$('#paddress2').val( place.address.split(",")[2] );
-			
 			$('#place_guide').val(place.guide);
 			
 			

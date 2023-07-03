@@ -37,8 +37,8 @@ public class Controller_HY {
 
 	// test path
 	private String path = "C:/Users/admin/Desktop/imgs";
-	private String PlaceImgPath = "C:/Users/admin/Desktop/placeImgs";
-	private String RoomTypeImgPath = "C:/Users/admin/Desktop/roomTypeImgs";
+	private String PlaceImgPath = "C:/Users/User/Desktop/YONOLJA/placeImgs";
+	private String RoomTypeImgPath = "C:/Users/User/Desktop/YONOLJA/roomTypeImgs";
 
 	// 경로 나중에 변환해야함
 	String placeImgPath = "C:\\Users\\admin\\git\\Yonolja_Project\\Yonolja\\src\\main\\resources\\static\\img\\place_img";
@@ -50,7 +50,7 @@ public class Controller_HY {
 	// 업장추가페이지
 	@Autowired
 	private DAO_HY hydao;
-
+	
 	@GetMapping("/host_addPlace")
 	public String showAddplace(Model model) {
 		ArrayList<DTO_HY_P> ptypes = hydao.showPtype(); // DB에서 옵션 데이터 조회
@@ -90,6 +90,8 @@ public class Controller_HY {
 				"");
 		System.out.println(Arrays.toString(selectedEnvironments));
 		//////////////////////////////////////////////////////////////////////////
+		
+		pguide = pguide.replace("\n", "<br>");
 //		사진관리 코드인데 다른코드쓸예정이라 막음 
 //		String DBpath = "";
 //		for (int i = 0; i < imgs.length; i++) {
@@ -150,7 +152,12 @@ public class Controller_HY {
 		jo.put("imgs", place.getPlace_imgs());
 		jo.put("mobile", place.getPlace_mobile());
 		jo.put("options", place.getPlace_options());
-		jo.put("guide", place.getPlace_guide());
+		
+		String pguide = null;
+		if(place.getPlace_guide()!=null && !place.getPlace_guide().equals("")) {
+			pguide = place.getPlace_guide().replace("<br>", "\n");
+		} 
+		jo.put("guide", pguide);
 		jo.put("environment", place.getPlace_environment());
 		
 		
@@ -454,6 +461,9 @@ public class Controller_HY {
 		String place_guide = req.getParameter("place_guide");
 		String place_environment = req.getParameter("place_environment");
 		
+		place_guide = place_guide.replace("\n", "<br>");
+		
+		System.out.println(place_guide);
 	
 			hydao.updatePlace
 			(place_seq, place_name,place_type_seq,  
@@ -568,7 +578,9 @@ public class Controller_HY {
 			
 			if(req.getParameter("roomtype_seq")==null || 
 			   req.getParameter("roomtype_seq").equals("")) 
-			{	hydao.addRoomType( /*  insert  */	
+			{	
+				roomtype_guide = roomtype_guide.replace("\n","<br>");
+				hydao.addRoomType( /*  insert  */	
 					roomtype_name, 
 					place_seq, 
 					roomtype_capacity, 
@@ -577,6 +589,7 @@ public class Controller_HY {
 					roomtype_guide );						}
 			else { 
 				int roomtype_seq = Integer.parseInt(req.getParameter("roomtype_seq"));
+				roomtype_guide = roomtype_guide.replace("\n","<br>");
 				hydao.modifyRoomtype( /* update */
 					roomtype_seq, 
 					roomtype_name, 
@@ -607,7 +620,12 @@ public class Controller_HY {
 		jo.put("name", roomtype.getRoomtype_name());
 		jo.put("capacity", roomtype.getRoomtype_capacity());
 		jo.put("price", roomtype.getRoomtype_price());
-		jo.put("guide", roomtype.getRoomtype_guide());
+		
+		String rtguide = null;
+		if(roomtype.getRoomtype_guide()!=null && !roomtype.getRoomtype_guide().equals("")) {
+			rtguide = roomtype.getRoomtype_guide().replace("<br>","\n");
+		}
+		jo.put("guide", rtguide);
 		jo.put("options", roomtype.getRoomtype_options());
 		
 
@@ -702,16 +720,6 @@ public class Controller_HY {
 		catch(Exception e) {return "fail";}
 		
 
-		return "success";
-	}
-	
-	
-	@PostMapping("/deletePlace")
-	@ResponseBody
-	public String deletePlace(HttpServletRequest req) {
-		
-		int place_seq = Integer.parseInt( req.getParameter("place_seq") );
-		hydao.deletePlace(place_seq);
 		return "success";
 	}
 
