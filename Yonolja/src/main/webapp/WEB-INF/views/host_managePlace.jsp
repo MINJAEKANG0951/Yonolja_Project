@@ -700,7 +700,17 @@ background-color:blue;
 	transition:0.3s;
 }
 
-
+#deletePlace{
+	background-color:#DDDDDD;
+	color:#FF0000;
+	border:0px;
+	border-radius:5px;
+	cursor:pointer;
+}
+#deletePlace:hover{
+	background-color:gray;
+	transition:0.3s;
+}
 
 
 
@@ -842,6 +852,7 @@ background-color:blue;
 				<button id=close_placeModal>닫기</button>
 			</td> 
 		</tr>
+		<tr><td colspan=2 style="text-align:right;"><button id=deletePlace>업장삭제</button>&nbsp;</td></tr>
 	</table>
 </div>
 
@@ -1112,6 +1123,14 @@ $(document)
 	loadRoomTypes();
 	loadrtPageNums();
 	refresh_placeImg();
+})
+.on('click','#deletePlace',function(){
+	
+	check = confirm('정말로 이 숙박업소를 삭제하시겠습니까? 한 번 삭제하고나면 복구가 불가능합니다.')
+	if(check){
+		place_seq = parseInt($('#place_seq').val());
+		document.location = "/deletePlace/" + place_seq;
+	} 
 })
 .on('click','#addroomtypePhoto',function(){
 	$('#roomtypeImgInput').trigger('click');

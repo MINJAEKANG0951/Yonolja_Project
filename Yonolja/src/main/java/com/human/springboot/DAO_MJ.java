@@ -37,4 +37,12 @@ public interface DAO_MJ {
 	int countRoomLeft(int roomtype_seq, String sql);
 	void addBook(int user_seq, int room_seq, String checkin, String checkout,int book_price);
 	int getAnyRoomAvailable(int roomtype_seq, String sql);
+	
+	
+	ArrayList<DTO_MJ_reviewSampleDTO> getSamples();
+	ArrayList<DTO_MJ_roomTypeDTO> getRoomTypes2(int place_seq);
+	
+	
+	ArrayList<DTO_MJ_placeDTO> getAllPlaces();
+	
 }

@@ -7,6 +7,8 @@
 <head>
     <meta charset="UTF-8">
     <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=9205057ff16b5c3fa0c0df924cbb7156&libraries=services"></script>
+	<script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.4.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-vis"></script>
 <title>main</title>
 </head>
 <style>
@@ -820,10 +822,125 @@ div[class*=portrait]:hover{
 	color:gray;
 	font-size:12px;
 }
+
+
+
+#recommendation{
+	position:fixed;
+	right:10px;
+	top:200px;
+	width:70px;
+	height:50px;
+	background-color:white;
+	border:1px solid black;
+	z-index:1;
+	padding:0px;
+	margin:0px;
+	font-size:0px;
+}
+#foldButton{
+	height:100%;
+	width:100%;
+	background-color:white;
+	border:0px;
+	cursor:pointer;
+	font-size:12px;
+	padding:0px;
+}
+#foldButton:hover{
+	background-color:#ddd;
+}
+
+.rc_places{
+	background-color:white;
+	display:none;
+}
+
+.rc_place{
+	background-color:white;
+	cursor:pointer;
+}
+
+.rc_place:hover{
+	background-color:#ddd;
+}
+
+
+.rc_place_imgBox{
+	width:70px;
+	height:70px;
+	border:1px solid black;
+}
+.rc_place_img{
+	width:100%;
+	height:100%;
+}
+
+.rc_place_name{
+	border:1px solid black;
+	width:70px;
+	overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:12px;
+    font-weight:bold;
+}
+
+.rc_place_guide{
+	font-size:12px;
+	border:1px solid black;
+}
+
+
 </style>
-<div id=modal_background></div>
+
 <body>
 
+<% if( session.getAttribute("user_name")!=null && !session.getAttribute("user_name").equals("") ){ %>
+<div id=recommendation>
+	<button id=foldButton>
+		<%= session.getAttribute("user_name") %>
+		님이 좋아할만한 장소! ▼
+	</button>
+	<div class=rc_places> 
+		<!--  
+		<div class=rc_place>
+			<div class=rc_place_imgBox>
+				<img class=rc_place_img src="img/test/거북이1.png">
+			</div>
+			<div class=rc_place_name>
+				상명스테이
+			</div>
+		</div>
+		
+		
+		<div class=rc_place>
+			<div class=rc_place_imgBox>
+				<img class=rc_place_img src="img/test/거북이2.png">
+			</div>
+			<div class=rc_place_name>
+				센텀호텔
+			</div>
+		</div>
+		
+		
+		<div class=rc_place>
+			<div class=rc_place_imgBox>
+				<img class=rc_place_img src="img/test/거북이3.png">
+			</div>
+			<div class=rc_place_name>
+				플레아드 몽블랑 어저고 ㅇ저쩌고
+			</div>
+		</div>
+		-->
+		
+	</div>
+</div>
+<% } %>
+
+
+
+<div id=modal_background></div>
 <button id=mapButton>
 	지도 표시하기<img src="/img/website/map2.png">
 </button>
@@ -1200,6 +1317,19 @@ $(document)
 	calendar.setAim('when_checkin','when_checkout')
 	fill_placeType_checkBoxes();
 	fill_placeOption_checkBoxes();
+	trainModel();
+})
+.on('click','.rc_place',function(){
+	place_seq = $(this).attr('id');
+	if(place_seq=='-1'){return false;}
+	document.location = "/place/" + place_seq;
+})
+.on('click','#foldButton',function(){
+	if( $('.rc_places').css('display')=='none'){
+		$('.rc_places').css('display','block');
+	} else {
+		$('.rc_places').css('display','none');
+	}
 })
 .on('click','.environment_left',function(){
 	$('.environments').animate({scrollLeft:$('.environments').scrollLeft()-350},250)
@@ -1469,7 +1599,9 @@ $('html').click(function(e){
 	if(clicked=='user_profile'||clicked=='mypage_button'){
 		if( $('.sub').css('display')=='none'  ){ $('.sub').css('display','block')} 
 		else { $('.sub').css('display','none')}
-	} else { $('.sub').css('display','none') }
+	} else {
+		$('.sub').css('display','none') 
+	}
 })
 // 스크롤시 header 에 효과주기 
 $(window).scroll(function(){
@@ -1625,7 +1757,7 @@ function showPlaceList(){	// placeToShow 에 담긴 places 들을 list 로 만�
 		place = placesToShow[j];
 		
 		portrait = makeStructure();
-		rvRate = '리뷰없음'
+		rvRate = ''
 		if(place.reviewRate!=null && place.reviewRate!=''){
 			rvRate = "★ " + place.reviewRate.toFixed(1)
 		}
@@ -1799,12 +1931,223 @@ function fill_placeOption_checkBoxes(){
 			$('#placeoptions_checkboxes').append(str);
 			
 		}
-		
 	})
-	
-	
 }
 
+
+
+
+////////////////////////////////////// 인공지능 /////////////////////////////////////////////////
+
+
+/*
+			
+								인공지능
+			
+			변수 > 숙박업소 옵션개수, 이용한 고객 성별, 달 (실제값)
+			도출값 > 평점
+			
+			
+			질의값 : 모든 호텔의 숙박업소 옵션개수, 현재 사용자성별, 현재 달
+			도출값 : 예상평점
+			
+			
+			그 후 예상평점 높은순으로 나열
+*/	
+
+
+const sample_questions = [];
+const sample_answers = [];
+modelFlag = true;
+
+const actual_questions = [];
+
+const places_recommended = [];
+
+
+function trainModel(){		// 모델을 학습 시키는 함수 - db에서 해당월,사용자성별,호텔옵션개수 모든 리뷰내역가져와서 학습시킴
+
+	today = new Date();
+		
+	thisMonth = today.getMonth()+1;
+	
+	$.ajax({url:'/trainModel', type:'post', dataType:'json', 
+		
+		data:{ thisMonth:thisMonth },
+		
+		success:function(data){
+			
+			if(data.length==0){
+				$('.rc_places').append('<div class=rc_place><div class=rc_place_guide>데이터가<br>존재하지<br>않습니다</div></div>');
+				modelFlag = false;
+				return false;
+			} else {
+				$('.rc_places').append('<div class=rc_place id=-1><div class=rc_place_guide>로드중..</div></div>');
+				for(i=0;i<data.length;i++){
+					
+					user_gender = null;
+					if( data[i].user_gender=='male' ){user_gender = 0}
+					else{user_gender=1}
+					month = parseInt( data[i].month ) 
+					howmanyOptions = parseInt( data[i].howmanyOptions );
+					reviewRate = parseInt( data[i].review_rate );
+											// 성별, 달, 옵션개수
+					sample_questions.push([user_gender, month, howmanyOptions])
+					sample_answers.push([reviewRate])
+					
+				}
+			}
+		},
+		
+		complete:function(){
+			// 학습한 모델을 가지고 정답을 예측하는 함수, 정답을 예측한 함수 이후에는
+			// 평점순으로 보여주면됨.
+			
+			console.log(sample_questions)
+			console.log(sample_answers)
+			
+			useModel();
+		}
+	})
+}
+
+
+
+function useModel(){
+	
+	
+	today = new Date();
+	thisMonth = today.getMonth()+1;
+	
+	$.ajax({url:'/getAllPlaces', type:'post', dataType:'json', 
+		
+		success:function(places){	
+			
+			for(i=0;i<places.length;i++){
+				
+				place = places[i];
+				// 모든 place 를 가져옴 - 월 / 사용자성별(0남/1여) / 옵션개수 > 질의array에 넣음 
+				
+				gender = null;
+				if(place.user_gender=='male'){gender=0}
+				else{gender=1}
+				
+				howmanyOptions = parseInt(place.howmanyOptions);
+				
+				actual_questions.push([thisMonth,gender,howmanyOptions]);
+				pinfo = {
+						
+						seq:place.seq, 
+						name:place.name, 
+						img:place.img
+				};
+				places_recommended.push(pinfo)
+				
+			}
+			
+		}, 
+		
+		complete:function(){
+			
+			console.log(actual_questions)
+			console.log(places_recommended)
+			
+			
+			if(modelFlag){	// true일시 모델 학습
+				
+				// 데이터 tf 용으로 변환
+				var tf_questions = tf.tensor(sample_questions);
+			    var tf_answers = tf.tensor(sample_answers);
+				var tf_ask = tf.tensor( actual_questions )
+			    
+			    // 모델만들기
+		        var X = tf.input({ shape: [3] });
+		        var H1 = tf.layers.dense({ units: 3, activation:'relu' }).apply(X);
+		        var H2 = tf.layers.dense({ units: 3, activation:'relu' }).apply(H1);
+		        var Y = tf.layers.dense({ units: 1 }).apply(H2);
+		        var model = tf.model({ inputs: X, outputs: Y });
+		        var compileParam = { optimizer: tf.train.adam(), loss: tf.losses.meanSquaredError }
+		        model.compile(compileParam);
+		        // tfvis.show.modelSummary({name:'요약', tab:'모델'}, model); 
+				
+		        
+		        // 모델학습시키기 
+				var _history = [];
+		        var fitParam = { 
+		          epochs: 200, 
+		          callbacks:{
+		            onEpochEnd:
+		              function(epoch, logs){
+		                console.log('epoch', epoch, logs, 'RMSE=>', Math.sqrt(logs.loss));
+		                _history.push(logs);
+		           //     tfvis.show.history({name:'loss', tab:'역사'}, _history, ['loss']);
+		              }
+		          }
+		        }
+		        
+		        
+		        model.fit(tf_questions, tf_answers, fitParam).then(function (result) {
+		            // 4. 모델을 이용합니다. 
+		            // 4.1 기존의 데이터를 이용
+		            var review_result = model.predict(tf_ask);
+		            review_result.print();
+		                  var myArray= review_result.dataSync();
+		                  console.log(myArray);
+		                  
+ 
+		            // 이제 리뷰순위에따라서 나열해서 넣으면됨.     
+		            for(a=0;a<myArray.length;a++){
+		            	for(b=a+1;b<myArray.length;b++){
+		            		tem = myArray[a];
+		            		tem2 = places_recommended[a];
+		            		if(myArray[a]<myArray[b]){
+		            			myArray[a] = myArray[b];
+		            			myArray[b] = tem;
+								console.log('dd')
+		            			places_recommended[a] = places_recommended[b];
+		            			places_recommended[b] = tem2;
+		            		}
+		            	}
+		            }
+		            console.log(myArray)  
+		            console.log(places_recommended)      
+		                  
+		             
+		            // 이제 append 만 하면됨.
+		            $('.rc_places').empty();
+		            
+		            p = places_recommended.length;
+		            if(p>5){p=5;}
+		            
+		            for(l=0;l<p;l++){
+		            	
+		            	place = places_recommended[l];
+		            	
+		            	str = '<div class=rc_place id='+ place.seq +'>'
+		            	str +='<div class=rc_place_imgBox>'
+		            	str +='<img class=rc_place_img src="' + place.img.split(",")[0] + '">';
+		            	str +='</div>'
+		            	str +='<div class=rc_place_name>' + place.name + '</div>'
+		            	str += '</div>'
+		            	
+		            	$('.rc_places').append(str);
+		            }
+		            
+		            
+		            
+		        });  
+		        
+		    
+			}
+			
+			
+			
+		}
+		
+	
+	})
+	
+}
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
