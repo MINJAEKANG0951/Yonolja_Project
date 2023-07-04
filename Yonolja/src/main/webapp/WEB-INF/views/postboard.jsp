@@ -185,7 +185,7 @@
            <div class="banner-slider">
            
            
-  <h2 class="text-center">문의 게시판</h2>
+ 
   <div class="banner-container">
     <img src="https://yaimg.yanolja.com/v5/2023/05/24/13/646e100ad092c4.89080932.png" alt="Banner 1">
     <img src="https://yaimg.yanolja.com/v5/2023/06/16/20/648cc7768e3dc4.94186600.png" alt="Banner 2">
@@ -224,11 +224,11 @@
                 <table class="table table-bordered">
                    <thead>
     <tr>
-        <th style="width: 7%;">번호</th>
-        <th style="width: 57%;">글제목</th>
-        <th style="width: 11%;">작성자</th>
-        <th style="width: 11%;">작성일</th>
-        <th style="width: 14%;">답변여부</th>
+      <th style="width: 7%;">번호</th>
+        <th style="width: 54%;">글제목</th>
+        <th style="width: 10%;">작성자</th>
+        <th style="width: 13.5%;">작성일</th>
+        <th style="width: 15.5%;">답변여부</th>
     </tr>
 </thead>
 

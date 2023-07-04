@@ -322,7 +322,7 @@ label {
         
         
 <!-- 이미지 -->
-<img src="${post_img}" alt="" style="width: 100%; height: 100%; object-fit: contain; " data-toggle="modal" data-target="#myModal" id="postImage">
+<img src="${post_img}" alt="" style="width: 100%; height: 100%; object-fit: contain; " data-toggle="modal" data-target="#myModal" id="postImage" onerror="this.parentNode.removeChild(this);" >
 
 <!-- Modal -->
 <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">

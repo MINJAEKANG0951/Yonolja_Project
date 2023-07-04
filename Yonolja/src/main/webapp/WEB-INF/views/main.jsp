@@ -1321,6 +1321,7 @@ $(document)
 })
 .on('click','.rc_place',function(){
 	place_seq = $(this).attr('id');
+	if(place_seq=='-1'){return false;}
 	document.location = "/place/" + place_seq;
 })
 .on('click','#foldButton',function(){
@@ -1981,7 +1982,7 @@ function trainModel(){		// 모델을 학습 시키는 함수 - db에서 해당�
 				modelFlag = false;
 				return false;
 			} else {
-				$('.rc_places').append('<div class=rc_place><div class=rc_place_guide>로드중..</div></div>');
+				$('.rc_places').append('<div class=rc_place id=-1><div class=rc_place_guide>로드중..</div></div>');
 				for(i=0;i<data.length;i++){
 					
 					user_gender = null;
