@@ -182,7 +182,20 @@
 	    where row_num=1
 	</select>
 	
+	<select id="getSamples"  resultType="com.human.springboot.DTO_MJ_reviewSampleDTO">
+		select p.place_seq, p.place_name, p.place_imgs, b.checkin_date, rv.review_star, u.user_gender
+		from yonolja_review rv, yonolja_book b, yonolja_user u,yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+		where rv.book_seq = b.book_seq and b.room_seq = rm.room_seq and rm.roomtype_seq = rt.roomtype_seq and 
+		rt.place_seq = p.place_seq and b.user_seq = u.user_seq
+	</select>
 	
+	<select id="getAllPlaces"  resultType="com.human.springboot.DTO_MJ_placeDTO">
+		select p.place_seq, p.place_name, p.place_imgs, count(rm.room_seq)
+		from yonolja_room rm, yonolja_roomtype rt, yonolja_place p
+		where rm.roomtype_seq = rt.roomtype_seq and rt.place_seq = p.place_seq
+		group by p.place_seq, p.place_name, p.place_imgs
+		order by p.place_seq
+	</select>
 	
 </mapper>
 

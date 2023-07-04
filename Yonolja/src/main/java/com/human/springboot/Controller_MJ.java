@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import ch.qos.logback.core.recovery.ResilientSyslogOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
@@ -118,12 +119,14 @@ public class Controller_MJ {
 				session.setAttribute("user_seq", users.get(i).getUser_seq());
 				session.setAttribute("user_id", users.get(i).getUser_id());
 				session.setAttribute("user_name", users.get(i).getUser_name());
+				session.setAttribute("user_gender", users.get(i).getUser_gender());
 				session.setAttribute("user_type", users.get(i).getUser_type());
 				session.setAttribute("user_signinType", users.get(i).getUser_signinType());
 				
 				System.out.println(session.getAttribute("user_seq"));
 				System.out.println(session.getAttribute("user_id"));
 				System.out.println(session.getAttribute("user_name"));
+				System.out.println(session.getAttribute("user_gender"));
 				System.out.println(session.getAttribute("user_type"));
 				System.out.println(session.getAttribute("user_signinType"));
 				return "main";
@@ -860,6 +863,135 @@ public class Controller_MJ {
 		
 		
 	}
+	
+	
+	
+	
+	@PostMapping("/trainModel")
+	@ResponseBody
+	public String getRecommendation(HttpServletRequest req) {
+
+		
+		
+		HttpSession session = req.getSession();
+		
+		String thisMonth = req.getParameter("thisMonth");
+		String user_gender = null;
+		
+		
+		JSONArray ja = new JSONArray();
+		
+		if( session.getAttribute("user_gender")==null ) {return ja.toString();} 
+		else { user_gender = (String) session.getAttribute("user_gender"); }
+		
+
+		// client 로 학습자료를 보내야함. 
+		// 숙박업소의 호텔옵션개수, 사용자성별, 해당월 
+		
+		ArrayList<DTO_MJ_reviewSampleDTO> booksamples = mjdao.getSamples();
+		
+		for(int i=0;i<booksamples.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			int place_seq = booksamples.get(i).getPlace_seq();
+			
+//			jo.put("place_seq", place_seq);
+//			jo.put("place_name", booksamples.get(i).getPlace_name());
+//			jo.put("place_imgs", booksamples.get(i).getPlace_imgs());
+			jo.put("user_gender", booksamples.get(i).getUser_gender());
+			jo.put("month", booksamples.get(i).getCheckin_date().split("\\.")[1]);
+			
+			ArrayList<String> alloptions = mjdao.placeAlloptions(place_seq);
+			ArrayList<Integer> sortedAlloptions = new ArrayList<Integer>();
+			
+			for(int j=0;j<alloptions.size();j++) {
+				if(alloptions.get(j)!=null) {
+					String[]roomtypeOptions = alloptions.get(j).split(",");
+					for(int h=0;h<roomtypeOptions.length;h++) {
+						if(!sortedAlloptions.contains(Integer.parseInt(roomtypeOptions[h]))) {
+							sortedAlloptions.add( Integer.parseInt(roomtypeOptions[h]) );
+						}
+					}
+				}
+			}
+			
+			int howmanyPlaceOption = sortedAlloptions.size();
+			
+			jo.put("howmanyOptions", howmanyPlaceOption);
+			jo.put("review_rate", booksamples.get(i).getReview_star());
+			
+			
+			System.out.println(
+					place_seq + "," +  
+					booksamples.get(i).getUser_gender() + "," + 
+					booksamples.get(i).getCheckin_date().split("\\.")[1] + "," +  
+					booksamples.get(i).getReview_star()
+			);
+			
+			
+			ja.put(jo);
+		}
+		
+		
+		return ja.toString();
+	}
+	
+	
+	
+	
+	@PostMapping("/getAllPlaces")
+	@ResponseBody
+	public String getAllPlaces(HttpServletRequest req) {
+
+		// place 의 정보(출력용), place의 옵션개수, 사용자성별, 해당월을 client 쪽으로 보내야함.
+		
+		// 여기서는 각 place 의 정보와 옵션개수, 사용자성별을  ja 에 추가 가능. 
+		// 해당월은 client 에서 해도 됨
+		
+		
+		HttpSession session = req.getSession();
+		String user_gender = (String) session.getAttribute("user_gender");
+		
+		
+		JSONArray ja = new JSONArray();
+		
+		ArrayList<DTO_MJ_placeDTO> places = mjdao.getAllPlaces();
+		
+		for(int i=0;i<places.size();i++) {
+			
+			JSONObject jo = new JSONObject();
+			
+			int place_seq = places.get(i).getPlace_seq();
+			
+			ArrayList<String> alloptions = mjdao.placeAlloptions(place_seq);
+			ArrayList<Integer> sortedAlloptions = new ArrayList<Integer>();
+			
+			for(int j=0;j<alloptions.size();j++) {
+				if(alloptions.get(j)!=null) {
+					String[]roomtypeOptions = alloptions.get(j).split(",");
+					for(int h=0;h<roomtypeOptions.length;h++) {
+						if(!sortedAlloptions.contains(Integer.parseInt(roomtypeOptions[h]))) {
+							sortedAlloptions.add( Integer.parseInt(roomtypeOptions[h]) );
+						}
+					}
+				}
+			}
+			int howmanyOptions = sortedAlloptions.size();
+			
+			jo.put("seq", place_seq);
+			jo.put("name", places.get(i).getPlace_name());
+			jo.put("img", places.get(i).getPlace_imgs());
+			jo.put("howmanyOptions", howmanyOptions);
+			jo.put("user_gender", user_gender);
+			
+			ja.put(jo);
+		}
+		
+		return ja.toString();
+	}
+	
+	
 	
 	
 	

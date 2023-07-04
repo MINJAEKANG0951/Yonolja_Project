@@ -722,5 +722,21 @@ public class Controller_HY {
 
 		return "success";
 	}
+	
+	
+	
+	
+	@GetMapping("/deletePlace/{place_seq}")
+	public String deletePlace(@PathVariable("place_seq") int place_seq) {
+		
+		hydao.deletePlace(place_seq);
+		
+		return "redirect:/mypage";
+	}
+	
+	
+	
+	
+	
 
 }
