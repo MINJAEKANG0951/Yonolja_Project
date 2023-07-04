@@ -174,7 +174,16 @@
 </style>
 <body>
 <%@ include file ="./structure/header_placePage.jsp" %>
+ 
+ 
+ 
+ 
 
+
+ 
+ 
+ 
+ 
 <section class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-10">
@@ -185,7 +194,7 @@
            <div class="banner-slider">
            
            
-  <h2 class="text-center">문의 게시판</h2>
+<!--   <h2 class="text-center">문의 게시판</h2> -->
   <div class="banner-container">
     <img src="https://yaimg.yanolja.com/v5/2023/05/24/13/646e100ad092c4.89080932.png" alt="Banner 1">
     <img src="https://yaimg.yanolja.com/v5/2023/06/16/20/648cc7768e3dc4.94186600.png" alt="Banner 2">
@@ -202,7 +211,7 @@
   <button class="next-button"> > </button>
 </div>
 
-            
+           
             
             
             <div class="form-group mt-4">
@@ -223,12 +232,12 @@
             <div class="table-responsive">
                 <table class="table table-bordered">
                    <thead>
-    <tr>
+    <tr >
         <th style="width: 7%;">번호</th>
-        <th style="width: 57%;">글제목</th>
-        <th style="width: 11%;">작성자</th>
-        <th style="width: 11%;">작성일</th>
-        <th style="width: 14%;">답변여부</th>
+        <th style="width: 54%;">글제목</th>
+        <th style="width: 10%;">작성자</th>
+        <th style="width: 13.5%;">작성일</th>
+        <th style="width: 15.5%;">답변여부</th>
     </tr>
 </thead>
 
@@ -491,5 +500,24 @@ nextButton.addEventListener('click', () => {
   bannerContainer.style.animationPlayState = 'running';
 });
 
+const API_KEY = 'd2be0a8d2b68e6a62cf1be34efc53499';
+const city = 'Seoul';
+
+$('#getWeather').on('click', function() {
+    $.ajax({
+        url: `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(data) {
+            $('#weatherInfo').html(`The temperature in ${city} is ${data.main.temp} K.`);
+        },
+        error: function(error) {
+            console.log(error);
+        },
+    });
+});
+
+
 </script>
+
 </html>

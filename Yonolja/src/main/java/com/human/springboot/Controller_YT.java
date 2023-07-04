@@ -26,6 +26,18 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Map;
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+
 @Controller
 public class Controller_YT {
  
@@ -344,7 +356,20 @@ public class Controller_YT {
     }
     
    
-	
+    @RestController
+    public class WeatherController {
+        
+        private static final String API_KEY = "YOUR_OPENWEATHERMAP_API_KEY";
+        private static final String CITY = "Seoul";
+        private static final String URL = "http://api.openweathermap.org/data/2.5/weather?q=" + CITY + "&appid=" + API_KEY;
+
+        @GetMapping("/weather")
+        public String getWeather() {
+            RestTemplate restTemplate = new RestTemplate();
+            ResponseEntity<String> response = restTemplate.getForEntity(URL, String.class);
+            return response.getBody();
+        }
+    }
 	 
 	
 }
